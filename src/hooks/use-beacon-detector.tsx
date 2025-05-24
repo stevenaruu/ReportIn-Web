@@ -153,7 +153,7 @@ export const useBeaconDetector = () => {
             }
           }, 5000);
 
-        } catch (connectError) {
+        } catch (connectError: any) {
           console.log('Could not connect to device, adding basic info:', connectError);
 
           // Add device even if connection failed
