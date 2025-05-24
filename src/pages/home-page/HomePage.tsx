@@ -1,5 +1,4 @@
 import { useBeaconDetector } from '@/hooks/use-beacon-detector';
-import React from 'react';
 
 const BeaconScanner = () => {
   const {

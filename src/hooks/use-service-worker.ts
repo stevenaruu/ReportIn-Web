@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 // src/hooks/useServiceWorker.ts
 import { useEffect } from 'react'
 import { Workbox } from 'workbox-window'
