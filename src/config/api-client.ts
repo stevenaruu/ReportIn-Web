@@ -1,10 +1,25 @@
+import { BASE_URL } from "@/constant/ApiService";
+import store from "@/store";
 import axios from "axios";
 
 const apiClient = axios.create({
-  baseURL: "http://localhost:7000",
-  timeout: 15000, // 15 seconds timeout
+  baseURL: BASE_URL,
+  timeout: 0,
   headers: { "Content-Type": "application/json" },
 });
+
+apiClient.interceptors.request.use(
+  (config) => {
+    const state = store.getState();
+    const username = state.auth.username ?? "unknown";
+
+    if (username) {
+      config.headers["username"] = username;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
 apiClient.interceptors.response.use(
   (response) => response,

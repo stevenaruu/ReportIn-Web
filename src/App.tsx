@@ -3,7 +3,8 @@ import './App.css'
 import { useServiceWorker } from './hooks/use-service-worker'
 import { NetworkContext } from './contexts/network-context'
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import HomePage from './pages/home-page/HomePage'
+import HomePage from './pages/core/home-page/HomePage'
+import LoginPage from './pages/core/login-page/LoginPage';
 
 function App() {
   const { isOnline, isServiceWorkerReady } = useContext(NetworkContext)
@@ -20,6 +21,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/login" element={<LoginPage />} />
       </Routes>
     </BrowserRouter>
   )

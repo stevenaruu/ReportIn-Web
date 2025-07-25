@@ -1,4 +1,6 @@
 import { useBeaconDetector } from '@/hooks/use-beacon-detector';
+import { selectUsername } from '@/store/auth/selector';
+import { useSelector } from 'react-redux';
 
 const BeaconScanner = () => {
   const {
@@ -16,6 +18,8 @@ const BeaconScanner = () => {
   } = useBeaconDetector();
 
   const nearestBeacon = getNearestBeacon();
+  const username = useSelector(selectUsername);
+  console.log("username", username);
 
   return (
     <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-lg">
