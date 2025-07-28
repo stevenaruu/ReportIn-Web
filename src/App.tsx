@@ -1,7 +1,7 @@
 import { useContext } from 'react'
 import './App.css'
 import { useServiceWorker } from './hooks/use-service-worker'
-import { NetworkContext } from './contexts/network-context'
+import { NetworkContext } from './contexts/network/network-context'
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import HomePage from './pages/core/home-page/HomePage'
 import LoginPage from './pages/core/login-page/LoginPage';

@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect, ReactNode } from 'react'
 
-interface NetworkContextType {
+type NetworkContextType = {
   isOnline: boolean
   isServiceWorkerReady: boolean
 }
