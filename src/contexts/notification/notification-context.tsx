@@ -27,7 +27,7 @@ export const NotificationProvider = ({ children }: { children: React.ReactNode }
           console.log('FCM Token:', token);
           setFcmToken(token);
 
-          notification.mutate({ personId: '', token });
+          notification.mutate({ personId: 'a', token });
         } else {
           console.warn('Notification permission not granted');
         }

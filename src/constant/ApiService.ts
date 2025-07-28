@@ -1,6 +1,6 @@
 import { IApi } from "@/interfaces/IApi";
 
-export const BASE_URL = 'http://localhost:7000';
+export const BASE_URL = 'https://report-in-api.vercel.app';
 
 export const ApiService: IApi = {
   user: `${BASE_URL}/user`,
