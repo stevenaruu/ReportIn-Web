@@ -1,10 +1,9 @@
-// HomePage.tsx
-import { useEffect, useState } from 'react';
-import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
 import { db } from '@/config/firebase';
 import { IReport } from '@/types/model/report';
+import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
+import { useEffect, useState } from 'react'
 
-const HomePage = () => {
+const DashboardPage = () => {
   const [reports, setReports] = useState<IReport[]>([]);
 
   useEffect(() => {
@@ -38,7 +37,7 @@ const HomePage = () => {
         ))}
       </ul>
     </div>
-  );
-};
+  )
+}
 
-export default HomePage;
+export default DashboardPage
