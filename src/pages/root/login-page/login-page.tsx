@@ -7,7 +7,7 @@ import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
-const LoginPage = () => {
+const RootLoginPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const login = useLoginMutation();
@@ -44,7 +44,7 @@ const LoginPage = () => {
         <h2 className="text-4xl text-[#5D5D5D] font-bold mb-2">SIGN IN</h2>
         <img className='w-48 my-6' src="/assets/images/email-consent.svg" alt="" />
         <hr className="w-3/6 border-t border-gray-400 mb-6" />
-        <button onClick={handleGoogleLogin} className="px-36 bg-red-500 text-white font-semibold py-2 rounded-md hover:bg-red-600 transition">
+        <button onClick={handleGoogleLogin} className="md:px-32 px-24 bg-red-500 text-white font-semibold py-2 rounded-md hover:bg-red-600 transition">
           SIGN IN
         </button>
       </div>
@@ -55,4 +55,4 @@ const LoginPage = () => {
   );
 }
 
-export default LoginPage
+export default RootLoginPage

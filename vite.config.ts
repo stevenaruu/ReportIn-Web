@@ -10,13 +10,16 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       devOptions: {
-        enabled: true
+        enabled: false
       },
       includeAssets: [
         "**/*",
+        "!**/*.{png,jpg,jpeg,svg,gif,webp,avif}", // exclude all common image formats
       ],
       workbox: {
-        globPatterns: ['**/*.{js,css,html,svg,png,jpg,json,ico,woff,woff2}'],
+        globPatterns: [
+          '**/*.{js,css,html,json,ico,woff,woff2}', // exclude image types here
+        ],
         runtimeCaching: [
           {
             urlPattern: ({ request }) => request.destination === "document",

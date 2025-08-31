@@ -14,15 +14,15 @@ const queryClient = new QueryClient()
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-      <Provider store={store}>
-        <PersistGate loading={null} persistor={persistor}>
-          <NetworkProvider>
+      <NetworkProvider>
+        <Provider store={store}>
+          <PersistGate loading={null} persistor={persistor}>
             <NotificationProvider>
               <App />
             </NotificationProvider>
-          </NetworkProvider>
-        </PersistGate>
-      </Provider>
+          </PersistGate>
+        </Provider>
+      </NetworkProvider>
     </QueryClientProvider>
   </StrictMode>
 )

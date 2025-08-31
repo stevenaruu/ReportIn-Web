@@ -1,4 +1,4 @@
-import SubLayout from "@/layouts/sub-layout"
+import { RootLayout } from "@/layouts/layout";
 import { features } from "@/lib/features";
 import { useState } from "react";
 
@@ -6,7 +6,7 @@ const FeaturePage = () => {
   const [selected, setSelected] = useState(0);
 
   return (
-    <SubLayout>
+    <RootLayout>
       <div className="flex text-[#5d5d5d] flex-col md:flex-row items-center md:items-start justify-between w-full min-h-[60vh] gap-10 py-12">
         <div className="flex-1 max-w-xl w-full">
           <h1 className="text-4xl font-bold mb-2">MAIN FEATURES</h1>
@@ -35,7 +35,7 @@ const FeaturePage = () => {
           <img src="assets/images/features.svg" alt="" className="w-7/12 object-contain mb-2" />
         </div>
       </div>
-    </SubLayout >
+    </RootLayout>
   )
 }
 

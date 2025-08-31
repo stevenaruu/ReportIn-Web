@@ -1,4 +1,4 @@
-import SubLayout from '@/layouts/sub-layout'
+import { RootLayout } from '@/layouts/layout';
 import { useState } from 'react';
 
 const ContactPage = () => {
@@ -19,7 +19,7 @@ const ContactPage = () => {
   };
 
   return (
-    <SubLayout>
+    <RootLayout>
       <div className="w-full max-w-6xl mx-auto px-4 mt-16 text-[#5d5d5d]">
         <div className="flex flex-col md:flex-row md:gap-4 items-center md:items-start justify-between">
           {/* Kiri: Judul, teks, ilustrasi */}
@@ -85,7 +85,7 @@ const ContactPage = () => {
           </form>
         </div>
       </div>
-    </SubLayout>
+    </RootLayout>
   )
 }
 

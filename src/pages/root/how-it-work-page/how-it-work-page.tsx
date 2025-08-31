@@ -1,4 +1,4 @@
-import SubLayout from '@/layouts/sub-layout'
+import { RootLayout } from "@/layouts/layout";
 
 const steps = [
   {
@@ -20,7 +20,7 @@ const steps = [
 
 const HowItWorkPage = () => {
   return (
-    <SubLayout>
+    <RootLayout>
       <section className="w-full min-h-[70vh] py-12 flex flex-col items-center justify-center">
         <h2 className="text-2xl md:text-3xl font-bold text-[#5d5d5d] mb-2 text-center">
           HOW IT WORKS
@@ -59,7 +59,7 @@ const HowItWorkPage = () => {
           ))}
         </div>
       </section>
-    </SubLayout>
+    </RootLayout>
   )
 }
 
