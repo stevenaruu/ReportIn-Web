@@ -10,7 +10,7 @@ export const getSubdomainResponseExample = {
     "provider": "Microsoft",
     "customization": {
       "customizationId": "guid",
-      "primaryColor": "#0e7490",
+      "primaryColor": "#f59e0b",
       "logo": "",
     }
   }

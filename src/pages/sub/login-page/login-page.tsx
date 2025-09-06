@@ -5,17 +5,17 @@ import LoginLogo from '@/assets/sub/login';
 import Footer from '@/components/footer/footer';
 import { auth } from '@/config/firebase';
 import { getSubdomainResponseExample } from '@/examples/campuses';
-import { useRedirect } from '@/hooks/use-redirect';
 import { getProviderLogo } from '@/lib/get-provider-logo';
 import { hexToRgba } from '@/lib/hex-to-rgba';
 import { setUsername } from '@/store/auth/slice';
 import { selectPerson } from '@/store/person/selector';
-import { setPerson } from '@/store/person/slice';
+import { setPerson, setPersonActiveRole } from '@/store/person/slice';
 import { PublicCampus } from '@/types/response/campus';
 import { GoogleAuthProvider, OAuthProvider, signInWithPopup } from 'firebase/auth';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { TailSpin } from 'react-loader-spinner'
 
 const SubLoginPage = () => {
   const navigate = useNavigate();
@@ -45,8 +45,13 @@ const SubLoginPage = () => {
       { token: idToken, campusId: campus.campusId },
       {
         onSuccess: (data) => {
+          const roles = data.data?.role ?? [];
+          const activeRole = roles.find((r) => r.isDefault) ?? roles[0];
+
           dispatch(setUsername(data.data?.name));
           dispatch(setPerson(data.data));
+          dispatch(setPersonActiveRole(activeRole));
+
           navigate('/dashboard');
         },
         onError: (error) => {
@@ -90,7 +95,7 @@ const SubLoginPage = () => {
     <div>
       <div
         style={{ backgroundColor: hexToRgba(campus.customization.primaryColor, 0.1) }}
-        className="min-h-screen flex flex-col justify-between bg-[var(--bg)]/70"
+        className="min-h-screen flex flex-col justify-between"
       >
         <div className="flex flex-1 flex-col-reverse md:flex-row gap-12 items-center justify-center p-6 md:p-12">
 
@@ -106,14 +111,27 @@ const SubLoginPage = () => {
             </p>
 
             <button
+              disabled={login.isLoading}
               onClick={handleLogin}
               className="w-full md:w-auto bg-[#5D5D5D] flex items-center justify-center gap-3 text-white px-5 py-3 rounded-lg shadow-md hover:bg-[#4a4a4a] transition"
             >
-              <img
-                src={getProviderLogo(campus.provider)}
-                alt=""
-                className="h-6 w-auto object-contain"
-              />
+              {login.isLoading ? (
+                <TailSpin
+                  visible={true}
+                  height="24"
+                  width="24"
+                  color="#FFFFFF"
+                  ariaLabel="line-wave-loading"
+                  wrapperStyle={{}}
+                  wrapperClass=""
+                />
+              ) : (
+                <img
+                  src={getProviderLogo(campus.provider)}
+                  alt=""
+                  className="h-6 w-auto object-contain"
+                />
+              )}
               Sign In with {campus.provider}
             </button>
           </div>

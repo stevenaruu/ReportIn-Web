@@ -3,6 +3,8 @@ import { createContext, useContext, useEffect, useState } from 'react';
 import { messaging } from '@/config/firebase';
 import { getToken, onMessage } from 'firebase/messaging';
 import { useCreateNotificationMutation } from '@/api/services/notification';
+import { useSelector } from 'react-redux';
+import { selectPerson } from '@/store/person/selector';
 
 type NotificationContextType = {
   fcmToken: string | null;
@@ -15,6 +17,7 @@ const NotificationContext = createContext<NotificationContextType>({
 export const NotificationProvider = ({ children }: { children: React.ReactNode }) => {
   const [fcmToken, setFcmToken] = useState<string | null>(null);
   const notification = useCreateNotificationMutation();
+  const person = useSelector(selectPerson);
 
   useEffect(() => {
     const requestPermissionAndToken = async () => {
@@ -24,10 +27,12 @@ export const NotificationProvider = ({ children }: { children: React.ReactNode }
           const token = await getToken(messaging, {
             vapidKey: 'BOgH5zxkSj2Fjq4Z6sNAWw4WDGZTbTbp305jJ6LdxuNEX3uNpGOLT0GJ4l0QwG6tBlByvgWl9_romEfcwe0PT6c',
           });
-          console.log('FCM Token:', token);
-          setFcmToken(token);
 
-          notification.mutate({ personId: 'a', token });
+          if (token && person) {
+            setFcmToken(token);
+            notification.mutate({ personId: person.id, token });
+          }
+
         } else {
           console.warn('Notification permission not granted');
         }
@@ -54,7 +59,7 @@ export const NotificationProvider = ({ children }: { children: React.ReactNode }
         ...(image ? { image } : {}),
       });
     });
-  }, []);
+  }, [person]);
 
   return (
     <NotificationContext.Provider value={{ fcmToken }}>

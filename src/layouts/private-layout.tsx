@@ -3,6 +3,7 @@ import { selectUser } from "@/store/user/selector";
 import { useNavigate, Outlet } from "react-router-dom";
 import { useEffect } from "react";
 import { selectPerson } from "@/store/person/selector";
+import { NotificationProvider } from "@/contexts/notification/notification-context";
 
 const SubPrivateLayout = () => {
   const person = useSelector(selectPerson);
@@ -19,7 +20,9 @@ const SubPrivateLayout = () => {
   }
 
   return (
-    <Outlet />
+    <NotificationProvider>
+      <Outlet />
+    </NotificationProvider>
   );
 };
 

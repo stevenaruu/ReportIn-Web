@@ -6,18 +6,55 @@ import { selectPerson } from "@/store/person/selector";
 import { Link } from "react-router-dom";
 import { hexToRgba } from "@/lib/hex-to-rgba";
 import { getSubdomainResponseExample } from "@/examples/campuses";
+import { useEffect, useRef, useState } from "react";
+import { Menu } from "lucide-react";
 
 const RootNavbar = () => {
   const user = useSelector(selectUsername);
   return user ? <Authenticated /> : <Unauthenticated />;
 };
 
-const SubNavbar = () => {
+export default function SubNavbar({ onToggleSidebar }: { onToggleSidebar: () => void }) {
   const person = useSelector(selectPerson);
+
+  const [open, setOpen] = useState(false);
+  const popoverRef = useRef<HTMLDivElement | null>(null);
+
+  const handleLogout = () => {
+    window.location.href = '/logout';
+  }
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        popoverRef.current &&
+        !popoverRef.current.contains(event.target as Node)
+      ) {
+        setOpen(false);
+      }
+    }
+
+    if (open) {
+      document.addEventListener("click", handleClickOutside);
+    } else {
+      document.removeEventListener("click", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, [open]);
 
   return (
     <nav className="flex items-center justify-between px-4 md:px-8 py-4 text-[#5D5D5D] shadow relative z-50">
-      <div className="flex items-center gap-3">
+      <button
+        className="md:hidden p-2 rounded hover:bg-gray-100"
+        onClick={onToggleSidebar}
+      >
+        <Menu className="w-6 h-6" />
+      </button>
+
+      <div className="hidden md:flex items-center gap-3">
         <Link to="/">
           <img className="w-32" src="/assets/images/reportin-logo.png" alt="Reportin logo" />
         </Link>
@@ -25,16 +62,42 @@ const SubNavbar = () => {
         <p className="text-lg">Facility Complaint System</p>
       </div>
 
-      <div className="flex items-center">
-        <span
-          style={{ backgroundColor: hexToRgba(getSubdomainResponseExample.data.customization.primaryColor, 0.7) }}
-          className="text-white px-9 py-2 rounded-md transition font-bold cursor-pointer"
-        >
-          {person?.name}
-        </span>
+      <div className="relative inline-block text-left" ref={popoverRef}>
+        <div className="flex items-center">
+          <span
+            onClick={() => setOpen(!open)}
+            style={{
+              backgroundColor: hexToRgba(
+                getSubdomainResponseExample.data.customization.primaryColor,
+                0.7
+              ),
+            }}
+            className="text-white px-9 py-2 rounded-md transition font-bold cursor-pointer select-none"
+          >
+            {person?.name}
+          </span>
+        </div>
+
+        {open && (
+          <div className="absolute right-0 mt-2 w-64 rounded-md bg-white shadow-lg ring-1 ring-black/5 z-20">
+            <div className="p-4 text-gray-700 text-sm space-y-2">
+              <p className="font-semibold">{person?.name}</p>
+              <hr />
+              <div className="flex py-2 gap-2">
+                <img className="w-5" src="/assets/icons/email.svg" alt="email" />
+                <p className="font-semibold">{person?.email}</p>
+              </div>
+              <hr />
+              <div onClick={handleLogout} className="flex pt-2 gap-2 cursor-pointer">
+                <img className="w-5" src="/assets/icons/logout.svg" alt="logout" />
+                <p className="font-semibold">Logout</p>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </nav>
   )
 }
 
-export { RootNavbar, SubNavbar };
+export { RootNavbar };

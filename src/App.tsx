@@ -5,8 +5,7 @@ import HomePage from './pages/root/home-page/home-page'
 import FeaturePage from './pages/root/feature-page/feature-page';
 import HowItWorkPage from './pages/root/how-it-work-page/how-it-work-page';
 import ContactPage from './pages/root/contact-page/contact-page';
-import { useContext, useMemo } from 'react';
-import { NetworkContext } from './contexts/network/network-context';
+import { useMemo } from 'react';
 import { getSubdomain } from './lib/get-subdomain';
 import SubLoginPage from './pages/sub/login-page/login-page';
 import SubDashboardPage from './pages/sub/dashboard-page/dashboard-page';
@@ -18,16 +17,12 @@ import BrowseReportPage from './pages/sub/browse-report-page/browse-report-page'
 import BrowseCategoryPage from './pages/sub/browse-category-page/browse-category-page';
 import BrowseAreaPage from './pages/sub/browse-area-page/browse-area-page';
 import BrowseAccountPage from './pages/sub/browse-account-page/browse-account-page';
+import SubLogoutPage from './pages/sub/logout-page/logout-page';
 
 function App() {
-  const { isOnline, isServiceWorkerReady } = useContext(NetworkContext)
-
-  console.log("isOnline", isOnline)
-  console.log("isServiceWorkerReady", isServiceWorkerReady)
-
   useServiceWorker({
-    onSuccess: () => console.log('Service Worker Successfully Registered'),
-    onUpdate: () => console.log('New content available')
+    onSuccess: () => { },
+    onUpdate: () => { }
   })
 
   const ROOT_DOMAIN = import.meta.env.VITE_ROOT_DOMAIN ?? 'localhost';
@@ -41,9 +36,9 @@ function App() {
     <BrowserRouter>
       {isSubdomain ? (
         <Routes>
-          <Route path="*" element={<Navigate to="/dashboard" replace />} />
+          <Route path="*" element={<Navigate to="/login" replace />} />
           <Route path="/login" element={<SubLoginPage />} />
-
+          <Route path="/logout" element={<SubLogoutPage />} />
 
           <Route element={<SubPrivateLayout />}>
             <Route path="/dashboard" element={<SubDashboardPage />} />
