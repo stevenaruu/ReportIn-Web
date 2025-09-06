@@ -1,59 +1,29 @@
-import { db } from '@/config/firebase';
-import { SubLayout } from '@/layouts/layout';
-import { selectPerson } from '@/store/person/selector';
-import { IReport } from '@/types/model/report';
-import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
-import { useEffect, useState } from 'react'
+import { selectPersonActiveRole } from '@/store/person/selector';
+import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import ComplainantPage from './complainant-page';
+import CustodianPage from './custodian-page';
+import BuildingManagementPage from './building-management-page';
 
 const SubDashboardPage = () => {
-  const [reports, setReports] = useState<IReport[]>([]);
-  const person = useSelector(selectPerson);
-
-  console.log("person", person);
+  const personActiveRole = useSelector(selectPersonActiveRole);
 
   useEffect(() => {
-    const q = query(
-      collection(db, 'Report'),
-      orderBy('createdDate', 'desc')
-    );
+    if (!['Complainant', 'Custodian', 'Building Management'].includes(personActiveRole.roleName)) {
+      window.location.href = '/logout';
+    }
+  }, [personActiveRole]);
 
-    const unsub = onSnapshot(q, (snapshot) => {
-      const reportData: IReport[] = snapshot.docs.map((doc) => {
-        const data = doc.data() as Omit<IReport, 'id'>;
-        return {
-          id: doc.id,
-          ...data,
-        };
-      });
-      setReports(reportData);
-    });
+  switch (personActiveRole.roleName) {
+    case 'Complainant':
+      return <ComplainantPage />;
+    case 'Custodian':
+      return <CustodianPage />;
+    case 'Building Management':
+      return <BuildingManagementPage />;
+    default:
+      return null;
+  }
+};
 
-    return () => unsub();
-  }, []);
-
-  return (
-    <SubLayout>
-      <h2>Daftar Report (Real-time)</h2>
-      <ul>
-        {reports.map((report) => (
-          <li key={report.id}>
-            {report.description?.[0] ?? '(Tidak ada deskripsi)'} - {report.status}
-          </li>
-        ))}
-        {reports.map((report) => (
-          <li key={report.id}>
-            {report.description?.[0] ?? '(Tidak ada deskripsi)'} - {report.status}
-          </li>
-        ))}
-        {reports.map((report) => (
-          <li key={report.id}>
-            {report.description?.[0] ?? '(Tidak ada deskripsi)'} - {report.status}
-          </li>
-        ))}
-      </ul>
-    </SubLayout>
-  )
-}
-
-export default SubDashboardPage
+export default SubDashboardPage;

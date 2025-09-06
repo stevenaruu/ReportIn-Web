@@ -3,14 +3,14 @@ export const getSubdomainResponseExample = {
   "statusCode": 200,
   "message": "Success",
   "data": {
-    "campusId": "guid",
+    "campusId": "campus-id-123",
     "name": "FORSYTHIA University",
     "mandatoryEmail": ["@binus.ac.id", "@binus.edu"],
     "siteName": "http://binus.localhost:5173",
     "provider": "Microsoft",
     "customization": {
       "customizationId": "guid",
-      "primaryColor": "#f59e0b",
+      "primaryColor": "#22c55e",
       "logo": "",
     }
   }

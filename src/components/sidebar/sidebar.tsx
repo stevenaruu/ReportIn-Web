@@ -118,7 +118,7 @@ export default function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose:
               </DialogContent>
             </Dialog>
           </div>
-          <p className="text-lg font-semibold">{activeRole?.roleName}</p>
+          <p className="text-lg font-semibold mt-4">{activeRole?.roleName}</p>
         </div>
 
         {/* === NAV MENU === */}
