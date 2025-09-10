@@ -1,9 +1,10 @@
 import apiClient from "@/config/api-client";
 import { ApiPerson } from "@/constant/ApiPerson";
-import { ILoginRequest } from "@/types/request/person";
+import { IGetAllPersonRequest, ILoginRequest, IUpdatePersonRoleRequest } from "@/types/request/person";
 import { IResponse } from "@/types/response";
-import { ILoginResponse } from "@/types/response/person";
-import { useMutation } from "@tanstack/react-query";
+import { IGetAllPersonResponse, ILoginResponse } from "@/types/response/person";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 
 export const useLoginMutation = () => {
   return useMutation<IResponse<ILoginResponse>, Error, ILoginRequest>(
@@ -12,4 +13,37 @@ export const useLoginMutation = () => {
       return response.data;
     }
   );
+};
+
+export const useUpdatePersonRole = () => {
+  return useMutation<IResponse, Error, IUpdatePersonRoleRequest>(
+    async (data) => {
+      const response = await apiClient.post<IResponse>(ApiPerson.role, data);
+      return response.data;
+    }
+  );
+};
+
+export const useGetAllPersonQuery = (params?: IGetAllPersonRequest) => {
+  return useQuery<IResponse<IGetAllPersonResponse[]>, Error>({
+    queryKey: ["all-person", params],
+    queryFn: async () => {
+      try {
+        const response = await apiClient.post<IResponse<IGetAllPersonResponse[]>>(
+          ApiPerson.allPerson,
+          params
+        );
+
+        return response.data;
+      } catch (err) {
+        if (err instanceof AxiosError) {
+          throw new Error(err.response?.data?.message || "Error fetching persons");
+        }
+        throw new Error("Unexpected error occurred");
+      }
+    },
+    staleTime: 1000 * 60 * 5, // 5 menit
+    retry: 3,
+    refetchOnWindowFocus: false,
+  });
 };

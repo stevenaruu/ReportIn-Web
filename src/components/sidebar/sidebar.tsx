@@ -5,7 +5,7 @@ import { hexToRgba } from "@/lib/hex-to-rgba";
 import { sidebarConfig } from "@/lib/sidebar";
 import { selectPerson, selectPersonActiveRole } from "@/store/person/selector";
 import { useDispatch, useSelector } from "react-redux";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import {
   Dialog,
@@ -17,8 +17,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { IPersonRole } from "@/types/role";
 import { setPersonActiveRole } from "@/store/person/slice";
+import { BACKGROUND_PRIMARY_COLOR } from "@/lib/primary-color";
 
 export default function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const person = useSelector(selectPerson);
@@ -31,10 +33,6 @@ export default function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose:
     (config) => config.role === activeRole?.roleName
   );
 
-  const baseBg = hexToRgba(
-    getSubdomainResponseExample.data.customization.primaryColor,
-    0.5
-  );
   const activeBg = hexToRgba(
     getSubdomainResponseExample.data.customization.primaryColor,
     0.7
@@ -57,10 +55,10 @@ export default function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose:
           ${isOpen ? "translate-x-0" : "-translate-x-full"}
           md:translate-x-0
         `}
-        style={{ backgroundColor: baseBg }}
+        style={BACKGROUND_PRIMARY_COLOR(0.5)}
       >
         <div
-          style={{ backgroundColor: activeBg }}
+          style={BACKGROUND_PRIMARY_COLOR(0.7)}
           className="rounded-md p-4 mx-4 mt-4"
         >
           <div className="flex justify-between items-center">
@@ -68,9 +66,7 @@ export default function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose:
             <Dialog open={open} onOpenChange={setOpen}>
               <DialogTrigger asChild>
                 <div
-                  style={{
-                    backgroundColor: getSubdomainResponseExample.data.customization.primaryColor,
-                  }}
+                  style={BACKGROUND_PRIMARY_COLOR(1)}
                   className="cursor-pointer px-2 py-1 rounded-sm"
                 >
                   <p className="text-xs">CHANGE</p>
@@ -105,11 +101,10 @@ export default function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose:
                   <Button
                     onClick={() => {
                       dispatch(setPersonActiveRole(selectedRole));
+                      navigate("/dashboard");
                       setOpen(false);
                     }}
-                    style={{
-                      backgroundColor: hexToRgba(getSubdomainResponseExample.data.customization.primaryColor, 1),
-                    }}
+                    style={BACKGROUND_PRIMARY_COLOR(1)}
                     className="text-white hover:opacity-90 w-full sm:w-auto"
                   >
                     CHOOSE

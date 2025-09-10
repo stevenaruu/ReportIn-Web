@@ -7,3 +7,15 @@ export type ILoginResponse = {
   email: string,
   role: IPersonRole[],
 }
+
+export type IGetAllPersonResponse = {
+  id: string,
+  campusId: string,
+  name: string,
+  role: IPersonRole[],
+  email: string,
+  createdBy: string,
+  createdDate: string,
+  lastUpdatedBy: string,
+  lastUpdatedDate: string
+}

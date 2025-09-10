@@ -1,44 +1,145 @@
-import { db } from '@/config/firebase';
-import { SubLayout } from '@/layouts/layout';
-import { IReport } from '@/types/model/report';
-import { collection, onSnapshot, orderBy, query } from 'firebase/firestore';
-import React, { useEffect, useState } from 'react'
+import { useState, useEffect, useMemo } from "react";
+import { SearchBar } from "@/components/search-bar/search-bar";
+import { getSubdomainResponseExample } from "@/examples/campuses";
+import { SubLayout } from "@/layouts/layout";
+import { ReportCard } from "@/components/report-card/report-card";
+import { Pagination } from "@/components/pagination/pagination";
+import { Button } from "@/components/ui/button";
+import { useReports } from "@/hooks/use-report";
+import { IReport } from "@/types/model/report";
+import { useSelector } from "react-redux";
+import { selectPerson } from "@/store/person/selector";
+import { BACKGROUND_PRIMARY_COLOR } from "@/lib/primary-color";
+import FilterSort from "@/components/filter-sort/filter-sort";
+
+const ITEMS_PER_PAGE = 4;
 
 const ComplainantPage = () => {
-  const [reports, setReports] = useState<IReport[]>([]);
+  const person = useSelector(selectPerson);
+  const campusId = getSubdomainResponseExample.data.campusId;
+
+  // filter & sort state
+  const [sortBy, setSortBy] = useState<"status" | "area" | "category" | "count">("count");
+  const [order, setOrder] = useState<"asc" | "desc">("desc");
+  const [statusFilter, setStatusFilter] = useState<string[]>([]);
+  const [areaFilter, setAreaFilter] = useState<string[]>([]);
+  const [categoryFilter, setCategoryFilter] = useState<string[]>([]);
+
+  const reportOptions = useMemo(() => ({
+    sortBy,
+    order,
+    filters: { status: statusFilter, areas: areaFilter, categories: categoryFilter }
+  }), [sortBy, order, statusFilter, areaFilter, categoryFilter]);
+
+  const { reports, loading } = useReports(campusId, reportOptions);
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [activeTab, setActiveTab] = useState<"reports" | "myReports">("reports");
+
+  const handleSearch = (value: string) => {
+    setSearchTerm(value.toLowerCase());
+    setCurrentPage(1);
+  };
+
+  const tabbedReports = activeTab === "myReports"
+    ? reports.filter(r => r.complainant?.some(c => c.personId === person?.id))
+    : reports;
+
+  const filteredReports = tabbedReports.filter(
+    (r) =>
+      r.area?.name?.toLowerCase().includes(searchTerm) ||
+      r.description?.join(" ").toLowerCase().includes(searchTerm) ||
+      r.category?.name?.toLowerCase().includes(searchTerm) ||
+      r.lastUpdatedBy?.toLowerCase().includes(searchTerm)
+  );
+
+  const totalPages = Math.ceil(filteredReports.length / ITEMS_PER_PAGE);
 
   useEffect(() => {
-    const q = query(
-      collection(db, 'Report'),
-      orderBy('createdDate', 'desc')
-    );
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages || 1);
+    }
+  }, [totalPages, currentPage]);
 
-    const unsub = onSnapshot(q, (snapshot) => {
-      const reportData: IReport[] = snapshot.docs.map((doc) => {
-        const data = doc.data() as Omit<IReport, 'id'>;
-        return {
-          id: doc.id,
-          ...data,
-        };
-      });
-      setReports(reportData);
-    });
-
-    return () => unsub();
-  }, []);
+  const paginatedReports = filteredReports.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
 
   return (
     <SubLayout>
-      <h2>Daftar Report (Real-time)</h2>
-      <ul>
-        {reports.map((report) => (
-          <li key={report.id}>
-            {report.description?.[0] ?? '(Tidak ada deskripsi)'} - {report.status}
-          </li>
-        ))}
-      </ul>
-    </SubLayout>
-  )
-}
+      <SearchBar onSearch={handleSearch} placeholder="Search Report..." />
 
-export default ComplainantPage
+      <div className="flex flex-col gap-2 md:flex-row justify-between mb-4">
+        <div className="flex gap-3">
+          <Button
+            size="sm"
+            className="rounded-full px-6"
+            style={activeTab === "reports" ? BACKGROUND_PRIMARY_COLOR(0.7) : {}}
+            variant={activeTab === "reports" ? "default" : "outline"}
+            onClick={() => setActiveTab("reports")}
+          >
+            Reports
+          </Button>
+          <Button
+            size="sm"
+            className="rounded-full px-6"
+            style={activeTab === "myReports" ? BACKGROUND_PRIMARY_COLOR(0.7) : {}}
+            variant={activeTab === "myReports" ? "default" : "outline"}
+            onClick={() => setActiveTab("myReports")}
+          >
+            My Reports
+          </Button>
+        </div>
+        <FilterSort
+          areas={[...new Set(reports.map(r => r.area?.name).filter(Boolean))]}
+          categories={[...new Set(reports.map(r => r.category?.name).filter(Boolean))]}
+          onApply={({ sortBy, sortDirection, status, areas, categories }) => {
+            setSortBy(sortBy);
+            setOrder(sortDirection);
+            setStatusFilter(status);
+            setAreaFilter(areas);
+            setCategoryFilter(categories);
+          }}
+        />
+      </div>
+
+      <div className="flex flex-col gap-4">
+        {loading
+          ? Array.from({ length: ITEMS_PER_PAGE }).map((_, idx) => (
+            <ReportCard key={`skeleton-${idx}`} isLoading report={{} as IReport} />
+          ))
+          : paginatedReports.length > 0
+            ? paginatedReports.map((report) => {
+              const canEdit = report.complainant?.some(c => c.personId === person?.id);
+              return (
+                <ReportCard
+                  key={report.id}
+                  report={report}
+                  privilege={{ view: true, edit: canEdit }}
+                />
+              );
+            })
+            : <p className="text-center text-neutral-500">No reports found.</p>}
+      </div>
+
+      <div className="mt-6 flex flex-col md:flex-row gap-6 md:gap-0 justify-between items-center">
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+        />
+        <Button
+          style={BACKGROUND_PRIMARY_COLOR(0.7)}
+          className="w-full md:w-1/4"
+          variant="default"
+        >
+          Create Report
+        </Button>
+      </div>
+    </SubLayout>
+  );
+};
+
+export default ComplainantPage;

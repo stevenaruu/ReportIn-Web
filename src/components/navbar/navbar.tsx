@@ -4,10 +4,9 @@ import Unauthenticated from "./unauthenticated";
 import Authenticated from "./authenticated";
 import { selectPerson } from "@/store/person/selector";
 import { Link } from "react-router-dom";
-import { hexToRgba } from "@/lib/hex-to-rgba";
-import { getSubdomainResponseExample } from "@/examples/campuses";
 import { useEffect, useRef, useState } from "react";
 import { Menu } from "lucide-react";
+import { BACKGROUND_PRIMARY_COLOR } from "@/lib/primary-color";
 
 const RootNavbar = () => {
   const user = useSelector(selectUsername);
@@ -66,12 +65,7 @@ export default function SubNavbar({ onToggleSidebar }: { onToggleSidebar: () => 
         <div className="flex items-center">
           <span
             onClick={() => setOpen(!open)}
-            style={{
-              backgroundColor: hexToRgba(
-                getSubdomainResponseExample.data.customization.primaryColor,
-                0.7
-              ),
-            }}
+            style={BACKGROUND_PRIMARY_COLOR(0.7)}
             className="text-white px-9 py-2 rounded-md transition font-bold cursor-pointer select-none"
           >
             {person?.name}

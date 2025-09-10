@@ -2,8 +2,8 @@ import { SubLayout } from "@/layouts/layout"
 import { Card, CardContent } from "@/components/ui/card"
 import ProfileImage from "@/assets/sub/profile"
 import { getSubdomainResponseExample } from "@/examples/campuses"
-import { hexToRgba } from "@/lib/hex-to-rgba"
 import LeaderboardLogo from "@/assets/sub/leaderboard"
+import { BACKGROUND_PRIMARY_COLOR, TEXT_PRIMARY_COLOR } from "@/lib/primary-color"
 
 type Player = {
   id: number
@@ -28,7 +28,7 @@ const LeaderboardPage = () => {
 
   return (
     <SubLayout>
-      <div className="p-6">
+      <div className="pt-6">
         {players.length > 0 && (
           <h1 className="text-2xl text-[#5d5d5d] font-bold text-center mb-8">Leaderboards</h1>
         )}
@@ -53,7 +53,7 @@ const LeaderboardPage = () => {
               </div>
               <p className="mt-6 text-sm font-medium text-center text-[#5d5d5d]">{topThree[1].name}</p>
               <p
-                style={{ color: getSubdomainResponseExample.data.customization.primaryColor }}
+                style={TEXT_PRIMARY_COLOR(1)}
                 className="font-semibold">{topThree[1].points.toLocaleString()} Points
               </p>
             </div>
@@ -77,7 +77,7 @@ const LeaderboardPage = () => {
               </div>
               <p className="mt-8 text-base font-medium text-center text-[#5d5d5d]">{topThree[0].name}</p>
               <p
-                style={{ color: getSubdomainResponseExample.data.customization.primaryColor }}
+                style={TEXT_PRIMARY_COLOR(1)}
                 className="font-semibold">{topThree[0].points.toLocaleString()} Points
               </p>
             </div>
@@ -101,7 +101,7 @@ const LeaderboardPage = () => {
               </div>
               <p className="mt-6 text-sm font-medium text-center text-[#5d5d5d]">{topThree[2].name}</p>
               <p
-                style={{ color: getSubdomainResponseExample.data.customization.primaryColor }}
+                style={TEXT_PRIMARY_COLOR(1)}
                 className="font-semibold">
                 {topThree[2].points.toLocaleString()} Points
               </p>
@@ -115,7 +115,7 @@ const LeaderboardPage = () => {
             <Card key={player.id} className="hover:shadow-md transition-shadow">
               <CardContent className="flex items-center gap-4 p-4">
                 <div
-                  style={{ backgroundColor: hexToRgba(getSubdomainResponseExample.data.customization.primaryColor, 0.5) }}
+                  style={BACKGROUND_PRIMARY_COLOR(0.5)}
                   className="w-8 h-8 rounded-full flex items-center justify-center"
                 >
                   <span className="text-white font-bold text-sm">{i + 4}</span>
@@ -130,7 +130,7 @@ const LeaderboardPage = () => {
                   <p className="font-medium text-[#5d5d5d]">{player.name}</p>
                 </div>
                 <p
-                  style={{ color: getSubdomainResponseExample.data.customization.primaryColor }}
+                  style={TEXT_PRIMARY_COLOR(1)}
                   className="font-semibold">
                   {player.points.toLocaleString()} Points
                 </p>

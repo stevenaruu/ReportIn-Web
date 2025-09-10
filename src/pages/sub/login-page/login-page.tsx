@@ -16,6 +16,7 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { TailSpin } from 'react-loader-spinner'
+import { BACKGROUND_PRIMARY_COLOR } from '@/lib/primary-color';
 
 const SubLoginPage = () => {
   const navigate = useNavigate();
@@ -25,9 +26,7 @@ const SubLoginPage = () => {
   const [campus, setCampus] = useState<PublicCampus>(getSubdomainResponseExample.data);
 
   useEffect(() => {
-    if (person) {
-      navigate('/dashboard');
-    }
+    if (person) navigate('/dashboard');
   }, [person]);
 
   const handleLogin = () => {
@@ -94,7 +93,7 @@ const SubLoginPage = () => {
   return (
     <div>
       <div
-        style={{ backgroundColor: hexToRgba(campus.customization.primaryColor, 0.1) }}
+        style={BACKGROUND_PRIMARY_COLOR(0.1)}
         className="min-h-screen flex flex-col justify-between"
       >
         <div className="flex flex-1 flex-col-reverse md:flex-row gap-12 items-center justify-center p-6 md:p-12">

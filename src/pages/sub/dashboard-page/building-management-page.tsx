@@ -1,13 +1,6 @@
-import { db } from "@/config/firebase";
 import { SubLayout } from "@/layouts/layout";
 import { IReport } from "@/types/model/report";
-import {
-  collection,
-  onSnapshot,
-  query,
-  where,
-} from "firebase/firestore";
-import React, { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import {
   Card,
   CardContent,
@@ -27,31 +20,10 @@ import {
 } from "recharts";
 import { getSubdomainResponseExample } from "@/examples/campuses";
 import { hexToRgba } from "@/lib/hex-to-rgba";
+import { TEXT_PRIMARY_COLOR } from "@/lib/primary-color";
 
-const BuildingManagementPage = () => {
-  const [reports, setReports] = useState<IReport[]>([]);
-
-  const campusId = getSubdomainResponseExample.data.campusId;
+const BuildingManagementPage = ({ reports }: { reports: IReport[] }) => {
   const primaryColor = getSubdomainResponseExample.data.customization.primaryColor;
-
-  useEffect(() => {
-    if (!campusId) return;
-
-    const q = query(
-      collection(db, "Report"),
-      where("campusId", "==", campusId),
-    );
-
-    const unsub = onSnapshot(q, (snapshot) => {
-      const reportData: IReport[] = snapshot.docs.map((doc) => {
-        const data = doc.data() as Omit<IReport, "id">;
-        return { id: doc.id, ...data };
-      });
-      setReports(reportData);
-    });
-
-    return () => unsub();
-  }, [campusId]);
 
   const {
     yearlyTrend,
@@ -132,8 +104,8 @@ const BuildingManagementPage = () => {
   return (
     <SubLayout>
       <h1
-        style={{ color: hexToRgba(primaryColor, 1) }}
-        className="text-3xl mt-3 mb-5"
+        style={TEXT_PRIMARY_COLOR(1)}
+        className="text-3xl mt-2 mb-5"
       >
         Report Analytics
       </h1>
@@ -143,7 +115,7 @@ const BuildingManagementPage = () => {
         {/* Yearly Report Trends */}
         <Card className="md:col-span-7">
           <CardHeader>
-            <CardTitle style={{ color: hexToRgba(primaryColor, 1) }}>
+            <CardTitle style={TEXT_PRIMARY_COLOR(1)}>
               Yearly Report Trends ({new Date().toLocaleString("en-US", { year: "numeric" })})
             </CardTitle>
           </CardHeader>
@@ -166,7 +138,7 @@ const BuildingManagementPage = () => {
         {/* Monthly Category Report Trends */}
         <Card className="md:col-span-5">
           <CardHeader>
-            <CardTitle style={{ color: hexToRgba(primaryColor, 1) }}>
+            <CardTitle style={TEXT_PRIMARY_COLOR(1)}>
               Monthly Category Report Trends
             </CardTitle>
           </CardHeader>
@@ -204,7 +176,7 @@ const BuildingManagementPage = () => {
               </PieChart>
             </ResponsiveContainer>
             <p
-              style={{ color: hexToRgba(primaryColor, 1) }}
+              style={TEXT_PRIMARY_COLOR(1)}
               className="text-center text-sm mt-2"
             >
               Report category totals for this month ({new Date().toLocaleString("en-US", { month: "long" })})
@@ -224,13 +196,13 @@ const BuildingManagementPage = () => {
           <Card className="text-center" key={i}>
             <CardContent className="pt-6 flex justify-center items-center flex-col h-full">
               <div
-                style={{ color: hexToRgba(primaryColor, 1) }}
+                style={TEXT_PRIMARY_COLOR(1)}
                 className="text-3xl font-bold"
               >
                 {item.value}
               </div>
               <div
-                style={{ color: hexToRgba(primaryColor, 1) }}
+                style={TEXT_PRIMARY_COLOR(1)}
                 className="text-gray-500"
               >
                 {item.label}

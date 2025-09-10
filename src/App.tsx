@@ -18,6 +18,7 @@ import BrowseCategoryPage from './pages/sub/browse-category-page/browse-category
 import BrowseAreaPage from './pages/sub/browse-area-page/browse-area-page';
 import BrowseAccountPage from './pages/sub/browse-account-page/browse-account-page';
 import SubLogoutPage from './pages/sub/logout-page/logout-page';
+import BrowseAccountDetailPage from './pages/sub/browse-account-detail-page/browse-account-detail-page';
 
 function App() {
   useServiceWorker({
@@ -47,6 +48,7 @@ function App() {
             <Route path="/browse-category" element={<BrowseCategoryPage />} />
             <Route path="/browse-area" element={<BrowseAreaPage />} />
             <Route path="/browse-account" element={<BrowseAccountPage />} />
+            <Route path="/browse-account/:personId" element={<BrowseAccountDetailPage />} />
           </Route>
         </Routes>
       ) : (

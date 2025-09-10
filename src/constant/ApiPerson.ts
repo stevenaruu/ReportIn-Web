@@ -2,5 +2,6 @@ import { ApiService } from "./ApiService";
 
 export const ApiPerson = {
   login: `${ApiService.person}`,
-  allPerson: `${ApiService.person}/all`
+  allPerson: `${ApiService.person}/all`,
+  role: `${ApiService.person}/role`
 }

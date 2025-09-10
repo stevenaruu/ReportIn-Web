@@ -4,9 +4,14 @@ import { useSelector } from 'react-redux';
 import ComplainantPage from './complainant-page';
 import CustodianPage from './custodian-page';
 import BuildingManagementPage from './building-management-page';
+import { getSubdomainResponseExample } from '@/examples/campuses';
+import { useReports } from '@/hooks/use-report';
 
 const SubDashboardPage = () => {
   const personActiveRole = useSelector(selectPersonActiveRole);
+  const campusId = getSubdomainResponseExample.data.campusId;
+
+  const { reports } = useReports(campusId, { sortBy: "count", order: "desc" });
 
   useEffect(() => {
     if (!['Complainant', 'Custodian', 'Building Management'].includes(personActiveRole.roleName)) {
@@ -18,9 +23,9 @@ const SubDashboardPage = () => {
     case 'Complainant':
       return <ComplainantPage />;
     case 'Custodian':
-      return <CustodianPage />;
+      return <CustodianPage reports={reports} />;
     case 'Building Management':
-      return <BuildingManagementPage />;
+      return <BuildingManagementPage reports={reports} />;
     default:
       return null;
   }

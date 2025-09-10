@@ -1,31 +1,30 @@
 import LogoutLogo from '@/assets/sub/logout'
 import { getSubdomainResponseExample } from '@/examples/campuses'
-import { hexToRgba } from '@/lib/hex-to-rgba'
+import { BACKGROUND_PRIMARY_COLOR } from '@/lib/primary-color'
 import { persistor } from '@/store'
-import { selectPerson } from '@/store/person/selector'
 import { useEffect } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 
 const SubLogoutPage = () => {
-  const person = useSelector(selectPerson);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    if (!person) {
-      console.log("disini 2");
-      window.location.href = '/login';
-    } else {
-      console.log("disini");
-      persistor.purge().then(() => {
-        sessionStorage.clear();
-        localStorage.clear();
-        window.location.href = '/login';
-      });
-    }
-  }, [person])
+    const logout = async () => {
+      dispatch({ type: "LOGOUT" });
+      await persistor.purge();
+      await localStorage.clear();
+      await sessionStorage.clear();
+
+      setTimeout(() => {
+        window.location.replace('/login');
+      }, 100);
+    };
+    logout();
+  }, []);
 
   return (
     <div
-      style={{ backgroundColor: hexToRgba(getSubdomainResponseExample.data.customization.primaryColor, 0.1) }}
+      style={BACKGROUND_PRIMARY_COLOR(0.1)}
       className="min-h-screen flex flex-col gap-12 justify-center items-center p-5"
     >
       <LogoutLogo
