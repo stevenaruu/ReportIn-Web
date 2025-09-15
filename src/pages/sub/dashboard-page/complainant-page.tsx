@@ -11,10 +11,13 @@ import { useSelector } from "react-redux";
 import { selectPerson } from "@/store/person/selector";
 import { BACKGROUND_PRIMARY_COLOR } from "@/lib/primary-color";
 import FilterSort from "@/components/filter-sort/filter-sort";
+import { useNavigate } from "react-router-dom";
 
-const ITEMS_PER_PAGE = 4;
+const ITEMS_PER_PAGE = 10;
 
 const ComplainantPage = () => {
+  const navigate = useNavigate();
+
   const person = useSelector(selectPerson);
   const campusId = getSubdomainResponseExample.data.campusId;
 
@@ -134,6 +137,7 @@ const ComplainantPage = () => {
           style={BACKGROUND_PRIMARY_COLOR(0.7)}
           className="w-full md:w-1/4"
           variant="default"
+          onClick={() => navigate("/report")}
         >
           Create Report
         </Button>

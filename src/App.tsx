@@ -19,6 +19,7 @@ import BrowseAreaPage from './pages/sub/browse-area-page/browse-area-page';
 import BrowseAccountPage from './pages/sub/browse-account-page/browse-account-page';
 import SubLogoutPage from './pages/sub/logout-page/logout-page';
 import BrowseAccountDetailPage from './pages/sub/browse-account-detail-page/browse-account-detail-page';
+import ReportPage from './pages/sub/report-page/report-page';
 
 function App() {
   useServiceWorker({
@@ -32,6 +33,7 @@ function App() {
 
   const subdomain = useMemo(() => getSubdomain(hostname, ROOT_DOMAIN), [hostname, ROOT_DOMAIN]);
   const isSubdomain = Boolean(subdomain);
+  console.log('isSubdomain', subdomain);
 
   return (
     <BrowserRouter>
@@ -49,6 +51,9 @@ function App() {
             <Route path="/browse-area" element={<BrowseAreaPage />} />
             <Route path="/browse-account" element={<BrowseAccountPage />} />
             <Route path="/browse-account/:personId" element={<BrowseAccountDetailPage />} />
+            <Route path="/report" element={<ReportPage />} />
+            <Route path="/report/view/:reportId" element={<ReportPage />} />
+            <Route path="/report/edit/:reportId" element={<ReportPage />} />
           </Route>
         </Routes>
       ) : (

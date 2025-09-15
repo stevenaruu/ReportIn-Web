@@ -5,6 +5,7 @@ import { getToken, onMessage } from 'firebase/messaging';
 import { useCreateNotificationMutation } from '@/api/services/notification';
 import { useSelector } from 'react-redux';
 import { selectPerson } from '@/store/person/selector';
+import { getSubdomainResponseExample } from '@/examples/campuses';
 
 type NotificationContextType = {
   fcmToken: string | null;
@@ -30,7 +31,7 @@ export const NotificationProvider = ({ children }: { children: React.ReactNode }
 
           if (token && person) {
             setFcmToken(token);
-            notification.mutate({ personId: person.id, token });
+            notification.mutate({ personId: person.id, token, campusId: getSubdomainResponseExample.data.campusId });
           }
 
         } else {

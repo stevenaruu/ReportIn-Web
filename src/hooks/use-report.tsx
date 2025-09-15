@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { db } from "@/config/firebase";
 import { IReport } from "@/types/model/report";
 import { collection, onSnapshot, query, where } from "firebase/firestore";

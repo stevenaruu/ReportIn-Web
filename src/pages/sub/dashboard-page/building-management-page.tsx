@@ -21,8 +21,21 @@ import {
 import { getSubdomainResponseExample } from "@/examples/campuses";
 import { hexToRgba } from "@/lib/hex-to-rgba";
 import { TEXT_PRIMARY_COLOR } from "@/lib/primary-color";
+import { useReports } from "@/hooks/use-report";
 
-const BuildingManagementPage = ({ reports }: { reports: IReport[] }) => {
+const BuildingManagementPage = () => {
+  const campusId = getSubdomainResponseExample.data.campusId;
+
+  const options = useMemo(
+    () => ({
+      sortBy: "count" as const,
+      order: "desc" as const,
+    }),
+    []
+  );
+
+  const { reports } = useReports(campusId, options);
+
   const primaryColor = getSubdomainResponseExample.data.customization.primaryColor;
 
   const {
@@ -90,8 +103,9 @@ const BuildingManagementPage = ({ reports }: { reports: IReport[] }) => {
       DONE: 0,
     };
     validReports.forEach((r) => {
-      if (statusMap[r.status] !== undefined) {
-        statusMap[r.status]++;
+      const key = r.status.toUpperCase().replace(/\s+/g, "_");
+      if (statusMap[key] !== undefined) {
+        statusMap[key]++;
       }
     });
 
