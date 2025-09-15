@@ -1,18 +1,21 @@
 export const getSubdomain = (hostname: string, rootDomain: string) => {
-  if (hostname.endsWith(".localhost")) {
-    const left = hostname.replace(".localhost", "");
-    if (!left || left === "www") return null;
-    return left;
+  const cleanHost = hostname.startsWith("www.") 
+    ? hostname.slice(4) 
+    : hostname;
+
+  if (cleanHost.endsWith(".localhost")) {
+    const left = cleanHost.replace(".localhost", "");
+    return left || null;
   }
 
-  if (hostname === "localhost" || hostname === "192.168.1.7") {
+  if (cleanHost === "localhost" || cleanHost === "127.0.0.1") {
     return null;
   }
 
-  if (!hostname.endsWith(rootDomain)) return null;
+  if (!cleanHost.endsWith(rootDomain)) return null;
 
-  const left = hostname.replace(`.${rootDomain}`, "");
-  if (!left || left === "www") return null;
+  const left = cleanHost.replace(`.${rootDomain}`, "");
+  if (!left) return null;
 
   return left;
 };
