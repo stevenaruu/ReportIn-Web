@@ -17,12 +17,13 @@ import {
 } from "@/components/ui/dialog"
 import { ChevronDown, Filter } from "lucide-react"
 import { hexToRgba } from "@/lib/hex-to-rgba"
-import { getSubdomainResponseExample } from "@/examples/campuses"
 import { Checkbox } from "../ui/checkbox"
 import {
   BACKGROUND_PRIMARY_COLOR,
   TEXT_PRIMARY_COLOR,
 } from "@/lib/primary-color"
+import { useSelector } from "react-redux"
+import { selectCampus } from "@/store/campus/selector"
 
 type SortBy = "status" | "area" | "category" | "count"
 type SortDirection = "asc" | "desc"
@@ -53,7 +54,9 @@ function useMediaQuery(query: string) {
   return matches
 }
 
-export default function FilterSort({ areas, categories, onApply }: FilterSortProps) {
+export default function FilterSort({ areas, categories, onApply }: FilterSortProps) { 
+  const campus = useSelector(selectCampus);
+
   const [open, setOpen] = useState(false)
   const [sortBy, setSortBy] = useState<SortBy>("count")
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc")
@@ -102,8 +105,7 @@ export default function FilterSort({ areas, categories, onApply }: FilterSortPro
                 style={{
                   backgroundColor: selectedStatus.includes(s as Status)
                     ? hexToRgba(
-                      getSubdomainResponseExample.data.customization
-                        .primaryColor,
+                      campus?.customization.primaryColor,
                       0.7
                     )
                     : undefined,
@@ -129,8 +131,7 @@ export default function FilterSort({ areas, categories, onApply }: FilterSortPro
                 style={{
                   backgroundColor: selectedAreas.includes(a)
                     ? hexToRgba(
-                      getSubdomainResponseExample.data.customization
-                        .primaryColor,
+                      campus?.customization.primaryColor,
                       0.7
                     )
                     : undefined,
@@ -156,8 +157,7 @@ export default function FilterSort({ areas, categories, onApply }: FilterSortPro
                 style={{
                   backgroundColor: selectedCategories.includes(c)
                     ? hexToRgba(
-                      getSubdomainResponseExample.data.customization
-                        .primaryColor,
+                      campus?.customization.primaryColor,
                       0.7
                     )
                     : undefined,
@@ -188,7 +188,7 @@ export default function FilterSort({ areas, categories, onApply }: FilterSortPro
               onClick={() => setSortBy(val as SortBy)}
             >
               <input
-                style={{ accentColor: hexToRgba(getSubdomainResponseExample.data.customization.primaryColor, 0.7) }}
+                style={{ accentColor: hexToRgba(campus?.customization.primaryColor, 0.7) }}
                 type="radio"
                 checked={sortBy === val}
                 onChange={() => setSortBy(val as SortBy)}
@@ -211,7 +211,7 @@ export default function FilterSort({ areas, categories, onApply }: FilterSortPro
             >
               <input
                 type="radio"
-                style={{ accentColor: hexToRgba(getSubdomainResponseExample.data.customization.primaryColor, 0.7) }}
+                style={{ accentColor: hexToRgba(campus?.customization.primaryColor, 0.7) }}
                 checked={sortDirection === val}
                 onChange={() => setSortDirection(val as SortDirection)}
               />

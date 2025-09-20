@@ -4,44 +4,43 @@ import { useLoginMutation } from '@/api/services/person';
 import LoginLogo from '@/assets/sub/login';
 import Footer from '@/components/footer/footer';
 import { auth } from '@/config/firebase';
-import { getSubdomainResponseExample } from '@/examples/campuses';
 import { getProviderLogo } from '@/lib/get-provider-logo';
-import { hexToRgba } from '@/lib/hex-to-rgba';
 import { setUsername } from '@/store/auth/slice';
 import { selectPerson } from '@/store/person/selector';
 import { setPerson, setPersonActiveRole } from '@/store/person/slice';
-import { PublicCampus } from '@/types/response/campus';
 import { GoogleAuthProvider, OAuthProvider, signInWithPopup } from 'firebase/auth';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { TailSpin } from 'react-loader-spinner'
 import { BACKGROUND_PRIMARY_COLOR } from '@/lib/primary-color';
+import { IPublicCampusResponse } from '@/types/response/campus';
+import { selectCampus } from '@/store/campus/selector';
 
 const SubLoginPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const login = useLoginMutation();
   const person = useSelector(selectPerson);
-  const [campus, setCampus] = useState<PublicCampus>(getSubdomainResponseExample.data);
+  const campus = useSelector(selectCampus);
 
   useEffect(() => {
     if (person) navigate('/dashboard');
   }, [person]);
 
   const handleLogin = () => {
-    if (campus.provider === 'Microsoft') {
+    if (campus?.provider === 'Microsoft') {
       handleMicrosoftLogin();
-    } else if (campus.provider === 'Google') {
+    } else if (campus?.provider === 'Google') {
       handleGoogleLogin();
     } else {
-      console.error(`Unsupported provider: ${campus.provider}`);
+      console.error(`Unsupported provider: ${campus?.provider}`);
     }
   };
 
   const processLogin = async (idToken: string) => {
     login.mutate(
-      { token: idToken, campusId: campus.campusId },
+      { token: idToken, campusId: campus?.campusId ?? '' },
       {
         onSuccess: (data) => {
           const roles = data.data?.role ?? [];
@@ -100,7 +99,7 @@ const SubLoginPage = () => {
 
           <div className="text-center md:text-left space-y-6 max-w-lg w-full">
             <div className="text-2xl md:text-3xl font-bold text-[#5D5D5D] leading-snug">
-              <p className="md:whitespace-nowrap">Welcome to {campus.name}</p>
+              <p className="md:whitespace-nowrap">Welcome to {campus?.name}</p>
               <p>Facility Complaint</p>
             </div>
 
@@ -126,19 +125,19 @@ const SubLoginPage = () => {
                 />
               ) : (
                 <img
-                  src={getProviderLogo(campus.provider)}
+                  src={getProviderLogo(campus?.provider ?? '')}
                   alt=""
                   className="h-6 w-auto object-contain"
                 />
               )}
-              Sign In with {campus.provider}
+              Sign In with {campus?.provider}
             </button>
           </div>
 
           <div className="flex justify-center md:justify-end w-full md:w-1/2">
             <LoginLogo
               className="w-2/3 sm:w-1/2 md:w-3/4 lg:w-2/3 max-w-sm"
-              color={campus.customization.primaryColor}
+              color={campus?.customization.primaryColor}
             />
           </div>
         </div>

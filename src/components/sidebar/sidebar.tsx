@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // src/components/Sidebar.tsx
-import { getSubdomainResponseExample } from "@/examples/campuses";
 import { hexToRgba } from "@/lib/hex-to-rgba";
 import { sidebarConfig } from "@/lib/sidebar";
 import { selectPerson, selectPersonActiveRole } from "@/store/person/selector";
@@ -18,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { IPersonRole } from "@/types/role";
 import { setPersonActiveRole } from "@/store/person/slice";
 import { BACKGROUND_PRIMARY_COLOR } from "@/lib/primary-color";
+import { selectCampus } from "@/store/campus/selector";
 
 export default function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const navigate = useNavigate();
@@ -25,6 +25,7 @@ export default function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose:
 
   const person = useSelector(selectPerson);
   const activeRole = useSelector(selectPersonActiveRole);
+  const campus = useSelector(selectCampus);
 
   const [open, setOpen] = useState(false);
   const [selectedRole, setSelectedRole] = useState<IPersonRole>(activeRole);
@@ -34,7 +35,7 @@ export default function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose:
   );
 
   const activeBg = hexToRgba(
-    getSubdomainResponseExample.data.customization.primaryColor,
+    campus?.customization.primaryColor,
     0.7
   );
 
@@ -91,7 +92,7 @@ export default function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose:
                         className={`cursor-pointer rounded-md border p-4 hover:opacity-90 transition`}
                       >
                         <p className="font-semibold text-xl">{role.roleName}</p>
-                        <p className="mt-2 text-sm">{getSubdomainResponseExample.data.name}</p>
+                        <p className="mt-2 text-sm">{campus?.name}</p>
                       </div>
                     );
                   })}

@@ -4,19 +4,22 @@ import { Column, DataTable } from "@/components/data-table/data-table"
 import { Pagination } from "@/components/pagination/pagination"
 import { SearchBar } from "@/components/search-bar/search-bar"
 import { Button } from "@/components/ui/button"
-import { getSubdomainResponseExample } from "@/examples/campuses"
 import { SubLayout } from "@/layouts/layout"
 import { formatTableDate } from "@/lib/format-date"
 import { BACKGROUND_PRIMARY_COLOR } from "@/lib/primary-color"
+import { selectCampus } from "@/store/campus/selector"
 import { useState } from "react"
+import { useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
 
 const BrowseAreaPage = () => {
+  const campus = useSelector(selectCampus);
+
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
 
   const { data, isLoading } = useGetAreaQuery({
-    campusId: getSubdomainResponseExample.data.campusId,
+    campusId: campus?.campusId ?? '',
     page,
     search,
   });

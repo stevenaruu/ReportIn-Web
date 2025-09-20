@@ -1,6 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
 import { SearchBar } from "@/components/search-bar/search-bar";
-import { getSubdomainResponseExample } from "@/examples/campuses";
 import { SubLayout } from "@/layouts/layout";
 import { ReportCard } from "@/components/report-card/report-card";
 import { Pagination } from "@/components/pagination/pagination";
@@ -9,11 +8,13 @@ import { useReports } from "@/hooks/use-report";
 import { IReport } from "@/types/model/report";
 import { BACKGROUND_PRIMARY_COLOR } from "@/lib/primary-color";
 import FilterSort from "@/components/filter-sort/filter-sort";
+import { useSelector } from "react-redux";
+import { selectCampus } from "@/store/campus/selector";
 
 const ITEMS_PER_PAGE = 4;
 
 const BrowseReportPage = () => {
-  const campusId = getSubdomainResponseExample.data.campusId;
+  const campus = useSelector(selectCampus);
 
   // filter & sort state
   const [sortBy, setSortBy] = useState<"status" | "area" | "category" | "count">("count");
@@ -28,7 +29,7 @@ const BrowseReportPage = () => {
     filters: { status: statusFilter, areas: areaFilter, categories: categoryFilter }
   }), [sortBy, order, statusFilter, areaFilter, categoryFilter]);
 
-  const { reports, loading } = useReports(campusId, reportOptions);
+  const { reports, loading } = useReports(campus?.campusId, reportOptions);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);

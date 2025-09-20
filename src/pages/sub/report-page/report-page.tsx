@@ -3,9 +3,9 @@ import Header from '@/components/header/header'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { getSubdomainResponseExample } from '@/examples/campuses'
 import { SubLayout } from '@/layouts/layout'
 import { BACKGROUND_PRIMARY_COLOR } from '@/lib/primary-color'
+import { selectCampus } from '@/store/campus/selector'
 import { selectPerson } from '@/store/person/selector'
 import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
@@ -14,6 +14,7 @@ const ReportPage = () => {
   const report = useCreateReportMutation();
 
   const person = useSelector(selectPerson);
+  const campus = useSelector(selectCampus);
 
   const [description, setDescription] = useState('')
   const [file, setFile] = useState<File | null>(null)
@@ -25,7 +26,7 @@ const ReportPage = () => {
     }
 
     report.mutate({
-      campusId: getSubdomainResponseExample.data.campusId,
+      campusId: campus?.campusId || '',
       complainantId: person?.id || '',
       complainantName: person?.name || '',
       complainantEmail: person?.email || '',

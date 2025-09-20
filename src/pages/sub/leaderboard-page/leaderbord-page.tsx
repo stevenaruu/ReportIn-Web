@@ -1,9 +1,10 @@
 import { SubLayout } from "@/layouts/layout"
 import { Card, CardContent } from "@/components/ui/card"
 import ProfileImage from "@/assets/sub/profile"
-import { getSubdomainResponseExample } from "@/examples/campuses"
 import LeaderboardLogo from "@/assets/sub/leaderboard"
 import { BACKGROUND_PRIMARY_COLOR, TEXT_PRIMARY_COLOR } from "@/lib/primary-color"
+import { useSelector } from "react-redux"
+import { selectCampus } from "@/store/campus/selector"
 
 type Player = {
   id: number
@@ -23,6 +24,8 @@ const players: Player[] = [
 ]
 
 const LeaderboardPage = () => {
+  const campus = useSelector(selectCampus);
+
   const topThree = players.slice(0, 3)
   const others = players.slice(3)
 
@@ -41,7 +44,7 @@ const LeaderboardPage = () => {
               <div className="relative">
                 <div className="w-20 h-20 rounded-full overflow-hidden shadow-lg">
                   <ProfileImage
-                    color={getSubdomainResponseExample.data.customization.primaryColor}
+                    color={campus?.customization.primaryColor}
                     className="w-full h-full"
                   />
                 </div>
@@ -65,7 +68,7 @@ const LeaderboardPage = () => {
               <div className="relative">
                 <div className="w-28 h-28 rounded-full overflow-hidden shadow-xl">
                   <ProfileImage
-                    color={getSubdomainResponseExample.data.customization.primaryColor}
+                    color={campus?.customization.primaryColor}
                     className="w-full h-full"
                   />
                 </div>
@@ -89,7 +92,7 @@ const LeaderboardPage = () => {
               <div className="relative">
                 <div className="w-20 h-20 rounded-full overflow-hidden shadow-lg">
                   <ProfileImage
-                    color={getSubdomainResponseExample.data.customization.primaryColor}
+                    color={campus?.customization.primaryColor}
                     className="w-full h-full"
                   />
                 </div>
@@ -122,7 +125,7 @@ const LeaderboardPage = () => {
                 </div>
                 <div className="w-12 h-12 rounded-full overflow-hidden shadow">
                   <ProfileImage
-                    color={getSubdomainResponseExample.data.customization.primaryColor}
+                    color={campus?.customization.primaryColor}
                     className="w-full h-full"
                   />
                 </div>
@@ -144,7 +147,7 @@ const LeaderboardPage = () => {
           <div className="flex justify-center items-center gap-10 flex-col py-10">
             <LeaderboardLogo
               className="w-2/3 sm:w-1/2 md:w-3/4 lg:w-2/3 max-w-sm"
-              color={getSubdomainResponseExample.data.customization.primaryColor}
+              color={campus?.customization.primaryColor}
             />
             <div className="text-center">
               <p className="text-[#5d5d5d] text-sm mt-2">

@@ -5,11 +5,13 @@ import storage from "redux-persist/lib/storage";
 import { authReducer } from "./store/auth/slice";
 import { userReducer } from "./store/user/slice";
 import { personReducer } from "./store/person/slice";
+import { campusReducer } from "./store/campus/slice";
 
 const appReducer = combineReducers({
   auth: authReducer,
   user: userReducer,
   person: personReducer,
+  campus: campusReducer,
 });
 
 const rootReducer = (state: any, action: any) => {

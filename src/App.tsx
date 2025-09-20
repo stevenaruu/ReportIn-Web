@@ -5,7 +5,7 @@ import HomePage from './pages/root/home-page/home-page'
 import FeaturePage from './pages/root/feature-page/feature-page';
 import HowItWorkPage from './pages/root/how-it-work-page/how-it-work-page';
 import ContactPage from './pages/root/contact-page/contact-page';
-import { useMemo } from 'react';
+import { useContext, useMemo } from 'react';
 import { getSubdomain } from './lib/get-subdomain';
 import SubLoginPage from './pages/sub/login-page/login-page';
 import SubDashboardPage from './pages/sub/dashboard-page/dashboard-page';
@@ -20,6 +20,12 @@ import BrowseAccountPage from './pages/sub/browse-account-page/browse-account-pa
 import SubLogoutPage from './pages/sub/logout-page/logout-page';
 import BrowseAccountDetailPage from './pages/sub/browse-account-detail-page/browse-account-detail-page';
 import ReportPage from './pages/sub/report-page/report-page';
+import { useGetCampusBySubDomain } from './api/services/campus';
+import LoadingPage from './pages/sub/loading/loading-page';
+import NotFoundPage from './pages/sub/not-found-page/not-found-page';
+import { useDispatch } from 'react-redux';
+import { setCampus } from './store/campus/slice';
+import { NetworkContext } from './contexts/network/network-context';
 
 function App() {
   useServiceWorker({
@@ -27,13 +33,28 @@ function App() {
     onUpdate: () => { }
   })
 
+  const dispatch = useDispatch();
+
   const ROOT_DOMAIN = import.meta.env.VITE_ROOT_DOMAIN ?? 'localhost';
 
   const { hostname } = window.location;
+  const { isOnline } = useContext(NetworkContext);
 
   const subdomain = useMemo(() => getSubdomain(hostname, ROOT_DOMAIN), [hostname, ROOT_DOMAIN]);
   const isSubdomain = Boolean(subdomain);
-  console.log('isSubdomain', subdomain);
+
+  const { data, isLoading, error } = useGetCampusBySubDomain(
+    { subdomain: subdomain ?? "" },
+    { enabled: isSubdomain }
+  );
+
+  if (isSubdomain && isOnline) {
+    if (isLoading) return <LoadingPage />
+    if (error) return <NotFoundPage />
+    if (data) {
+      dispatch(setCampus(data.data));
+    }
+  }
 
   return (
     <BrowserRouter>

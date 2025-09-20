@@ -18,13 +18,14 @@ import {
   Cell,
   ResponsiveContainer,
 } from "recharts";
-import { getSubdomainResponseExample } from "@/examples/campuses";
 import { hexToRgba } from "@/lib/hex-to-rgba";
 import { TEXT_PRIMARY_COLOR } from "@/lib/primary-color";
 import { useReports } from "@/hooks/use-report";
+import { useSelector } from "react-redux";
+import { selectCampus } from "@/store/campus/selector";
 
 const BuildingManagementPage = () => {
-  const campusId = getSubdomainResponseExample.data.campusId;
+  const campus = useSelector(selectCampus);
 
   const options = useMemo(
     () => ({
@@ -34,9 +35,9 @@ const BuildingManagementPage = () => {
     []
   );
 
-  const { reports } = useReports(campusId, options);
+  const { reports } = useReports(campus?.campusId, options);
 
-  const primaryColor = getSubdomainResponseExample.data.customization.primaryColor;
+  const primaryColor = campus?.customization.primaryColor;
 
   const {
     yearlyTrend,

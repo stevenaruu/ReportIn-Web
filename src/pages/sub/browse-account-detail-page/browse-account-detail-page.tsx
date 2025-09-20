@@ -8,18 +8,20 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { hexToRgba } from "@/lib/hex-to-rgba"
-import { getSubdomainResponseExample } from "@/examples/campuses"
 import { ROLES } from "@/lib/roles"
 import Header from "@/components/header/header"
 import { IUpdatePersonRoleRequest } from "@/types/request/person"
 import { useUpdatePersonRole } from "@/api/services/person"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { BACKGROUND_PRIMARY_COLOR } from "@/lib/primary-color"
+import { useSelector } from "react-redux"
+import { selectCampus } from "@/store/campus/selector"
 
 const BrowseAccountDetailPage = () => {
   const location = useLocation()
   const person = location.state as IGetAllPersonResponse
   const updateRole = useUpdatePersonRole();
+  const campus = useSelector(selectCampus);
 
   const [selectedRoles, setSelectedRoles] = useState<string[]>(
     person?.role.map((r) => r.roleId) || []
@@ -43,7 +45,7 @@ const BrowseAccountDetailPage = () => {
 
     const request: IUpdatePersonRoleRequest = {
       personId: person.id,
-      campusId: getSubdomainResponseExample.data.campusId,
+      campusId: campus?.campusId ?? '',
       role: checkedRoles.map(role => ({
         roleId: role.roleId,
         roleName: role.roleName,
@@ -117,8 +119,7 @@ const BrowseAccountDetailPage = () => {
                       style={{
                         backgroundColor: selectedRoles.includes(role.roleId)
                           ? hexToRgba(
-                            getSubdomainResponseExample.data.customization
-                              .primaryColor,
+                            campus?.customization.primaryColor,
                             0.7
                           )
                           : undefined,

@@ -1,6 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
 import { SearchBar } from "@/components/search-bar/search-bar";
-import { getSubdomainResponseExample } from "@/examples/campuses";
 import { SubLayout } from "@/layouts/layout";
 import { ReportCard } from "@/components/report-card/report-card";
 import { Pagination } from "@/components/pagination/pagination";
@@ -12,6 +11,7 @@ import { selectPerson } from "@/store/person/selector";
 import { BACKGROUND_PRIMARY_COLOR } from "@/lib/primary-color";
 import FilterSort from "@/components/filter-sort/filter-sort";
 import { useNavigate } from "react-router-dom";
+import { selectCampus } from "@/store/campus/selector";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -19,7 +19,7 @@ const ComplainantPage = () => {
   const navigate = useNavigate();
 
   const person = useSelector(selectPerson);
-  const campusId = getSubdomainResponseExample.data.campusId;
+  const campus = useSelector(selectCampus);
 
   // filter & sort state
   const [sortBy, setSortBy] = useState<"status" | "area" | "category" | "count">("count");
@@ -34,7 +34,7 @@ const ComplainantPage = () => {
     filters: { status: statusFilter, areas: areaFilter, categories: categoryFilter }
   }), [sortBy, order, statusFilter, areaFilter, categoryFilter]);
 
-  const { reports, loading } = useReports(campusId, reportOptions);
+  const { reports, loading } = useReports(campus?.campusId, reportOptions);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);

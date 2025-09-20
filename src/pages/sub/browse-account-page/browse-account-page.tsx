@@ -3,13 +3,16 @@
 import { useGetAllPersonQuery } from "@/api/services/person"
 import { Column, DataTable } from "@/components/data-table/data-table"
 import { SearchBar } from "@/components/search-bar/search-bar"
-import { getSubdomainResponseExample } from "@/examples/campuses"
 import { SubLayout } from "@/layouts/layout"
 import { useNavigate } from "react-router-dom"
 import { formatTableDate } from "@/lib/format-date"
+import { useSelector } from "react-redux"
+import { selectCampus } from "@/store/campus/selector"
 
 const BrowseAccountPage = () => {
-  const { data, isLoading, isError, error } = useGetAllPersonQuery(getSubdomainResponseExample.data.campusId);
+  const campus = useSelector(selectCampus);
+
+  const { data, isLoading, isError, error } = useGetAllPersonQuery(campus?.campusId ?? '');
 
   const navigate = useNavigate();
 

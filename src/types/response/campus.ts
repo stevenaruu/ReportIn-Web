@@ -1,4 +1,4 @@
-export type PublicCampus = {
+export type IPublicCampusResponse = {
   campusId: string;
   name: string;
   mandatoryEmail: string[];
@@ -10,10 +10,3 @@ export type PublicCampus = {
     logo: string;
   };
 }
-
-export type IPublicCampusResponse = {
-  status: boolean;
-  statusCode: number;
-  message: string;
-  data: PublicCampus;
-};

@@ -7,5 +7,6 @@ export const ApiService: IApi = {
   report: `${BASE_URL}/report`,
   notification: `${BASE_URL}/notification`,
   person: `${BASE_URL}/person`,
-  area: `${BASE_URL}/area`
+  area: `${BASE_URL}/area`,
+  campus: `${BASE_URL}/campus`
 }

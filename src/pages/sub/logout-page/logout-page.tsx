@@ -1,12 +1,13 @@
 import LogoutLogo from '@/assets/sub/logout'
-import { getSubdomainResponseExample } from '@/examples/campuses'
 import { BACKGROUND_PRIMARY_COLOR } from '@/lib/primary-color'
 import { persistor } from '@/store'
+import { selectCampus } from '@/store/campus/selector'
 import { useEffect } from 'react'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 const SubLogoutPage = () => {
   const dispatch = useDispatch();
+  const campus = useSelector(selectCampus);
 
   useEffect(() => {
     const logout = async () => {
@@ -29,7 +30,7 @@ const SubLogoutPage = () => {
     >
       <LogoutLogo
         className="w-2/3 sm:w-1/2 md:w-3/4 lg:w-2/3 max-w-sm"
-        color={getSubdomainResponseExample.data.customization.primaryColor}
+        color={campus?.customization.primaryColor}
       />
       <div className='text-center text-[#5d5d5d]'>
         <p className='text-xl font-bold'>Logout is in progress..</p>
