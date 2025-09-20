@@ -12,10 +12,12 @@ export const getSubdomain = (hostname: string, rootDomain: string) => {
     return null;
   }
 
+  if (cleanHost === rootDomain) {
+    return null; // kalau persis sama root domain, berarti ga ada subdomain
+  }
+
   if (!cleanHost.endsWith(rootDomain)) return null;
 
   const left = cleanHost.replace(`.${rootDomain}`, "");
-  if (!left) return null;
-
-  return left;
+  return left || null;
 };
