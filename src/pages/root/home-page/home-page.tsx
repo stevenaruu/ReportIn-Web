@@ -7,7 +7,7 @@ const HomePage = () => {
 
   return (
     <RootLayout>
-      <div className="flex flex-col-reverse md:flex-row items-center justify-between gap-8 md:gap-16 lg:gap-2 py-8">
+      <div className="min-h-[90vh] flex flex-col-reverse md:flex-row items-center justify-between gap-8 md:gap-16 lg:gap-2 py-8">
         <div className="w-full md:w-1/2 mt-8 md:mt-0 text-center md:text-left text-[#5D5D5D]">
           <h1 className="text-3xl md:text-4xl font-bold mb-3">Effortless Reporting, Faster Resolution</h1>
           <p className="mb-6 text-base md:text-lg">

@@ -21,7 +21,7 @@ const steps = [
 const HowItWorkPage = () => {
   return (
     <RootLayout>
-      <section className="w-full min-h-[70vh] py-12 flex flex-col items-center justify-center">
+      <section className="w-full min-h-[80vh] py-12 flex flex-col items-center justify-center">
         <h2 className="text-2xl md:text-3xl font-bold text-[#5d5d5d] mb-2 text-center">
           HOW IT WORKS
         </h2>
@@ -30,7 +30,7 @@ const HowItWorkPage = () => {
           <p>Customize, invite, and begin managing facility reports in minutes.</p>
         </div>
 
-        <div className="flex flex-col md:flex-row gap-6 md:gap-8 justify-center w-full max-w-5xl">
+        <div className="flex flex-col items-center md:flex-row gap-6 md:gap-8 justify-center w-full max-w-5xl">
           {steps.map((step, idx) => (
             <div
               key={step.title}
