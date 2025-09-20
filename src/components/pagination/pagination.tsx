@@ -8,6 +8,9 @@ interface PaginationProps {
 }
 
 export const Pagination = ({ currentPage, totalPages, onPageChange }: PaginationProps) => {
+
+  if (totalPages < 1) return <div />;
+
   return (
     <div className="flex items-center justify-center gap-2">
       <Button

@@ -1,5 +1,5 @@
 import apiClient from "@/config/api-client";
-import { ApiPerson } from "@/constant/ApiPerson";
+import { ApiArea } from "@/constant/ApiArea";
 import { IGetAreaRequest } from "@/types/request/area";
 import { IResponse } from "@/types/response";
 import { IGetAreaResponse } from "@/types/response/area";
@@ -11,9 +11,8 @@ export const useGetAreaQuery = (params?: IGetAreaRequest) => {
     queryKey: ["area", params],
     queryFn: async () => {
       try {
-        const response = await apiClient.post<IResponse<IGetAreaResponse[]>>(
-          ApiPerson.allPerson,
-          params
+         const response = await apiClient.get<IResponse<IGetAreaResponse[]>>(
+          ApiArea.getArea, { params }
         );
 
         return response.data;

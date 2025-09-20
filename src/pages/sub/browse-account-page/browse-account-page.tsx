@@ -9,9 +9,7 @@ import { useNavigate } from "react-router-dom"
 import { formatTableDate } from "@/lib/format-date"
 
 const BrowseAccountPage = () => {
-  const { data, isLoading, isError, error } = useGetAllPersonQuery({ campusId: getSubdomainResponseExample.data.campusId });
-
-  console.log("data", data);
+  const { data, isLoading, isError, error } = useGetAllPersonQuery(getSubdomainResponseExample.data.campusId);
 
   const navigate = useNavigate();
 

@@ -1,5 +1,5 @@
 import { ApiService } from "./ApiService";
 
 export const ApiArea = {
-  getArea: `${ApiService.area}`,
+  getArea: `${ApiService.area}/all`,
 }
