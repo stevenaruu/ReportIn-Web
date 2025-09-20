@@ -1,10 +1,10 @@
 import { SubLayout } from "@/layouts/layout"
 import { Card, CardContent } from "@/components/ui/card"
 import ProfileImage from "@/assets/sub/profile"
-import LeaderboardLogo from "@/assets/sub/leaderboard"
 import { BACKGROUND_PRIMARY_COLOR, TEXT_PRIMARY_COLOR } from "@/lib/primary-color"
 import { useSelector } from "react-redux"
 import { selectCampus } from "@/store/campus/selector"
+import EmptyState from "@/components/empty-state/empty-state"
 
 type Player = {
   id: number
@@ -13,14 +13,14 @@ type Player = {
 }
 
 const players: Player[] = [
-  { id: 1, name: "Alya Nur Hasannah", points: 4500 },
-  { id: 2, name: "Zain Fatin Mardhiyyah", points: 4500 },
-  { id: 3, name: "Julia Metta Viriyani", points: 4400 },
-  { id: 4, name: "Vira Ananda Sucipta", points: 4400 },
-  { id: 5, name: "Chelsea", points: 4400 },
-  { id: 6, name: "Justin Nathaniel Tanujaya", points: 4400 },
-  { id: 7, name: "Vinana Paramita Kwan", points: 4300 },
-  { id: 8, name: "Muhammad Dani Fadhlurrahman", points: 4300 },
+  // { id: 1, name: "Alya Nur Hasannah", points: 4500 },
+  // { id: 2, name: "Zain Fatin Mardhiyyah", points: 4500 },
+  // { id: 3, name: "Julia Metta Viriyani", points: 4400 },
+  // { id: 4, name: "Vira Ananda Sucipta", points: 4400 },
+  // { id: 5, name: "Chelsea", points: 4400 },
+  // { id: 6, name: "Justin Nathaniel Tanujaya", points: 4400 },
+  // { id: 7, name: "Vinana Paramita Kwan", points: 4300 },
+  // { id: 8, name: "Muhammad Dani Fadhlurrahman", points: 4300 },
 ]
 
 const LeaderboardPage = () => {
@@ -142,23 +142,7 @@ const LeaderboardPage = () => {
           ))}
         </div>
 
-        {/* Empty state when no players */}
-        {players.length === 0 && (
-          <div className="flex justify-center items-center gap-10 flex-col py-10">
-            <LeaderboardLogo
-              className="w-2/3 sm:w-1/2 md:w-3/4 lg:w-2/3 max-w-sm"
-              color={campus?.customization.primaryColor}
-            />
-            <div className="text-center">
-              <p className="text-[#5d5d5d] text-sm mt-2">
-                The leaderboard currently does not have any custodians listed.
-              </p>
-              <p className="text-[#5d5d5d] text-sm mt-2">
-                please check back later, as new custodians may appear once they join or complete their activities.
-              </p>
-            </div>
-          </div>
-        )}
+        <EmptyState count={players.length} type="leaderboard" />
       </div>
     </SubLayout>
   )

@@ -10,6 +10,7 @@ import { BACKGROUND_PRIMARY_COLOR } from "@/lib/primary-color";
 import FilterSort from "@/components/filter-sort/filter-sort";
 import { useSelector } from "react-redux";
 import { selectCampus } from "@/store/campus/selector";
+import EmptyState from "@/components/empty-state/empty-state";
 
 const ITEMS_PER_PAGE = 4;
 
@@ -63,58 +64,63 @@ const BrowseReportPage = () => {
 
   return (
     <SubLayout>
-      <SearchBar onSearch={handleSearch} placeholder="Search Report..." />
+      {reports.length > 0 &&
+        <>
+          <SearchBar onSearch={handleSearch} placeholder="Search Report..." />
 
-      <div className="flex flex-col gap-2 md:flex-row justify-between mb-4">
-        <div className="flex gap-3">
-          <Button
-            size="sm"
-            className="rounded-full px-6"
-            style={activeTab === "reports" ? BACKGROUND_PRIMARY_COLOR(0.7) : {}}
-            variant={activeTab === "reports" ? "default" : "outline"}
-            onClick={() => setActiveTab("reports")}
-          >
-            Reports
-          </Button>
-        </div>
-        <FilterSort
-          areas={[...new Set(reports.map(r => r.area?.name).filter(Boolean))]}
-          categories={[...new Set(reports.map(r => r.category?.name).filter(Boolean))]}
-          onApply={({ sortBy, sortDirection, status, areas, categories }) => {
-            setSortBy(sortBy);
-            setOrder(sortDirection);
-            setStatusFilter(status);
-            setAreaFilter(areas);
-            setCategoryFilter(categories);
-          }}
-        />
-      </div>
+          <div className="flex flex-col gap-2 md:flex-row justify-between mb-4">
+            <div className="flex gap-3">
+              <Button
+                size="sm"
+                className="rounded-full px-6"
+                style={activeTab === "reports" ? BACKGROUND_PRIMARY_COLOR(0.7) : {}}
+                variant={activeTab === "reports" ? "default" : "outline"}
+                onClick={() => setActiveTab("reports")}
+              >
+                Reports
+              </Button>
+            </div>
+            <FilterSort
+              areas={[...new Set(reports.map(r => r.area?.name).filter(Boolean))]}
+              categories={[...new Set(reports.map(r => r.category?.name).filter(Boolean))]}
+              onApply={({ sortBy, sortDirection, status, areas, categories }) => {
+                setSortBy(sortBy);
+                setOrder(sortDirection);
+                setStatusFilter(status);
+                setAreaFilter(areas);
+                setCategoryFilter(categories);
+              }}
+            />
+          </div>
 
-      <div className="flex flex-col gap-4">
-        {loading
-          ? Array.from({ length: ITEMS_PER_PAGE }).map((_, idx) => (
-            <ReportCard key={`skeleton-${idx}`} isLoading report={{} as IReport} />
-          ))
-          : paginatedReports.length > 0
-            ? paginatedReports.map((report) => {
-              return (
-                <ReportCard
-                  key={report.id}
-                  report={report}
-                  privilege={{ view: true, delete: true }}
-                />
-              );
-            })
-            : <p className="text-center text-neutral-500">No reports found.</p>}
-      </div>
+          <div className="flex flex-col gap-4">
+            {loading
+              ? Array.from({ length: ITEMS_PER_PAGE }).map((_, idx) => (
+                <ReportCard key={`skeleton-${idx}`} isLoading report={{} as IReport} />
+              ))
+              : paginatedReports.length > 0
+                ? paginatedReports.map((report) => {
+                  return (
+                    <ReportCard
+                      key={report.id}
+                      report={report}
+                      privilege={{ view: true, delete: true }}
+                    />
+                  );
+                })
+                : <p className="text-center text-neutral-500">No reports found.</p>}
+          </div>
 
-      <div className="mt-6 flex flex-col md:flex-row gap-6 md:gap-0 justify-between items-center">
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={setCurrentPage}
-        />
-      </div>
+          <div className="mt-6 flex flex-col md:flex-row gap-6 md:gap-0 justify-between items-center">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+            />
+          </div>
+        </>
+      }
+      <EmptyState count={reports.length} type="privateReport" />
     </SubLayout>
   );
 };
