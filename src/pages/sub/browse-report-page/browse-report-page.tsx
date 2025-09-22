@@ -6,16 +6,17 @@ import { Pagination } from "@/components/pagination/pagination";
 import { Button } from "@/components/ui/button";
 import { useReports } from "@/hooks/use-report";
 import { IReport } from "@/types/model/report";
-import { BACKGROUND_PRIMARY_COLOR } from "@/lib/primary-color";
 import FilterSort from "@/components/filter-sort/filter-sort";
 import { useSelector } from "react-redux";
 import { selectCampus } from "@/store/campus/selector";
 import EmptyState from "@/components/empty-state/empty-state";
+import { usePrimaryColor } from "@/lib/primary-color";
 
 const ITEMS_PER_PAGE = 4;
 
 const BrowseReportPage = () => {
   const campus = useSelector(selectCampus);
+  const { BACKGROUND_PRIMARY_COLOR } = usePrimaryColor();
 
   // filter & sort state
   const [sortBy, setSortBy] = useState<"status" | "area" | "category" | "count">("count");

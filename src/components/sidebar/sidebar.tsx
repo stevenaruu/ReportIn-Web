@@ -16,8 +16,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { IPersonRole } from "@/types/role";
 import { setPersonActiveRole } from "@/store/person/slice";
-import { BACKGROUND_PRIMARY_COLOR } from "@/lib/primary-color";
 import { selectCampus } from "@/store/campus/selector";
+import { usePrimaryColor } from "@/lib/primary-color";
 
 export default function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const navigate = useNavigate();
@@ -26,6 +26,7 @@ export default function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose:
   const person = useSelector(selectPerson);
   const activeRole = useSelector(selectPersonActiveRole);
   const campus = useSelector(selectCampus);
+  const { BACKGROUND_PRIMARY_COLOR } = usePrimaryColor();
 
   const [open, setOpen] = useState(false);
   const [selectedRole, setSelectedRole] = useState<IPersonRole>(activeRole);

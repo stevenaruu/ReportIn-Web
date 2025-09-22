@@ -15,10 +15,10 @@ export const useLoginMutation = () => {
   );
 };
 
-export const useUpdatePersonRole = () => {
+export const useUpdatePersonRole = (id: string) => {
   return useMutation<IResponse, Error, IUpdatePersonRoleRequest>(
     async (data) => {
-      const response = await apiClient.post<IResponse>(ApiPerson.role, data);
+      const response = await apiClient.post<IResponse>(ApiPerson.role(id), data);
       return response.data;
     }
   );
@@ -29,7 +29,7 @@ export const useGetAllPersonQuery = (id: string) => {
     queryKey: ["all-person", id],
     queryFn: async () => {
       try {
-        const response = await apiClient.get<IResponse<IGetAllPersonResponse[]>>(
+        const response = await apiClient.post<IResponse<IGetAllPersonResponse[]>>(
           ApiPerson.allPerson(id)
         );
         return response.data;

@@ -1,5 +1,5 @@
 import LogoutLogo from '@/assets/sub/logout'
-import { BACKGROUND_PRIMARY_COLOR } from '@/lib/primary-color'
+import { usePrimaryColor } from '@/lib/primary-color'
 import { persistor } from '@/store'
 import { selectCampus } from '@/store/campus/selector'
 import { useEffect } from 'react'
@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from 'react-redux'
 const SubLogoutPage = () => {
   const dispatch = useDispatch();
   const campus = useSelector(selectCampus);
+  const { BACKGROUND_PRIMARY_COLOR } = usePrimaryColor();
 
   useEffect(() => {
     const logout = async () => {

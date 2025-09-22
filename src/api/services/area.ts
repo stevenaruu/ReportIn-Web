@@ -1,9 +1,9 @@
 import apiClient from "@/config/api-client";
 import { ApiArea } from "@/constant/ApiArea";
-import { IGetAreaRequest } from "@/types/request/area";
+import { IAreaRequest, IGetAreaRequest } from "@/types/request/area";
 import { IResponse } from "@/types/response";
 import { IGetAreaResponse } from "@/types/response/area";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 
 export const useGetAreaQuery = (params?: IGetAreaRequest) => {
@@ -11,7 +11,7 @@ export const useGetAreaQuery = (params?: IGetAreaRequest) => {
     queryKey: ["area", params],
     queryFn: async () => {
       try {
-         const response = await apiClient.get<IResponse<IGetAreaResponse[]>>(
+        const response = await apiClient.get<IResponse<IGetAreaResponse[]>>(
           ApiArea.getArea, { params }
         );
 
@@ -26,5 +26,33 @@ export const useGetAreaQuery = (params?: IGetAreaRequest) => {
     staleTime: 1000 * 60 * 5, // 5 menit
     retry: 3,
     refetchOnWindowFocus: false,
+    refetchOnMount: "always",
   });
+};
+
+export const useCreateArea = () => {
+  return useMutation<IResponse, Error, IAreaRequest>(
+    async (data) => {
+      const response = await apiClient.post<IResponse>(ApiArea.createArea, data);
+      return response.data;
+    }
+  );
+};
+
+export const useUpdateArea = (id: string) => {
+  return useMutation<IResponse, Error, IAreaRequest>(
+    async (data) => {
+      const response = await apiClient.put<IResponse>(ApiArea.editArea(id), data);
+      return response.data;
+    }
+  );
+};
+
+export const useDeleteArea = () => {
+  return useMutation<IResponse, Error, string>(
+    async (id) => {
+      const response = await apiClient.delete<IResponse>(ApiArea.deleteArea(id));
+      return response.data;
+    }
+  );
 };

@@ -1,10 +1,11 @@
 import { SubLayout } from "@/layouts/layout"
 import { Card, CardContent } from "@/components/ui/card"
 import ProfileImage from "@/assets/sub/profile"
-import { BACKGROUND_PRIMARY_COLOR, TEXT_PRIMARY_COLOR } from "@/lib/primary-color"
 import { useSelector } from "react-redux"
 import { selectCampus } from "@/store/campus/selector"
 import EmptyState from "@/components/empty-state/empty-state"
+import { usePrimaryColor } from "@/lib/primary-color"
+import { useGetPersonLeaderboardQuery } from "@/api/services/leaderboard"
 
 type Player = {
   id: number
@@ -25,6 +26,12 @@ const players: Player[] = [
 
 const LeaderboardPage = () => {
   const campus = useSelector(selectCampus);
+  const { BACKGROUND_PRIMARY_COLOR, TEXT_PRIMARY_COLOR } = usePrimaryColor();
+
+  const { data, isLoading } = useGetPersonLeaderboardQuery(campus?.campusId ?? '');
+
+  console.log("data", data);
+  console.log("isLoading", isLoading);
 
   const topThree = players.slice(0, 3)
   const others = players.slice(3)

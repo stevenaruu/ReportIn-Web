@@ -1,5 +1,3 @@
-import { IPersonRole } from "../role"
-
 export type ILoginRequest = {
   campusId: string,
   token: string
@@ -9,8 +7,12 @@ export type IGetAllPersonRequest = {
   campusId: string
 }
 
+type IPersonRole = {
+  roleId: string,
+  roleName: string,
+}
+
 export type IUpdatePersonRoleRequest = {
-  personId: string,
   campusId: string,
   role: IPersonRole[]
 }

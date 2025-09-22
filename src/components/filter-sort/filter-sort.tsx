@@ -19,8 +19,7 @@ import { ChevronDown, Filter } from "lucide-react"
 import { hexToRgba } from "@/lib/hex-to-rgba"
 import { Checkbox } from "../ui/checkbox"
 import {
-  BACKGROUND_PRIMARY_COLOR,
-  TEXT_PRIMARY_COLOR,
+  usePrimaryColor,
 } from "@/lib/primary-color"
 import { useSelector } from "react-redux"
 import { selectCampus } from "@/store/campus/selector"
@@ -56,6 +55,7 @@ function useMediaQuery(query: string) {
 
 export default function FilterSort({ areas, categories, onApply }: FilterSortProps) { 
   const campus = useSelector(selectCampus);
+  const { BACKGROUND_PRIMARY_COLOR, TEXT_PRIMARY_COLOR } = usePrimaryColor();
 
   const [open, setOpen] = useState(false)
   const [sortBy, setSortBy] = useState<SortBy>("count")

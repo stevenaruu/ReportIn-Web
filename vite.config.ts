@@ -14,7 +14,6 @@ export default defineConfig({
       },
       includeAssets: [
         "**/*",
-        "!**/*.{png,jpg,jpeg,svg,gif,webp,avif}", // exclude all common image formats
       ],
       workbox: {
         globPatterns: [

@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { SubLayout } from '@/layouts/layout'
-import { BACKGROUND_PRIMARY_COLOR } from '@/lib/primary-color'
+import { usePrimaryColor } from '@/lib/primary-color'
 import { selectCampus } from '@/store/campus/selector'
 import { selectPerson } from '@/store/person/selector'
 import React, { useState } from 'react'
@@ -15,6 +15,7 @@ const ReportPage = () => {
 
   const person = useSelector(selectPerson);
   const campus = useSelector(selectCampus);
+  const { BACKGROUND_PRIMARY_COLOR } = usePrimaryColor();    
 
   const [description, setDescription] = useState('')
   const [file, setFile] = useState<File | null>(null)

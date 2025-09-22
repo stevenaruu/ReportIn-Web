@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { useState } from "react"
-import { BACKGROUND_PRIMARY_COLOR } from "@/lib/primary-color"
+import { usePrimaryColor } from "@/lib/primary-color"
 
 interface ReportCardProps<T = IReport> {
   report: T
@@ -43,6 +43,8 @@ export const ReportCard = <T extends IReport>({
   onEdit,
   onDelete,
 }: ReportCardProps<T>) => {
+  const { BACKGROUND_PRIMARY_COLOR } = usePrimaryColor();
+  
   const [currentImage, setCurrentImage] = useState(0)
 
   const images = report.image || []

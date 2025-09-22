@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button"
-import { BACKGROUND_PRIMARY_COLOR } from "@/lib/primary-color"
+import { usePrimaryColor } from "@/lib/primary-color"
 
 interface PaginationProps {
   currentPage: number
@@ -8,6 +8,7 @@ interface PaginationProps {
 }
 
 export const Pagination = ({ currentPage, totalPages, onPageChange }: PaginationProps) => {
+  const { BACKGROUND_PRIMARY_COLOR } = usePrimaryColor();
 
   if (totalPages < 1) return <div />;
 

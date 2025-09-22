@@ -13,9 +13,8 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { TailSpin } from 'react-loader-spinner'
-import { BACKGROUND_PRIMARY_COLOR } from '@/lib/primary-color';
-import { IPublicCampusResponse } from '@/types/response/campus';
 import { selectCampus } from '@/store/campus/selector';
+import { usePrimaryColor } from '@/lib/primary-color';
 
 const SubLoginPage = () => {
   const navigate = useNavigate();
@@ -23,6 +22,7 @@ const SubLoginPage = () => {
   const login = useLoginMutation();
   const person = useSelector(selectPerson);
   const campus = useSelector(selectCampus);
+  const { BACKGROUND_PRIMARY_COLOR } = usePrimaryColor();
 
   useEffect(() => {
     if (person) navigate('/dashboard');

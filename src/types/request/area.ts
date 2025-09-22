@@ -3,3 +3,9 @@ export type IGetAreaRequest = {
   page: number;
   search: string;
 }
+
+export type IAreaRequest = {
+  campusId: string;
+  areaName: string;
+  beaconId: string;
+}

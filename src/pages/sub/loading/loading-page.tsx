@@ -1,10 +1,11 @@
 import { useSelector } from 'react-redux';
 import { selectCampus } from '@/store/campus/selector';
 import LoadingLogo from '@/assets/sub/loading';
-import { TEXT_PRIMARY_COLOR } from '@/lib/primary-color';
+import { usePrimaryColor } from '@/lib/primary-color';
 
 const LoadingPage = () => {
   const campus = useSelector(selectCampus);
+  const { TEXT_PRIMARY_COLOR } = usePrimaryColor();
 
   return (
     <div className="bg-[#fafafa] min-h-screen flex flex-col gap-12 justify-center items-center p-5">

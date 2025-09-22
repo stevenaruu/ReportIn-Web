@@ -6,7 +6,7 @@ import { selectPerson } from "@/store/person/selector";
 import { Link } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { Menu } from "lucide-react";
-import { BACKGROUND_PRIMARY_COLOR } from "@/lib/primary-color";
+import { usePrimaryColor } from "@/lib/primary-color";
 
 const RootNavbar = () => {
   const user = useSelector(selectUsername);
@@ -15,6 +15,7 @@ const RootNavbar = () => {
 
 export default function SubNavbar({ onToggleSidebar }: { onToggleSidebar: () => void }) {
   const person = useSelector(selectPerson);
+  const { BACKGROUND_PRIMARY_COLOR } = usePrimaryColor();
 
   const [open, setOpen] = useState(false);
   const popoverRef = useRef<HTMLDivElement | null>(null);

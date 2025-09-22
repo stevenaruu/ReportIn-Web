@@ -26,6 +26,8 @@ import NotFoundPage from './pages/sub/not-found-page/not-found-page';
 import { useDispatch } from 'react-redux';
 import { setCampus } from './store/campus/slice';
 import { NetworkContext } from './contexts/network/network-context';
+import CreateAreaPage from './pages/sub/create-area-page/create-area-page';
+import EditAreaPage from './pages/sub/edit-area-page/edit-area-page';
 
 function App() {
   useServiceWorker({
@@ -70,6 +72,8 @@ function App() {
             <Route path="/browse-report" element={<BrowseReportPage />} />
             <Route path="/browse-category" element={<BrowseCategoryPage />} />
             <Route path="/browse-area" element={<BrowseAreaPage />} />
+            <Route path="/browse-area/create" element={<CreateAreaPage />} />
+            <Route path="/browse-area/edit/:areaId" element={<EditAreaPage />} />
             <Route path="/browse-account" element={<BrowseAccountPage />} />
             <Route path="/browse-account/:personId" element={<BrowseAccountDetailPage />} />
             <Route path="/report" element={<ReportPage />} />

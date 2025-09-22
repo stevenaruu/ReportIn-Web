@@ -19,13 +19,14 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { hexToRgba } from "@/lib/hex-to-rgba";
-import { TEXT_PRIMARY_COLOR } from "@/lib/primary-color";
 import { useReports } from "@/hooks/use-report";
 import { useSelector } from "react-redux";
 import { selectCampus } from "@/store/campus/selector";
+import { usePrimaryColor } from "@/lib/primary-color";
 
 const BuildingManagementPage = () => {
   const campus = useSelector(selectCampus);
+  const { TEXT_PRIMARY_COLOR } = usePrimaryColor();
 
   const options = useMemo(
     () => ({

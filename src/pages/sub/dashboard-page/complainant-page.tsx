@@ -8,11 +8,11 @@ import { useReports } from "@/hooks/use-report";
 import { IReport } from "@/types/model/report";
 import { useSelector } from "react-redux";
 import { selectPerson } from "@/store/person/selector";
-import { BACKGROUND_PRIMARY_COLOR } from "@/lib/primary-color";
 import FilterSort from "@/components/filter-sort/filter-sort";
 import { useNavigate } from "react-router-dom";
 import { selectCampus } from "@/store/campus/selector";
 import EmptyState from "@/components/empty-state/empty-state";
+import { usePrimaryColor } from "@/lib/primary-color";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -21,6 +21,7 @@ const ComplainantPage = () => {
 
   const person = useSelector(selectPerson);
   const campus = useSelector(selectCampus);
+  const { BACKGROUND_PRIMARY_COLOR } = usePrimaryColor();
 
   // filter & sort state
   const [sortBy, setSortBy] = useState<"status" | "area" | "category" | "count">("count");

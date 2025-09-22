@@ -12,16 +12,17 @@ import { ROLES } from "@/lib/roles"
 import Header from "@/components/header/header"
 import { IUpdatePersonRoleRequest } from "@/types/request/person"
 import { useUpdatePersonRole } from "@/api/services/person"
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { BACKGROUND_PRIMARY_COLOR } from "@/lib/primary-color"
 import { useSelector } from "react-redux"
 import { selectCampus } from "@/store/campus/selector"
+import { usePrimaryColor } from "@/lib/primary-color"
+import { Modal } from "@/components/modal/Modal"
 
 const BrowseAccountDetailPage = () => {
   const location = useLocation()
   const person = location.state as IGetAllPersonResponse
-  const updateRole = useUpdatePersonRole();
+  const updateRole = useUpdatePersonRole(person.id);
   const campus = useSelector(selectCampus);
+  const { BACKGROUND_PRIMARY_COLOR } = usePrimaryColor();
 
   const [selectedRoles, setSelectedRoles] = useState<string[]>(
     person?.role.map((r) => r.roleId) || []
@@ -44,12 +45,10 @@ const BrowseAccountDetailPage = () => {
     const checkedRoles = ROLES.filter((r) => selectedRoles.includes(r.roleId))
 
     const request: IUpdatePersonRoleRequest = {
-      personId: person.id,
       campusId: campus?.campusId ?? '',
       role: checkedRoles.map(role => ({
         roleId: role.roleId,
         roleName: role.roleName,
-        isDefault: false,
       })),
     }
 
@@ -71,80 +70,72 @@ const BrowseAccountDetailPage = () => {
     <SubLayout>
       <Header title="Edit Account" />
 
-      {/* Modal Pop Up */}
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{modalTitle}</DialogTitle>
-            <DialogDescription>{modalMessage}</DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button style={BACKGROUND_PRIMARY_COLOR(0.7)} onClick={() => setOpen(false)}>OK</Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+      <Modal
+        open={open}
+        onOpenChange={setOpen}
+        title={modalTitle}
+        message={modalMessage}
+      />
 
-      {
-    person && (
-      <div className="space-y-4">
-        {/* Name */}
-        <Card>
-          <CardContent className="p-4 text-[#5d5d5d]">
-            <h2 className="font-semibold mb-3">Name</h2>
-            <Input className="bg-gray-100" value={person.name} disabled />
-          </CardContent>
-        </Card>
+      {person && (
+        <div className="space-y-4">
+          {/* Name */}
+          <Card>
+            <CardContent className="p-4 text-[#5d5d5d]">
+              <h2 className="font-semibold mb-3">Name</h2>
+              <Input className="bg-gray-100" value={person.name} disabled />
+            </CardContent>
+          </Card>
 
-        {/* Email */}
-        <Card>
-          <CardContent className="p-4 text-[#5d5d5d]">
-            <h2 className="font-semibold mb-3">Email</h2>
-            <Input className="bg-gray-100" value={person.email} disabled />
-          </CardContent>
-        </Card>
+          {/* Email */}
+          <Card>
+            <CardContent className="p-4 text-[#5d5d5d]">
+              <h2 className="font-semibold mb-3">Email</h2>
+              <Input className="bg-gray-100" value={person.email} disabled />
+            </CardContent>
+          </Card>
 
-        {/* Role Mapping */}
-        <Card>
-          <CardContent className="p-4 text-[#5d5d5d]">
-            <h2 className="font-semibold mb-3">Role Mapping</h2>
-            <div className="border rounded-md">
-              <div className="grid grid-cols-1 divide-y">
-                <p className="p-3">Role Name</p>
-                {ROLES.map((role) => (
-                  <label
-                    key={role.roleId}
-                    className="flex items-center gap-3 p-3"
-                  >
-                    <Checkbox
-                      style={{
-                        backgroundColor: selectedRoles.includes(role.roleId)
-                          ? hexToRgba(
-                            campus?.customization.primaryColor,
-                            0.7
-                          )
-                          : undefined,
-                      }}
-                      checked={selectedRoles.includes(role.roleId)}
-                      onCheckedChange={() => handleToggleRole(role.roleId)}
-                    />
-                    <span>{role.roleName}</span>
-                  </label>
-                ))}
+          {/* Role Mapping */}
+          <Card>
+            <CardContent className="p-4 text-[#5d5d5d]">
+              <h2 className="font-semibold mb-3">Role Mapping</h2>
+              <div className="border rounded-md">
+                <div className="grid grid-cols-1 divide-y">
+                  <p className="p-3">Role Name</p>
+                  {ROLES.map((role) => (
+                    <label
+                      key={role.roleId}
+                      className="flex items-center gap-3 p-3"
+                    >
+                      <Checkbox
+                        style={{
+                          backgroundColor: selectedRoles.includes(role.roleId)
+                            ? hexToRgba(
+                              campus?.customization.primaryColor,
+                              0.7
+                            )
+                            : undefined,
+                        }}
+                        checked={selectedRoles.includes(role.roleId)}
+                        onCheckedChange={() => handleToggleRole(role.roleId)}
+                      />
+                      <span>{role.roleName}</span>
+                    </label>
+                  ))}
+                </div>
               </div>
-            </div>
-            <Button
-              onClick={handleSubmit}
-              style={BACKGROUND_PRIMARY_COLOR(0.7)}
-              className="mt-4"
-              disabled={updateRole.isLoading}
-            >
-              {updateRole.isLoading ? "Submitting..." : "Submit"}
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    )
-  }
+              <Button
+                onClick={handleSubmit}
+                style={BACKGROUND_PRIMARY_COLOR(0.7)}
+                className="mt-4"
+                disabled={updateRole.isLoading}
+              >
+                {updateRole.isLoading ? "Submitting..." : "Submit"}
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      )}
     </SubLayout >
   )
 }

@@ -2,7 +2,7 @@
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Eye, Edit, Trash } from "lucide-react"
-import { BACKGROUND_PRIMARY_COLOR } from "@/lib/primary-color"
+import { usePrimaryColor } from "@/lib/primary-color"
 
 export interface Column<T> {
   key: keyof T | string
@@ -33,6 +33,8 @@ export function DataTable<T>({
   onEdit,
   onDelete,
 }: DataTableProps<T>) {
+  const { BACKGROUND_PRIMARY_COLOR } = usePrimaryColor();
+
   return (
     <div className="overflow-x-auto rounded-md border">
       <table className="w-full border-collapse">

@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { BACKGROUND_PRIMARY_COLOR } from "@/lib/primary-color"
+import { usePrimaryColor } from "@/lib/primary-color"
 
 interface SearchBarProps {
   placeholder?: string
@@ -16,6 +16,8 @@ export const SearchBar = ({
   onSearch,
   buttonColor,
 }: SearchBarProps) => {
+  const { BACKGROUND_PRIMARY_COLOR } = usePrimaryColor();
+
   const [query, setQuery] = useState("")
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -34,7 +36,7 @@ export const SearchBar = ({
       />
       <Button
         type="submit"
-        style={ buttonColor ? { backgroundColor: buttonColor } : BACKGROUND_PRIMARY_COLOR(0.7)}
+        style={buttonColor ? { backgroundColor: buttonColor } : BACKGROUND_PRIMARY_COLOR(0.7)}
       >
         Search
       </Button>

@@ -1,17 +1,17 @@
 import { useSelector } from "react-redux";
-import { hexToRgba } from "./hex-to-rgba";
 import { selectCampus } from "@/store/campus/selector";
+import { hexToRgba } from "./hex-to-rgba";
 
-export const BACKGROUND_PRIMARY_COLOR = (intensity: number) => {
+export const usePrimaryColor = () => {
   const campus = useSelector(selectCampus);
-  return {
-    backgroundColor: hexToRgba(campus?.customization.primaryColor, intensity)
-  }
-}
 
-export const TEXT_PRIMARY_COLOR = (intensity: number) => {
-  const campus = useSelector(selectCampus);
-  return {
-    color: hexToRgba(campus?.customization.primaryColor, intensity)
-  }
-}
+  const BACKGROUND_PRIMARY_COLOR = (intensity = 1) => ({
+    backgroundColor: hexToRgba(campus?.customization.primaryColor, intensity),
+  });
+
+  const TEXT_PRIMARY_COLOR = (intensity = 1) => ({
+    color: hexToRgba(campus?.customization.primaryColor, intensity),
+  });
+
+  return { BACKGROUND_PRIMARY_COLOR, TEXT_PRIMARY_COLOR };
+};
