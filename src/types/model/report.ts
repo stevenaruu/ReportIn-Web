@@ -1,9 +1,11 @@
-import { IAccess } from "./access";
+import { IAccess } from "./access"
 
 export type IPersonReport = {
   personId: string,
   name: string,
-  email: string
+  email: string,
+  description: string,
+  image: string
 }
 
 export type IAreaReport = {
@@ -19,14 +21,12 @@ export type ICategoryReport = {
 export type IReport = {
   id: string,
   complainant: IPersonReport[],
-  custodian: IPersonReport,
+  custodian?: IPersonReport,
   area: IAreaReport,
   category: ICategoryReport,
   campusId: string,
-  description: string[],
-  image: string[],
   status: string,
   count: number,
   deletionRemark?: string,
-  completionDate?: string,
+  completionDate?: string
 } & IAccess;

@@ -47,10 +47,10 @@ export const ReportCard = <T extends IReport>({
   
   const [currentImage, setCurrentImage] = useState(0)
 
-  const images = report.image || []
-  const description = report.description?.[0] || "No description"
+  const images = report.complainant || []
+  const description = report.complainant?.[0].description || "No description"
   const extraDescriptions =
-    report.description?.length > 1 ? report.description.length - 1 : 0
+    report.complainant?.length > 1 ? report.complainant.length - 1 : 0
 
   const handleDotClick = (index: number) => {
     setCurrentImage(index)
@@ -136,7 +136,7 @@ export const ReportCard = <T extends IReport>({
               images.map((img, idx) => (
                 <img
                   key={idx}
-                  src={img}
+                  src={img.image}
                   alt={`Report ${idx + 1}`}
                   className="w-28 h-28 md:w-20 md:h-20 object-cover flex-shrink-0"
                 />

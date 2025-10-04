@@ -53,7 +53,7 @@ const ComplainantPage = () => {
   const filteredReports = tabbedReports.filter(
     (r) =>
       r.area?.name?.toLowerCase().includes(searchTerm) ||
-      r.description?.join(" ").toLowerCase().includes(searchTerm) ||
+      r.complainant?.some(c => c.description.toLowerCase().includes(searchTerm)) ||
       r.category?.name?.toLowerCase().includes(searchTerm) ||
       r.lastUpdatedBy?.toLowerCase().includes(searchTerm)
   );
