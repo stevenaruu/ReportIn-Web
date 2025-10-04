@@ -2,5 +2,6 @@ import { ApiService } from "./ApiService";
 
 export const ApiReport = {
   createReport: `${ApiService.report}`,
+  updateReport: (id: string) => `${ApiService.report}/${id}`,
   deleteReport: (id: string) => `${ApiService.report}/${id}`,
 }

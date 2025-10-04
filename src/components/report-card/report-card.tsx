@@ -44,7 +44,7 @@ export const ReportCard = <T extends IReport>({
   onDelete,
 }: ReportCardProps<T>) => {
   const { BACKGROUND_PRIMARY_COLOR } = usePrimaryColor();
-  
+
   const [currentImage, setCurrentImage] = useState(0)
 
   const images = report.complainant || []
@@ -206,7 +206,7 @@ export const ReportCard = <T extends IReport>({
           )}
         </div>
 
-        <div className="flex items-center gap-2 w-full">
+        <div className="flex flex-col md:flex-row items-center gap-2 w-full">
           <p className="text-sm text-neutral-600 line-clamp-1 flex-1">
             {description}
           </p>
@@ -225,32 +225,46 @@ export const ReportCard = <T extends IReport>({
         <div className="flex md:hidden gap-2 justify-center mt-3">
           {privilege.view && (
             <Button
+              style={BACKGROUND_PRIMARY_COLOR(0.5)}
               size="icon"
               variant="outline"
-              className="rounded-full h-8 w-8"
+              className="rounded-md h-8 w-8"
               onClick={() => onView?.(report)}
             >
-              <Eye className="h-4 w-4" />
+              <Eye className="h-4 w-4 text-white" />
+            </Button>
+          )}
+          {privilege.take && (
+            <Button
+              style={BACKGROUND_PRIMARY_COLOR(0.5)}
+              size="icon"
+              variant="outline"
+              className="rounded-md h-8 w-8"
+              onClick={() => onView?.(report)}
+            >
+              <Send className="h-4 w-4 text-white" />
             </Button>
           )}
           {privilege.edit && (
             <Button
+              style={BACKGROUND_PRIMARY_COLOR(0.5)}
               size="icon"
               variant="outline"
-              className="rounded-full h-8 w-8"
+              className="rounded-md h-8 w-8"
               onClick={() => onEdit?.(report)}
             >
-              <Pencil className="h-4 w-4" />
+              <Pencil className="h-4 w-4 text-white" />
             </Button>
           )}
           {privilege.delete && (
             <Button
+              style={BACKGROUND_PRIMARY_COLOR(0.5)}
               size="icon"
               variant="destructive"
-              className="rounded-full h-8 w-8"
+              className="rounded-md h-8 w-8"
               onClick={() => onDelete?.(report)}
             >
-              <Trash className="h-4 w-4" />
+              <Trash className="h-4 w-4 text-white" />
             </Button>
           )}
         </div>

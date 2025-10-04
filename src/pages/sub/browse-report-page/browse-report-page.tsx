@@ -15,11 +15,19 @@ import { usePrimaryColor } from "@/lib/primary-color";
 import { ITEMS_PER_PAGE } from "@/lib/item-per-page";
 import { Modal } from "@/components/modal/Modal";
 import { useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
+import { useGetAllAreaQuery } from "@/api/services/area";
+import { useGetAllCategoryQuery } from "@/api/services/category";
 
 const BrowseReportPage = () => {
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const campus = useSelector(selectCampus);
   const { BACKGROUND_PRIMARY_COLOR } = usePrimaryColor();
+
+  // Fetch master data for areas and categories
+  const { data: areasData } = useGetAllAreaQuery(campus?.campusId || "");
+  const { data: categoriesData } = useGetAllCategoryQuery(campus?.campusId || "");
 
   // modal state
   const [modalTitle, setModalTitle] = useState("Delete Report")
@@ -136,8 +144,8 @@ const BrowseReportPage = () => {
               </Button>
             </div>
             <FilterSort
-              areas={[...new Set(reports.map(r => r.area?.name).filter(Boolean))]}
-              categories={[...new Set(reports.map(r => r.category?.name).filter(Boolean))]}
+              areas={areasData?.data?.map(area => area.name) || []}
+              categories={categoriesData?.data?.map(category => category.name) || []}
               onApply={({ sortBy, sortDirection, status, areas, categories }) => {
                 setSortBy(sortBy);
                 setOrder(sortDirection);
@@ -155,6 +163,7 @@ const BrowseReportPage = () => {
                   key={report.id}
                   report={report}
                   privilege={{ view: true, delete: true }}
+                  onView={() => navigate(`/report/view/${report.id}`)}
                   onDelete={handleDeleteClick}
                 />
               ))

@@ -14,6 +14,8 @@ import { selectCampus } from "@/store/campus/selector";
 import EmptyState from "@/components/empty-state/empty-state";
 import { usePrimaryColor } from "@/lib/primary-color";
 import { ITEMS_PER_PAGE } from "@/lib/item-per-page";
+import { useGetAllAreaQuery } from "@/api/services/area";
+import { useGetAllCategoryQuery } from "@/api/services/category";
 
 const ComplainantPage = () => {
   const navigate = useNavigate();
@@ -21,6 +23,10 @@ const ComplainantPage = () => {
   const person = useSelector(selectPerson);
   const campus = useSelector(selectCampus);
   const { BACKGROUND_PRIMARY_COLOR } = usePrimaryColor();
+
+  // Fetch master data for areas and categories
+  const { data: areasData } = useGetAllAreaQuery(campus?.campusId || "");
+  const { data: categoriesData } = useGetAllCategoryQuery(campus?.campusId || "");
 
   // filter & sort state
   const [sortBy, setSortBy] = useState<"status" | "area" | "category" | "count">("count");
@@ -109,8 +115,8 @@ const ComplainantPage = () => {
               </Button>
             </div>
             <FilterSort
-              areas={[...new Set(reports.map(r => r.area?.name).filter(Boolean))]}
-              categories={[...new Set(reports.map(r => r.category?.name).filter(Boolean))]}
+              areas={areasData?.data?.map(area => area.name) || []}
+              categories={categoriesData?.data?.map(category => category.name) || []}
               onApply={({ sortBy, sortDirection, status, areas, categories }) => {
                 setSortBy(sortBy);
                 setOrder(sortDirection);
@@ -130,6 +136,8 @@ const ComplainantPage = () => {
                     key={report.id}
                     report={report}
                     privilege={{ view: true, edit: canEdit }}
+                    onView={() => navigate(`/report/view/${report.id}`)}
+                    onEdit={() => navigate(`/report/edit/${report.id}`)}
                   />
                 );
               })

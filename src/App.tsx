@@ -31,6 +31,7 @@ import EditAreaPage from './pages/sub/edit-area-page/edit-area-page';
 import CreateCategoryPage from './pages/sub/create-category-page/create-category-page';
 import EditCategoryPage from './pages/sub/edit-category-page/edit-category-page';
 import RootLogoutPage from './pages/root/logout-page/logout-page';
+import ReportDetailPage from './pages/sub/report-detail-page/report-detail-page';
 
 function App() {
   useServiceWorker({
@@ -82,8 +83,8 @@ function App() {
             <Route path="/browse-account" element={<BrowseAccountPage />} />
             <Route path="/browse-account/:personId" element={<BrowseAccountDetailPage />} />
             <Route path="/report" element={<ReportPage />} />
-            <Route path="/report/view/:reportId" element={<ReportPage />} />
-            <Route path="/report/edit/:reportId" element={<ReportPage />} />
+            <Route path="/report/view/:reportId" element={<ReportDetailPage />} />
+            <Route path="/report/edit/:reportId" element={<ReportDetailPage />} />
           </Route>
         </Routes>
       ) : (

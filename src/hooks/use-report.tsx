@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { db } from "@/config/firebase";
 import { IReport } from "@/types/model/report";
-import { collection, onSnapshot, query, where } from "firebase/firestore";
+import { collection, onSnapshot, query, where, doc, getDoc } from "firebase/firestore";
 import { useEffect, useState } from "react";
 
 interface UseReportsOptions {
@@ -95,4 +95,44 @@ export function useReports(campusId?: string, options?: UseReportsOptions) {
   }, [campusId, options]);
 
   return { allReports, reports, loading };
+}
+
+export function useReportById(reportId?: string) {
+  const [report, setReport] = useState<IReport | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!reportId) {
+      setLoading(false);
+      return;
+    }
+
+    const getReport = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        const docRef = doc(db, "Report", reportId);
+        const docSnap = await getDoc(docRef);
+        
+        if (docSnap.exists()) {
+          const data = docSnap.data() as Omit<IReport, "id">;
+          setReport({ id: docSnap.id, ...data });
+        } else {
+          setError("Report not found");
+          setReport(null);
+        }
+      } catch {
+        setError("Failed to fetch report");
+        setReport(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    getReport();
+  }, [reportId]);
+
+  return { report, loading, error };
 }
