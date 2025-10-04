@@ -1,10 +1,12 @@
 import EmptyLogo from "@/assets/sub/empty";
 import LeaderboardLogo from "@/assets/sub/leaderboard";
+import CampusLogo from "@/assets/sub/campus";
+import FilterLogo from "@/assets/sub/filter";
 import { selectCampus } from "@/store/campus/selector";
 import React from "react";
 import { useSelector } from "react-redux";
 
-type EmptyStateType = "leaderboard" | "publicReport" | "privateReport";
+type EmptyStateType = "leaderboard" | "publicReport" | "privateReport" | "campus" | "filterReport";
 
 interface EmptyStateProps {
   type: EmptyStateType;
@@ -43,13 +45,27 @@ const EmptyState: React.FC<EmptyStateProps> = ({ type, count, className, childre
         "Check back later for updates.",
       ],
     },
+    campus: {
+      logo: CampusLogo,
+      messages: [
+        "No campus has been created yet.",
+        "Create your campus to manage your application, reports, and customization.",
+      ],
+    },
+    filterReport: {
+      logo: FilterLogo,
+      messages: [
+        "Oops! There are no reports for this filter.",
+        "Try adjusting your filter or check back later.",
+      ],
+    },
   };
 
   const { logo: Logo, messages } = contentMap[type];
 
   return (
     <div
-      className={`w-full h-full flex justify-center items-center gap-10 flex-col py-10 ${className || ""}`}
+      className={`${className || ""} w-full h-full flex justify-center items-center gap-10 flex-col py-10`}
     >
       <Logo
         color={campus?.customization.primaryColor}

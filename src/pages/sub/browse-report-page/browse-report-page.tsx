@@ -11,8 +11,7 @@ import { useSelector } from "react-redux";
 import { selectCampus } from "@/store/campus/selector";
 import EmptyState from "@/components/empty-state/empty-state";
 import { usePrimaryColor } from "@/lib/primary-color";
-
-const ITEMS_PER_PAGE = 4;
+import { ITEMS_PER_PAGE } from "@/lib/item-per-page";
 
 const BrowseReportPage = () => {
   const campus = useSelector(selectCampus);
@@ -31,7 +30,7 @@ const BrowseReportPage = () => {
     filters: { status: statusFilter, areas: areaFilter, categories: categoryFilter }
   }), [sortBy, order, statusFilter, areaFilter, categoryFilter]);
 
-  const { reports, loading } = useReports(campus?.campusId, reportOptions);
+  const { allReports, reports, loading } = useReports(campus?.campusId, reportOptions);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -65,7 +64,17 @@ const BrowseReportPage = () => {
 
   return (
     <SubLayout>
-      {reports.length > 0 &&
+      {loading ? (
+        <div className="flex flex-col">
+          <SearchBar onSearch={handleSearch} placeholder="Search Report..." />
+
+          <div className="flex flex-col gap-4">
+            {Array.from({ length: 5 }).map((_, idx) => (
+              <ReportCard key={`skeleton-${idx}`} isLoading report={{} as IReport} />
+            ))}
+          </div>
+        </div>
+      ) : allReports.length > 0 ? (
         <>
           <SearchBar onSearch={handleSearch} placeholder="Search Report..." />
 
@@ -95,21 +104,20 @@ const BrowseReportPage = () => {
           </div>
 
           <div className="flex flex-col gap-4">
-            {loading
-              ? Array.from({ length: ITEMS_PER_PAGE }).map((_, idx) => (
-                <ReportCard key={`skeleton-${idx}`} isLoading report={{} as IReport} />
+            {paginatedReports.length > 0
+              ? paginatedReports.map((report) => (
+                <ReportCard
+                  key={report.id}
+                  report={report}
+                  privilege={{ view: true, delete: true }}
+                />
               ))
-              : paginatedReports.length > 0
-                ? paginatedReports.map((report) => {
-                  return (
-                    <ReportCard
-                      key={report.id}
-                      report={report}
-                      privilege={{ view: true, delete: true }}
-                    />
-                  );
-                })
-                : <p className="text-center text-neutral-500">No reports found.</p>}
+              : (
+                <div className="flex justify-center items-center">
+                  <EmptyState className="w-3/6 mt-10" count={reports.length} type="filterReport" />
+                </div>
+              )
+            }
           </div>
 
           <div className="mt-6 flex flex-col md:flex-row gap-6 md:gap-0 justify-between items-center">
@@ -120,8 +128,9 @@ const BrowseReportPage = () => {
             />
           </div>
         </>
-      }
-      <EmptyState count={reports.length} type="privateReport" />
+      ) : (
+        <EmptyState count={allReports.length} type="privateReport" />
+      )}
     </SubLayout>
   );
 };

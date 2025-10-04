@@ -1,9 +1,11 @@
 import { useLoginMutation } from '@/api/services/user';
 import { auth } from '@/config/firebase';
 import { useRedirect } from '@/hooks/use-redirect';
+import { getProviderLogo } from '@/lib/get-provider-logo';
 import { setUsername } from '@/store/auth/slice';
 import { setUser } from '@/store/user/slice';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { TailSpin } from 'react-loader-spinner';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
@@ -44,11 +46,38 @@ const RootLoginPage = () => {
         <h2 className="text-4xl text-[#5D5D5D] font-bold mb-2">SIGN IN</h2>
         <img className='w-48 my-6' src="/assets/images/email-consent.svg" alt="" />
         <hr className="w-3/6 border-t border-gray-400 mb-6" />
-        <button onClick={handleGoogleLogin} className="md:px-32 px-24 bg-red-500 text-white font-semibold py-2 rounded-md hover:bg-red-600 transition">
-          SIGN IN
+        <button
+          disabled={login.isLoading}
+          onClick={handleGoogleLogin}
+          className="px-10 bg-red-500 text-white font-semibold py-3 rounded-md hover:bg-red-600 transition flex items-center justify-center gap-3"
+        >
+          {login.isLoading ? (
+            <TailSpin
+              visible={true}
+              height="24"
+              width="24"
+              color="#FFFFFF"
+              ariaLabel="line-wave-loading"
+              wrapperStyle={{}}
+              wrapperClass=""
+            />
+          ) : (
+            <div className='bg-white rounded-full p-1.5'>
+              <img
+                src={getProviderLogo('Google')}
+                alt=""
+                className="h-5 w-auto object-contain"
+              />
+            </div>
+          )}
+          Sign In with Google
         </button>
+        {/* <button onClick={handleGoogleLogin} className="md:px-32 px-24 bg-red-500 text-white font-semibold py-2 rounded-md hover:bg-red-600 transition">
+          SIGN IN
+        </button> */}
       </div>
-      <div className="hidden md:flex w-1/2 bg-white justify-center items-center">
+      <div className="relative hidden md:flex w-1/2 bg-white justify-center items-center">
+        <p onClick={() => navigate("/")} className='text-[#5d5d5d] absolute cursor-pointer top-5 right-5 font-semibold underline'>Back to Homepage</p>
         <img className='w-5/6' src="/assets/images/welcome.svg" alt="" />
       </div>
     </div>

@@ -10,3 +10,10 @@ export type IPublicCampusResponse = {
     logo: string;
   };
 }
+
+export type IAllCampusByUserIdResponse = {
+  id: string,
+  name: string,
+  siteName: string,
+  status: string
+}

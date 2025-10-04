@@ -46,6 +46,7 @@ const comparator = (options?: UseReportsOptions) => {
 };
 
 export function useReports(campusId?: string, options?: UseReportsOptions) {
+  const [allReports, setAllReports] = useState<IReport[]>([]);
   const [reports, setReports] = useState<IReport[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -59,6 +60,8 @@ export function useReports(campusId?: string, options?: UseReportsOptions) {
         const data = doc.data() as Omit<IReport, "id">;
         return { id: doc.id, ...data };
       });
+
+      setAllReports(reportData);
 
       // ✅ Filtering
       if (options?.filters?.status?.length) {
@@ -87,5 +90,5 @@ export function useReports(campusId?: string, options?: UseReportsOptions) {
     return () => unsub();
   }, [campusId, options]);
 
-  return { reports, loading };
+  return { allReports, reports, loading };
 }

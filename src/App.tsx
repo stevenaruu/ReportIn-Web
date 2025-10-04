@@ -28,6 +28,7 @@ import { setCampus } from './store/campus/slice';
 import { NetworkContext } from './contexts/network/network-context';
 import CreateAreaPage from './pages/sub/create-area-page/create-area-page';
 import EditAreaPage from './pages/sub/edit-area-page/edit-area-page';
+import RootLogoutPage from './pages/root/logout-page/logout-page';
 
 function App() {
   useServiceWorker({
@@ -88,6 +89,7 @@ function App() {
           <Route path="/features" element={<FeaturePage />} />
           <Route path="/how-it-works" element={<HowItWorkPage />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/logout" element={<RootLogoutPage />} />
 
           <Route element={<RootPrivateLayout />}>
             <Route path="/dashboard" element={<RootDashboardPage />} />

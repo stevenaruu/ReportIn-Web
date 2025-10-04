@@ -13,8 +13,7 @@ import { useNavigate } from "react-router-dom";
 import { selectCampus } from "@/store/campus/selector";
 import EmptyState from "@/components/empty-state/empty-state";
 import { usePrimaryColor } from "@/lib/primary-color";
-
-const ITEMS_PER_PAGE = 10;
+import { ITEMS_PER_PAGE } from "@/lib/item-per-page";
 
 const ComplainantPage = () => {
   const navigate = useNavigate();
@@ -36,7 +35,7 @@ const ComplainantPage = () => {
     filters: { status: statusFilter, areas: areaFilter, categories: categoryFilter }
   }), [sortBy, order, statusFilter, areaFilter, categoryFilter]);
 
-  const { reports, loading } = useReports(campus?.campusId, reportOptions);
+  const { allReports, reports, loading } = useReports(campus?.campusId, reportOptions);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -72,11 +71,19 @@ const ComplainantPage = () => {
     currentPage * ITEMS_PER_PAGE
   );
 
-  console.log("report", reports);
-
   return (
     <SubLayout>
-      {reports.length > 0 &&
+      {loading ? (
+        <div className="flex flex-col">
+          <SearchBar onSearch={handleSearch} placeholder="Search Report..." />
+
+          <div className="flex flex-col gap-4">
+            {Array.from({ length: 5 }).map((_, idx) => (
+              <ReportCard key={`skeleton-${idx}`} isLoading report={{} as IReport} />
+            ))}
+          </div>
+        </div>
+      ) : allReports.length > 0 ? (
         <>
           <SearchBar onSearch={handleSearch} placeholder="Search Report..." />
 
@@ -115,51 +122,55 @@ const ComplainantPage = () => {
           </div>
 
           <div className="flex flex-col gap-4">
-            {loading
-              ? Array.from({ length: ITEMS_PER_PAGE }).map((_, idx) => (
-                <ReportCard key={`skeleton-${idx}`} isLoading report={{} as IReport} />
-              ))
-              : paginatedReports.length > 0
-                ? paginatedReports.map((report) => {
-                  const canEdit = report.complainant?.some(c => c.personId === person?.id);
-                  return (
-                    <ReportCard
-                      key={report.id}
-                      report={report}
-                      privilege={{ view: true, edit: canEdit }}
-                    />
-                  );
-                })
-                : <p className="text-center text-neutral-500">No reports found.</p>}
+            {paginatedReports.length > 0
+              ? paginatedReports.map((report) => {
+                const canEdit = report.complainant?.some(c => c.personId === person?.id);
+                return (
+                  <ReportCard
+                    key={report.id}
+                    report={report}
+                    privilege={{ view: true, edit: canEdit }}
+                  />
+                );
+              })
+              : (
+                <div className="flex justify-center items-center">
+                  <EmptyState className="w-3/6 mt-10" count={reports.length} type="filterReport" />
+                </div>
+              )
+            }
           </div>
 
-          <div className="mt-6 flex flex-col md:flex-row gap-6 md:gap-0 justify-between items-center">
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={setCurrentPage}
-            />
-            <Button
-              style={BACKGROUND_PRIMARY_COLOR(0.7)}
-              className="w-full md:w-1/4"
-              variant="default"
-              onClick={() => navigate("/report")}
-            >
-              Create Report
-            </Button>
-          </div>
+          {reports.length > 0 &&
+            <div className="mt-6 flex flex-col md:flex-row gap-6 md:gap-0 justify-between items-center">
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+              />
+              <Button
+                style={BACKGROUND_PRIMARY_COLOR(0.7)}
+                className="w-full md:w-1/4"
+                variant="default"
+                onClick={() => navigate("/report")}
+              >
+                Create Report
+              </Button>
+            </div>
+          }
         </>
-      }
-      <EmptyState count={reports.length} type="publicReport">
-        <Button
-          style={BACKGROUND_PRIMARY_COLOR(0.7)}
-          className="w-full md:w-1/3"
-          variant="default"
-          onClick={() => navigate("/report")}
-        >
-          Create Report
-        </Button>
-      </EmptyState>
+      ) : (
+        <EmptyState count={allReports.length} type="publicReport">
+          <Button
+            style={BACKGROUND_PRIMARY_COLOR(0.7)}
+            className="w-full md:w-1/3"
+            variant="default"
+            onClick={() => navigate("/report")}
+          >
+            Create Report
+          </Button>
+        </EmptyState>
+      )}
     </SubLayout>
   );
 };
