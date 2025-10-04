@@ -1,7 +1,7 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { useGetAllCampusByUserId } from "@/api/services/campus"
+import { useGetAllCampusByUserId, useDeleteCampus } from "@/api/services/campus"
 import { CampusCard } from "@/components/campus-card/campus-card"
 import EmptyState from "@/components/empty-state/empty-state"
+import { Modal } from "@/components/modal/Modal"
 import { Pagination } from "@/components/pagination/pagination"
 import { SearchBar } from "@/components/search-bar/search-bar"
 import { Button } from "@/components/ui/button"
@@ -9,21 +9,29 @@ import { RootLayout } from "@/layouts/layout"
 import { usePrimaryColor } from "@/lib/primary-color"
 import { selectUser } from "@/store/user/selector"
 import { IAllCampusByUserIdResponse } from "@/types/response/campus"
+import { useQueryClient } from "@tanstack/react-query"
 import { useState } from "react"
 import { useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
 
 const RootDashboardPage = () => {
+  const queryClient = useQueryClient();
+  
   const user = useSelector(selectUser);
   const { BACKGROUND_PRIMARY_COLOR } = usePrimaryColor();
   const navigate = useNavigate();
-
+  
   const { data, isLoading } = useGetAllCampusByUserId(user?.id ?? "");
+  const deleteCampus = useDeleteCampus();
 
+  // modal state
+  const [modalTitle, setModalTitle] = useState("Delete Campus")
+  const [modalMessage, setModalMessage] = useState("Are you sure you want to delete this campus? This action cannot be undone.")
+  const [modalType, setModalType] = useState<"confirmDelete" | "result" | null>(null);
+  
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
-
-  // Normalisasi data biar gak undefined/null
+  const [campusIdToDelete, setCampusIdToDelete] = useState("");  // Normalisasi data biar gak undefined/null
   const campuses: IAllCampusByUserIdResponse[] = data?.data ?? [];
 
   const handleEdit = (campus: IAllCampusByUserIdResponse) => {
@@ -31,9 +39,26 @@ const RootDashboardPage = () => {
     // contoh: navigate(`/campus/${campus.id}/edit`)
   };
 
-  const handleDelete = (campus: IAllCampusByUserIdResponse) => {
-    console.log("Delete clicked:", campus);
-    // contoh: panggil API delete
+  const handleDelete = () => {
+    deleteCampus.mutate(campusIdToDelete, {
+      onSuccess: (res) => {
+        queryClient.invalidateQueries({ queryKey: ["campus"], exact: false });
+
+        setModalTitle("Success");
+        setModalMessage(res.message);
+        setModalType("result");
+      },
+      onError: (err) => {
+        setModalTitle("Error");
+        setModalMessage(err.message);
+        setModalType("result");
+      }
+    });
+  };
+
+  const handleDeleteClick = (campus: IAllCampusByUserIdResponse) => {
+    setCampusIdToDelete(campus.id)
+    setModalType("confirmDelete")
   };
 
   const handleSearch = (value: string) => {
@@ -44,6 +69,18 @@ const RootDashboardPage = () => {
 
   return (
     <RootLayout>
+      <Modal
+        open={modalType !== null}
+        onOpenChange={() => setModalType(null)}
+        title={modalTitle}
+        message={modalMessage}
+        onConfirm={modalType === "confirmDelete" ? handleDelete : undefined}
+        confirmText={modalType === "confirmDelete" ? "Delete" : "OK"}
+        onCancel={modalType === "confirmDelete" ? () => setModalType(null) : undefined}
+        cancelText="Cancel"
+        loading={deleteCampus.isLoading}
+      />
+
       <div className="mt-6">
         <SearchBar onSearch={handleSearch} placeholder="Search Campus..." />
 
@@ -69,7 +106,7 @@ const RootDashboardPage = () => {
                 campus={campus}
                 privilege={{ edit: true, delete: true }}
                 onEdit={handleEdit}
-                onDelete={handleDelete}
+                onDelete={handleDeleteClick}
               />
             ))}
           </div>

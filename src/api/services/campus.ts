@@ -3,7 +3,7 @@ import { ApiCampus } from "@/constant/ApiCampus";
 import { ISubdomainRequest } from "@/types/request/campus";
 import { IResponse } from "@/types/response";
 import { IAllCampusByUserIdResponse, IPublicCampusResponse } from "@/types/response/campus";
-import { useQuery, UseQueryOptions } from "@tanstack/react-query";
+import { useMutation, useQuery, UseQueryOptions } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 
 export const useGetCampusBySubDomain = (
@@ -59,4 +59,13 @@ export const useGetAllCampusByUserId = (
     refetchOnWindowFocus: false,
     ...options,
   });
+};
+
+export const useDeleteCampus = () => {
+  return useMutation<IResponse, Error, string>(
+    async (id) => {
+      const response = await apiClient.delete<IResponse>(ApiCampus.deleteCampus(id));
+      return response.data;
+    }
+  );
 };

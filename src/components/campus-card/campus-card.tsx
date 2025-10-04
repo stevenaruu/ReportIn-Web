@@ -24,7 +24,7 @@ interface CampusCardProps {
 export const CampusCard = ({
   campus,
   isLoading = false,
-  privilege = { view: true, edit: true, delete: true },
+  privilege = { view: false, edit: false, delete: false },
   onView,
   onEdit,
   onDelete,

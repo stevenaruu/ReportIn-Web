@@ -1,7 +1,8 @@
 export type IGetAreaRequest = {
   campusId: string;
-  page: number;
-  search: string;
+  page?: number;
+  search?: string;
+  all?: boolean;
 }
 
 export type IAreaRequest = {

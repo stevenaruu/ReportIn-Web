@@ -30,6 +30,36 @@ export const useGetAreaQuery = (params?: IGetAreaRequest) => {
   });
 };
 
+export const useGetAllAreaQuery = (campusId: string) => {
+  return useQuery<IResponse<IGetAreaResponse[]>, Error>({
+    queryKey: ["area", "all", campusId],
+    queryFn: async () => {
+      try {
+        const response = await apiClient.get<IResponse<IGetAreaResponse[]>>(
+          ApiArea.getArea, { 
+            params: { 
+              campusId,
+              all: true 
+            } 
+          }
+        );
+
+        return response.data;
+      } catch (err) {
+        if (err instanceof AxiosError) {
+          throw new Error(err.response?.data?.message || "Error fetching areas");
+        }
+        throw new Error("Unexpected error occurred");
+      }
+    },
+    staleTime: 1000 * 60 * 5, // 5 menit
+    retry: 3,
+    refetchOnWindowFocus: false,
+    refetchOnMount: "always",
+    enabled: !!campusId, // hanya jalankan query jika campusId ada
+  });
+};
+
 export const useCreateArea = () => {
   return useMutation<IResponse, Error, IAreaRequest>(
     async (data) => {

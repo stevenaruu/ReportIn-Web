@@ -14,14 +14,14 @@ type Player = {
 }
 
 const players: Player[] = [
-  // { id: 1, name: "Alya Nur Hasannah", points: 4500 },
-  // { id: 2, name: "Zain Fatin Mardhiyyah", points: 4500 },
-  // { id: 3, name: "Julia Metta Viriyani", points: 4400 },
-  // { id: 4, name: "Vira Ananda Sucipta", points: 4400 },
-  // { id: 5, name: "Chelsea", points: 4400 },
-  // { id: 6, name: "Justin Nathaniel Tanujaya", points: 4400 },
-  // { id: 7, name: "Vinana Paramita Kwan", points: 4300 },
-  // { id: 8, name: "Muhammad Dani Fadhlurrahman", points: 4300 },
+  { id: 1, name: "Alya Nur Hasannah", points: 4500 },
+  { id: 2, name: "Zain Fatin Mardhiyyah", points: 4500 },
+  { id: 3, name: "Julia Metta Viriyani", points: 4400 },
+  { id: 4, name: "Vira Ananda Sucipta", points: 4400 },
+  { id: 5, name: "Chelsea", points: 4400 },
+  { id: 6, name: "Justin Nathaniel Tanujaya", points: 4400 },
+  { id: 7, name: "Vinana Paramita Kwan", points: 4300 },
+  { id: 8, name: "Muhammad Dani Fadhlurrahman", points: 4300 },
 ]
 
 const LeaderboardPage = () => {
