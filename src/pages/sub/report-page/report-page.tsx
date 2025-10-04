@@ -167,7 +167,7 @@ const ReportPage = () => {
           <CardContent className="p-4 text-[#5d5d5d] flex flex-col gap-2">
             <div className='flex flex-col sm:flex-row gap-4 items-start'>
               {/* Preview Box */}
-              <div className="w-full sm:w-[120px] h-[120px] bg-neutral-50 flex items-center justify-center text-sm text-gray-400 border rounded-md overflow-hidden relative">
+              <div className="w-full sm:w-[120px] aspect-square bg-neutral-50 flex items-center justify-center text-sm text-gray-400 border rounded-md overflow-hidden relative">
                 {file ? (
                   <img
                     src={URL.createObjectURL(file)}
