@@ -1,6 +1,6 @@
 import apiClient from "@/config/api-client";
 import { ApiCampus } from "@/constant/ApiCampus";
-import { ISubdomainRequest } from "@/types/request/campus";
+import { ICampusByUserIdRequest, ISubdomainRequest } from "@/types/request/campus";
 import { IResponse } from "@/types/response";
 import { IAllCampusByUserIdResponse, IPublicCampusResponse } from "@/types/response/campus";
 import { useMutation, useQuery, UseQueryOptions } from "@tanstack/react-query";
@@ -35,15 +35,16 @@ export const useGetCampusBySubDomain = (
 };
 
 export const useGetAllCampusByUserId = (
-  userId: string,
+  params: ICampusByUserIdRequest,
   options?: UseQueryOptions<IResponse<IAllCampusByUserIdResponse[]>, Error>
 ) => {
   return useQuery<IResponse<IAllCampusByUserIdResponse[]>, Error>({
-    queryKey: ["campus", userId],
+    queryKey: ["campus", params],
     queryFn: async () => {
       try {
-        const response = await apiClient.post<IResponse<IAllCampusByUserIdResponse[]>>(
-          ApiCampus.getAllCampusByUserId(userId)
+        const response = await apiClient.get<IResponse<IAllCampusByUserIdResponse[]>>(
+          ApiCampus.getAllCampusByUserId(params.userId),
+          { params: { page: params.page, search: params.search } }
         );
         return response.data;
       } catch (err) {
@@ -53,10 +54,11 @@ export const useGetAllCampusByUserId = (
         throw new Error("Unexpected error occurred");
       }
     },
-    enabled: options?.enabled ?? true,
+    enabled: options?.enabled ?? !!params.userId,
     staleTime: 1000 * 60 * 5,
     retry: 3,
     refetchOnWindowFocus: false,
+    refetchOnMount: "always",
     ...options,
   });
 };

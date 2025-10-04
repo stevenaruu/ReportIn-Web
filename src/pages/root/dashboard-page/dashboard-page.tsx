@@ -16,22 +16,29 @@ import { useNavigate } from "react-router-dom"
 
 const RootDashboardPage = () => {
   const queryClient = useQueryClient();
-  
+
   const user = useSelector(selectUser);
   const { BACKGROUND_PRIMARY_COLOR } = usePrimaryColor();
   const navigate = useNavigate();
-  
-  const { data, isLoading } = useGetAllCampusByUserId(user?.id ?? "");
+
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+
+  const { data, isLoading } = useGetAllCampusByUserId({
+    userId: user?.id ?? '',
+    page,
+    search,
+  });
   const deleteCampus = useDeleteCampus();
 
   // modal state
   const [modalTitle, setModalTitle] = useState("Delete Campus")
   const [modalMessage, setModalMessage] = useState("Are you sure you want to delete this campus? This action cannot be undone.")
   const [modalType, setModalType] = useState<"confirmDelete" | "result" | null>(null);
-  
-  const [search, setSearch] = useState("");
-  const [page, setPage] = useState(1);
-  const [campusIdToDelete, setCampusIdToDelete] = useState("");  // Normalisasi data biar gak undefined/null
+
+  const [campusIdToDelete, setCampusIdToDelete] = useState("");
+
+  // Normalisasi data biar gak undefined/null
   const campuses: IAllCampusByUserIdResponse[] = data?.data ?? [];
 
   const handleEdit = (campus: IAllCampusByUserIdResponse) => {
@@ -62,7 +69,6 @@ const RootDashboardPage = () => {
   };
 
   const handleSearch = (value: string) => {
-    console.log("search", search);
     setSearch(value);
     setPage(1);
   }
@@ -87,7 +93,7 @@ const RootDashboardPage = () => {
         {/* Loading state */}
         {isLoading && (
           <div className="flex flex-col gap-4">
-            {[...Array(4)].map((_, i) => (
+            {[...Array(5)].map((_, i) => (
               <CampusCard
                 key={i}
                 isLoading
@@ -112,22 +118,26 @@ const RootDashboardPage = () => {
           </div>
         )}
 
-        <div className="mt-6 flex flex-col md:flex-row gap-6 md:gap-0 justify-between items-center">
-          <Pagination
-            currentPage={page}
-            totalPages={1}
-            onPageChange={setPage}
-          />
+        {data?.meta && (
+          <div className="mt-6 flex flex-col md:flex-row gap-6 md:gap-0 justify-between items-center">
+            <Pagination
+              currentPage={page}
+              totalPages={data.meta.totalPages}
+              onPageChange={setPage}
+            />
 
-          <Button
-            style={BACKGROUND_PRIMARY_COLOR(1)}
-            className="w-full md:w-1/4"
-            variant="default"
-            onClick={() => navigate("/browse-area/create")}
-          >
-            Create Campus
-          </Button>
-        </div>
+            {campuses.length > 0 &&
+              <Button
+                style={BACKGROUND_PRIMARY_COLOR(1)}
+                className="w-full md:w-1/4"
+                variant="default"
+                onClick={() => navigate("/campus")}
+              >
+                Create Campus
+              </Button>
+            }
+          </div>
+        )}
 
         {/* Empty state */}
         {!isLoading && (

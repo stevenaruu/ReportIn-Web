@@ -4,4 +4,6 @@ export type ISubdomainRequest = {
 
 export type ICampusByUserIdRequest = {
   userId: string,
+  page?: number;
+  search?: string;
 }

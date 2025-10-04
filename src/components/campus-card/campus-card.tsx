@@ -53,7 +53,7 @@ export const CampusCard = ({
   return (
     <Card className="text-[#5d5d5d] relative flex flex-col md:flex-row items-center p-4 shadow-sm rounded-md bg-neutral-50">
       {/* Campus logo */}
-      <div className="w-14 h-14 flex-shrink-0 rounded-full bg-neutral-300" />
+      <img className="w-14 h-14 flex-shrink-0 rounded-full bg-neutral-300" src={campus.customization.logo} alt="" />
 
       {/* Details */}
       <CardContent className="flex-1 flex flex-col gap-1 md:ml-4 mt-3 md:mt-0 p-0 text-center md:text-left">
