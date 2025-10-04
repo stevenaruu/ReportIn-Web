@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import Unauthenticated from "./unauthenticated";
 import Authenticated from "./authenticated";
 import { selectPerson } from "@/store/person/selector";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import { Menu } from "lucide-react";
 import { usePrimaryColor } from "@/lib/primary-color";
@@ -14,6 +14,7 @@ const RootNavbar = () => {
 };
 
 export default function SubNavbar({ onToggleSidebar }: { onToggleSidebar: () => void }) {
+  const navigate = useNavigate();
   const person = useSelector(selectPerson);
   const { BACKGROUND_PRIMARY_COLOR } = usePrimaryColor();
 
@@ -21,7 +22,7 @@ export default function SubNavbar({ onToggleSidebar }: { onToggleSidebar: () => 
   const popoverRef = useRef<HTMLDivElement | null>(null);
 
   const handleLogout = () => {
-    window.location.href = '/logout';
+    navigate('/logout');
   }
 
   useEffect(() => {
