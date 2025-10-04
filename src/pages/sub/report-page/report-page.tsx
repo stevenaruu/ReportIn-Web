@@ -118,10 +118,9 @@ const ReportPage = () => {
         {/* Upload & Camera */}
         <Card>
           <CardContent className="p-4 text-[#5d5d5d] flex flex-col gap-2">
-            <h2 className="font-semibold mb-3">Upload File</h2>
-            <div className='flex flex-col sm:flex-row gap-4 items-start'>
+            <div className='flex flex-row gap-4 items-start'>
               {/* Preview Box */}
-              <div className="w-full sm:w-[120px] h-[120px] bg-neutral-50 flex items-center justify-center text-sm text-gray-400 border rounded-md overflow-hidden relative">
+              <div className="w-[120px] h-[120px] bg-neutral-50 flex items-center justify-center text-sm text-gray-400 border rounded-md overflow-hidden relative">
                 {file ? (
                   <img
                     src={URL.createObjectURL(file)}
@@ -134,10 +133,11 @@ const ReportPage = () => {
               </div>
 
               {/* Upload Field */}
-              <div className="flex-1 w-full">
-                <div className="flex flex-col sm:flex-row gap-2">
+              <div className="flex-1">
+                <h2 className="font-semibold mb-3">Upload File</h2>
+                <div className="flex gap-2">
                   <Button 
-                    className='bg-neutral-50 w-full sm:w-auto' 
+                    className='bg-neutral-50' 
                     type="button" 
                     variant="outline" 
                     onClick={openCameraApp}
@@ -153,7 +153,7 @@ const ReportPage = () => {
                   />
 
                   {file && (
-                    <Button className='bg-neutral-50 w-full sm:w-auto' type="button" variant="outline" onClick={() => setFile(null)}>
+                    <Button className='bg-neutral-50' type="button" variant="outline" onClick={() => setFile(null)}>
                       Remove
                     </Button>
                   )}
@@ -169,7 +169,7 @@ const ReportPage = () => {
                   style={{ display: 'none' }}
                 />
                 
-                <p className='mt-3 text-xs text-gray-500'>
+                <p className='mt-3 text-xs'>
                   File must be an image (.jpg / .png) or use camera to take photo
                 </p>
               </div>
