@@ -53,7 +53,11 @@ export function useReports(campusId?: string, options?: UseReportsOptions) {
   useEffect(() => {
     if (!campusId) return;
 
-    const q = query(collection(db, "Report"), where("campusId", "==", campusId));
+    const q = query(
+      collection(db, "Report"), 
+      where("campusId", "==", campusId),
+      where("isDeleted", "==", false)
+    );
 
     const unsub = onSnapshot(q, (snapshot) => {
       let reportData: IReport[] = snapshot.docs.map((doc) => {

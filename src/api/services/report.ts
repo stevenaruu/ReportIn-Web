@@ -24,3 +24,12 @@ export const useCreateReportMutation = () => {
     return response.data;
   });
 };
+
+export const useDeleteReport = () => {
+  return useMutation<IResponse, Error, string>(
+    async (id) => {
+      const response = await apiClient.delete<IResponse>(ApiReport.deleteReport(id));
+      return response.data;
+    }
+  );
+};

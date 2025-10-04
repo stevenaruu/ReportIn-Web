@@ -1,6 +1,7 @@
 import { useCreateReportMutation } from '@/api/services/report'
 import { useGetAllAreaQuery } from '@/api/services/area'
 import Header from '@/components/header/header'
+import { Modal } from '@/components/modal/Modal'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -11,15 +12,23 @@ import { selectCampus } from '@/store/campus/selector'
 import { selectPerson } from '@/store/person/selector'
 import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import { useGetAllCategoryQuery } from '@/api/services/category'
 import CameraModal from '@/components/camera/camera-modal'
 
 const ReportPage = () => {
   const report = useCreateReportMutation();
+  const navigate = useNavigate();
 
   const person = useSelector(selectPerson);
   const campus = useSelector(selectCampus);
   const { BACKGROUND_PRIMARY_COLOR } = usePrimaryColor();
+
+  // modal state
+  const [open, setOpen] = useState(false)
+  const [modalTitle, setModalTitle] = useState("")
+  const [modalMessage, setModalMessage] = useState("")
+  const [isSuccessModal, setIsSuccessModal] = useState(false)
 
   const [description, setDescription] = useState('')
   const [file, setFile] = useState<File | null>(null)
@@ -54,18 +63,27 @@ const ReportPage = () => {
 
   const handleSubmit = () => {
     if (!file) {
-      alert('Please upload a file')
-      return
+      setModalTitle("Error");
+      setModalMessage("Please upload a file");
+      setIsSuccessModal(false);
+      setOpen(true);
+      return;
     }
 
     if (!selectedAreaId) {
-      alert('Please select an area')
-      return
+      setModalTitle("Error");
+      setModalMessage("Please select an area");
+      setIsSuccessModal(false);
+      setOpen(true);
+      return;
     }
 
     if (!selectedCategoryId) {
-      alert('Please select a category')
-      return
+      setModalTitle("Error");
+      setModalMessage("Please select a category");
+      setIsSuccessModal(false);
+      setOpen(true);
+      return;
     }
 
     report.mutate({
@@ -79,6 +97,19 @@ const ReportPage = () => {
       categoryName: selectedCategoryName,
       description,
       image: file,
+    }, {
+      onSuccess: (res) => {
+        setModalTitle("Success");
+        setModalMessage(res.message || "Report created successfully");
+        setIsSuccessModal(true);
+        setOpen(true);
+      },
+      onError: (err) => {
+        setModalTitle("Error");
+        setModalMessage(err.message || "Failed to create report");
+        setIsSuccessModal(false);
+        setOpen(true);
+      }
     })
   }
 
@@ -101,6 +132,14 @@ const ReportPage = () => {
   return (
     <SubLayout>
       <Header title="Create Report" />
+
+      <Modal
+        open={open}
+        onOpenChange={setOpen}
+        title={modalTitle}
+        message={modalMessage}
+        onConfirm={isSuccessModal ? () => navigate("/dashboard") : undefined}
+      />
 
       <div className="space-y-4 px-4 sm:px-0">
         {/* Description */}

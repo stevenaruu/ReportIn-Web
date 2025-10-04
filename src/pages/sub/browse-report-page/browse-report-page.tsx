@@ -5,6 +5,7 @@ import { ReportCard } from "@/components/report-card/report-card";
 import { Pagination } from "@/components/pagination/pagination";
 import { Button } from "@/components/ui/button";
 import { useReports } from "@/hooks/use-report";
+import { useDeleteReport } from "@/api/services/report";
 import { IReport } from "@/types/model/report";
 import FilterSort from "@/components/filter-sort/filter-sort";
 import { useSelector } from "react-redux";
@@ -12,10 +13,20 @@ import { selectCampus } from "@/store/campus/selector";
 import EmptyState from "@/components/empty-state/empty-state";
 import { usePrimaryColor } from "@/lib/primary-color";
 import { ITEMS_PER_PAGE } from "@/lib/item-per-page";
+import { Modal } from "@/components/modal/Modal";
+import { useQueryClient } from "@tanstack/react-query";
 
 const BrowseReportPage = () => {
+  const queryClient = useQueryClient();
   const campus = useSelector(selectCampus);
   const { BACKGROUND_PRIMARY_COLOR } = usePrimaryColor();
+
+  // modal state
+  const [modalTitle, setModalTitle] = useState("Delete Report")
+  const [modalMessage, setModalMessage] = useState("Are you sure you want to delete this report? This action cannot be undone.")
+  const [modalType, setModalType] = useState<"confirmDelete" | "result" | null>(null);
+  const [reportIdToDelete, setReportIdToDelete] = useState("");
+  const deleteReport = useDeleteReport();
 
   // filter & sort state
   const [sortBy, setSortBy] = useState<"status" | "area" | "category" | "count">("count");
@@ -41,6 +52,28 @@ const BrowseReportPage = () => {
     setCurrentPage(1);
   };
 
+  const handleDelete = () => {
+    deleteReport.mutate(reportIdToDelete, {
+      onSuccess: (res) => {
+        queryClient.invalidateQueries({ queryKey: ["reports"], exact: false });
+
+        setModalTitle("Success");
+        setModalMessage(res.message);
+        setModalType("result");
+      },
+      onError: (err) => {
+        setModalTitle("Error");
+        setModalMessage(err.message);
+        setModalType("result");
+      }
+    });
+  };
+
+  const handleDeleteClick = (report: IReport) => {
+    setReportIdToDelete(report.id)
+    setModalType("confirmDelete")
+  };
+
   const filteredReports = reports.filter(
     (r) =>
       r.area?.name?.toLowerCase().includes(searchTerm) ||
@@ -64,6 +97,18 @@ const BrowseReportPage = () => {
 
   return (
     <SubLayout>
+      <Modal
+        open={modalType !== null}
+        onOpenChange={() => setModalType(null)}
+        title={modalTitle}
+        message={modalMessage}
+        onConfirm={modalType === "confirmDelete" ? handleDelete : undefined}
+        confirmText={modalType === "confirmDelete" ? "Delete" : "OK"}
+        onCancel={modalType === "confirmDelete" ? () => setModalType(null) : undefined}
+        cancelText="Cancel"
+        loading={deleteReport.isLoading}
+      />
+
       {loading ? (
         <div className="flex flex-col">
           <SearchBar onSearch={handleSearch} placeholder="Search Report..." />
@@ -110,6 +155,7 @@ const BrowseReportPage = () => {
                   key={report.id}
                   report={report}
                   privilege={{ view: true, delete: true }}
+                  onDelete={handleDeleteClick}
                 />
               ))
               : (
