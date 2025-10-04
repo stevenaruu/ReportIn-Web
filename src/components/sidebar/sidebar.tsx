@@ -59,9 +59,22 @@ export default function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose:
         `}
         style={BACKGROUND_PRIMARY_COLOR(0.5)}
       >
+        {/* Campus Logo */}
+        {campus?.customization?.logo && (
+          <div
+            style={BACKGROUND_PRIMARY_COLOR(0.7)}
+            className="flex rounded-md justify-center mx-4 mt-4">
+            <img
+              src={campus.customization.logo}
+              alt={`${campus.name} Logo`}
+              className="w-6/12 object-contain"
+            />
+          </div>
+        )}
+
         <div
           style={BACKGROUND_PRIMARY_COLOR(0.7)}
-          className="rounded-md p-4 mx-4 mt-4"
+          className="rounded-md p-4 mt-4 mx-4"
         >
           <div className="flex justify-between items-center">
             <span className="text-sm">Role</span>
@@ -116,6 +129,7 @@ export default function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose:
             </Dialog>
           </div>
           <p className="text-lg font-semibold mt-4">{activeRole?.roleName}</p>
+          <p className="text-sm mt-1">{campus?.name}</p>
         </div>
 
         {/* === NAV MENU === */}
@@ -148,7 +162,7 @@ export default function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose:
             ))}
           </ul>
         </nav>
-      </aside>
+      </aside >
     </>
   );
 }
