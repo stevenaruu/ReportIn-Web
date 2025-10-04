@@ -28,6 +28,8 @@ import { setCampus } from './store/campus/slice';
 import { NetworkContext } from './contexts/network/network-context';
 import CreateAreaPage from './pages/sub/create-area-page/create-area-page';
 import EditAreaPage from './pages/sub/edit-area-page/edit-area-page';
+import CreateCategoryPage from './pages/sub/create-category-page/create-category-page';
+import EditCategoryPage from './pages/sub/edit-category-page/edit-category-page';
 import RootLogoutPage from './pages/root/logout-page/logout-page';
 
 function App() {
@@ -72,6 +74,8 @@ function App() {
             <Route path="/leaderboard" element={<LeaderboardPage />} />
             <Route path="/browse-report" element={<BrowseReportPage />} />
             <Route path="/browse-category" element={<BrowseCategoryPage />} />
+            <Route path="/browse-category/create" element={<CreateCategoryPage />} />
+            <Route path="/browse-category/edit/:categoryId" element={<EditCategoryPage />} />
             <Route path="/browse-area" element={<BrowseAreaPage />} />
             <Route path="/browse-area/create" element={<CreateAreaPage />} />
             <Route path="/browse-area/edit/:areaId" element={<EditAreaPage />} />
