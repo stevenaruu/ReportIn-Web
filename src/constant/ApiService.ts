@@ -9,5 +9,6 @@ export const ApiService: IApi = {
   person: `${BASE_URL}/person`,
   area: `${BASE_URL}/area`,
   campus: `${BASE_URL}/campus`,
-  leaderboard: `${BASE_URL}/leaderboard`
+  leaderboard: `${BASE_URL}/leaderboard`,
+  category: `${BASE_URL}/category`,
 }

@@ -1,8 +1,7 @@
 import { IAccess } from "../model/access";
 
-export type IGetAreaResponse = {
+export type IGetCategoryResponse = {
   id: string,
   name: string,
-  beaconId: string,
   campusId: string,
 } & IAccess;

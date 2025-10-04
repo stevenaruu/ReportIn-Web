@@ -11,6 +11,8 @@ import { selectCampus } from '@/store/campus/selector'
 import { selectPerson } from '@/store/person/selector'
 import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
+import { useGetAllCategoryQuery } from '@/api/services/category'
+import CameraModal from '@/components/camera/camera-modal'
 
 const ReportPage = () => {
   const report = useCreateReportMutation();
@@ -23,10 +25,12 @@ const ReportPage = () => {
   const [file, setFile] = useState<File | null>(null)
   const [selectedAreaId, setSelectedAreaId] = useState('')
   const [selectedAreaName, setSelectedAreaName] = useState('')
-  const cameraInputRef = React.useRef<HTMLInputElement>(null)
+  const [selectedCategoryId, setSelectedCategoryId] = useState('')
+  const [selectedCategoryName, setSelectedCategoryName] = useState('')
+  const [isCameraModalOpen, setIsCameraModalOpen] = useState(false)
 
-  // Query untuk mendapatkan semua area berdasarkan campusId
   const { data: areasData, isLoading: isLoadingAreas } = useGetAllAreaQuery(campus?.campusId || '')
+  const { data: categoriesData, isLoading: isLoadingCategories } = useGetAllCategoryQuery(campus?.campusId || '')
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0]
@@ -36,9 +40,16 @@ const ReportPage = () => {
   }
 
   const openCameraApp = () => {
-    if (cameraInputRef.current) {
-      cameraInputRef.current.click()
-    }
+    setIsCameraModalOpen(true)
+  }
+
+  const handleCameraCapture = (capturedFile: File) => {
+    setFile(capturedFile)
+    setIsCameraModalOpen(false)
+  }
+
+  const handleCameraClose = () => {
+    setIsCameraModalOpen(false)
   }
 
   const handleSubmit = () => {
@@ -52,6 +63,11 @@ const ReportPage = () => {
       return
     }
 
+    if (!selectedCategoryId) {
+      alert('Please select a category')
+      return
+    }
+
     report.mutate({
       campusId: campus?.campusId || '',
       complainantId: person?.id || '',
@@ -59,8 +75,8 @@ const ReportPage = () => {
       complainantEmail: person?.email || '',
       areaId: selectedAreaId,
       areaName: selectedAreaName,
-      categoryId: 'category-123-123-123',
-      categoryName: 'KEBERSIHAN',
+      categoryId: selectedCategoryId,
+      categoryName: selectedCategoryName,
       description,
       image: file,
     })
@@ -71,6 +87,14 @@ const ReportPage = () => {
     if (selectedArea) {
       setSelectedAreaId(areaId)
       setSelectedAreaName(selectedArea.name)
+    }
+  }
+
+  const handleCategorySelect = (categoryId: string) => {
+    const selectedCategory = categoriesData?.data?.find(category => category.id === categoryId)
+    if (selectedCategory) {
+      setSelectedCategoryId(categoryId)
+      setSelectedCategoryName(selectedCategory.name)
     }
   }
 
@@ -108,6 +132,29 @@ const ReportPage = () => {
                     className="hover:bg-gray-50 cursor-pointer"
                   >
                     {area.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </CardContent>
+        </Card>
+
+        {/* Category Select */}
+        <Card>
+          <CardContent className="p-4 text-[#5d5d5d]">
+            <h2 className="font-semibold mb-3">Category</h2>
+            <Select onValueChange={handleCategorySelect} disabled={isLoadingCategories}>
+              <SelectTrigger className="bg-white focus:ring-0 focus:ring-offset-0 border border-gray-200 w-full">
+                <SelectValue placeholder={isLoadingCategories ? "Loading categories..." : "Select a category"} />
+              </SelectTrigger>
+              <SelectContent className="bg-white border border-gray-200 shadow-lg w-full">
+                {categoriesData?.data?.map((category) => (
+                  <SelectItem
+                    key={category.id}
+                    value={category.id}
+                    className="hover:bg-gray-50 cursor-pointer"
+                  >
+                    {category.name}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -159,16 +206,6 @@ const ReportPage = () => {
                   )}
                 </div>
                 
-                {/* Hidden camera input */}
-                <input
-                  ref={cameraInputRef}
-                  type="file"
-                  accept="image/*"
-                  capture="environment" // Gunakan back camera di mobile
-                  onChange={handleFileChange}
-                  style={{ display: 'none' }}
-                />
-                
                 <p className='mt-3 text-xs'>
                   File must be an image (.jpg / .png) or use camera to take photo
                 </p>
@@ -190,6 +227,13 @@ const ReportPage = () => {
           </Button>
         </div>
       </div>
+
+      {/* Camera Modal */}
+      <CameraModal
+        isOpen={isCameraModalOpen}
+        onClose={handleCameraClose}
+        onCapture={handleCameraCapture}
+      />
     </SubLayout>
   )
 }
