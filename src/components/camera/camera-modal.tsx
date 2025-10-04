@@ -38,10 +38,10 @@ const CameraModal: React.FC<CameraModalProps> = ({ isOpen, onClose, onCapture })
     }
   }, [isOpen])
 
-  // Start camera when modal opens or facing mode changes
+  // Start camera when modal opens, facing mode changes, or when retaking photo
   useEffect(() => {
     const startCamera = async () => {
-      if (!isOpen) return
+      if (!isOpen || capturedImage) return
 
       setIsLoading(true)
       setError(null)
@@ -77,7 +77,7 @@ const CameraModal: React.FC<CameraModalProps> = ({ isOpen, onClose, onCapture })
     }
 
     startCamera()
-  }, [isOpen, facingMode])
+  }, [isOpen, facingMode, capturedImage])
 
   // Cleanup stream when component unmounts
   useEffect(() => {
@@ -111,6 +111,12 @@ const CameraModal: React.FC<CameraModalProps> = ({ isOpen, onClose, onCapture })
 
     const imageDataUrl = canvas.toDataURL('image/jpeg', 0.8)
     setCapturedImage(imageDataUrl)
+
+    // Stop camera stream after capturing to save resources
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((track: MediaStreamTrack) => track.stop())
+      streamRef.current = null
+    }
   }
 
   const confirmCapture = () => {
@@ -133,7 +139,13 @@ const CameraModal: React.FC<CameraModalProps> = ({ isOpen, onClose, onCapture })
   }
 
   const retakePhoto = () => {
+    // Stop current stream when retaking
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((track: MediaStreamTrack) => track.stop())
+      streamRef.current = null
+    }
     setCapturedImage(null)
+    setError(null)
   }
 
   const switchCamera = () => {
