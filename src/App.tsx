@@ -32,6 +32,8 @@ import CreateCategoryPage from './pages/sub/create-category-page/create-category
 import EditCategoryPage from './pages/sub/edit-category-page/edit-category-page';
 import RootLogoutPage from './pages/root/logout-page/logout-page';
 import ReportDetailPage from './pages/sub/report-detail-page/report-detail-page';
+import CreateCampusPage from './pages/sub/create-campus-page/create-campus-page';
+import EditCampusPage from './pages/sub/edit-campus-page/edit-campus-page';
 
 function App() {
   useServiceWorker({
@@ -98,6 +100,8 @@ function App() {
 
           <Route element={<RootPrivateLayout />}>
             <Route path="/dashboard" element={<RootDashboardPage />} />
+            <Route path="/campus" element={<CreateCampusPage />} />
+            <Route path="/campus/edit/:campusId" element={<EditCampusPage />} />
           </Route>
         </Routes>
       )}

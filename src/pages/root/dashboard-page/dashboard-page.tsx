@@ -42,8 +42,7 @@ const RootDashboardPage = () => {
   const campuses: IAllCampusByUserIdResponse[] = data?.data ?? [];
 
   const handleEdit = (campus: IAllCampusByUserIdResponse) => {
-    console.log("Edit clicked:", campus);
-    // contoh: navigate(`/campus/${campus.id}/edit`)
+    navigate(`/campus/edit/${campus.id}`, { state: { campus } })
   };
 
   const handleDelete = () => {

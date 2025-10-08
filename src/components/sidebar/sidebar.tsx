@@ -63,11 +63,12 @@ export default function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose:
         {campus?.customization?.logo && (
           <div
             style={BACKGROUND_PRIMARY_COLOR(0.7)}
-            className="flex rounded-md justify-center mx-4 mt-4">
+            className="flex rounded-md justify-center mx-4 mt-4 py-2 overflow-hidden"
+          >
             <img
               src={campus.customization.logo}
               alt={`${campus.name} Logo`}
-              className="w-6/12 object-contain"
+              className="w-full h-[100px] object-contain"
             />
           </div>
         )}

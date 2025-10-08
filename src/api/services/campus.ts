@@ -1,6 +1,6 @@
 import apiClient from "@/config/api-client";
 import { ApiCampus } from "@/constant/ApiCampus";
-import { ICampusByUserIdRequest, ISubdomainRequest } from "@/types/request/campus";
+import { ICampusByUserIdRequest, ICreateCampusRequest, ISubdomainRequest, IUpdateCampusRequest } from "@/types/request/campus";
 import { IResponse } from "@/types/response";
 import { IAllCampusByUserIdResponse, IPublicCampusResponse } from "@/types/response/campus";
 import { useMutation, useQuery, UseQueryOptions } from "@tanstack/react-query";
@@ -70,4 +70,44 @@ export const useDeleteCampus = () => {
       return response.data;
     }
   );
+};
+
+export const useCreateCampusMutation = () => {
+  return useMutation<IResponse, Error, ICreateCampusRequest>(async (data) => {
+    const formData = new FormData();
+    formData.append("userId", data.userId);
+    formData.append("name", data.name);
+    formData.append("mandatoryEmail", JSON.stringify(data.mandatoryEmail));
+    formData.append("siteName", data.siteName);
+    formData.append("provider", data.provider);
+    formData.append("customization", JSON.stringify(data.customization));
+    formData.append("logo", data.logo);
+    data.document.filter(Boolean).forEach((doc) => {
+      formData.append("document", doc!);
+    });
+    const response = await apiClient.post<IResponse>(ApiCampus.createCampus(), formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    return response.data;
+  });
+};
+
+export const useUpdateCampusMutation = () => {
+  return useMutation<IResponse, Error, { id: string; data: IUpdateCampusRequest }>(async ({ id, data }) => {
+    const formData = new FormData();
+    formData.append("userId", data.userId);
+    formData.append("name", data.name);
+    formData.append("mandatoryEmail", JSON.stringify(data.mandatoryEmail));
+    formData.append("siteName", data.siteName);
+    formData.append("provider", data.provider);
+    formData.append("customization", JSON.stringify(data.customization));
+    formData.append("logo", data.logo);
+    data.document.filter(Boolean).forEach((doc) => {
+      formData.append("document", doc!);
+    });
+    const response = await apiClient.post<IResponse>(ApiCampus.updateCampus(id), formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    return response.data;
+  });
 };
