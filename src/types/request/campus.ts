@@ -2,10 +2,22 @@ export type ISubdomainRequest = {
   subdomain: string,
 }
 
+export type ICampusRequest = {
+  page?: number;
+  search?: string;
+}
+
 export type ICampusByUserIdRequest = {
   userId: string,
   page?: number;
   search?: string;
+}
+
+export type IVerifyCampusRequest = {
+  userId: string,
+  campusId: string;
+  status: string;
+  comment: string;
 }
 
 export interface ICreateCampusRequest {

@@ -1,6 +1,6 @@
 import apiClient from "@/config/api-client";
 import { ApiCampus } from "@/constant/ApiCampus";
-import { ICampusByUserIdRequest, ICreateCampusRequest, ISubdomainRequest, IUpdateCampusRequest } from "@/types/request/campus";
+import { ICampusByUserIdRequest, ICampusRequest, ICreateCampusRequest, ISubdomainRequest, IUpdateCampusRequest, IVerifyCampusRequest } from "@/types/request/campus";
 import { IResponse } from "@/types/response";
 import { IAllCampusByUserIdResponse, IPublicCampusResponse } from "@/types/response/campus";
 import { useMutation, useQuery, UseQueryOptions } from "@tanstack/react-query";
@@ -63,6 +63,34 @@ export const useGetAllCampusByUserId = (
   });
 };
 
+export const useGetAllCampus = (
+  params: ICampusRequest,
+  options?: UseQueryOptions<IResponse<IAllCampusByUserIdResponse[]>, Error>
+) => {
+  return useQuery<IResponse<IAllCampusByUserIdResponse[]>, Error>({
+    queryKey: ["campus", params],
+    queryFn: async () => {
+      try {
+        const response = await apiClient.get<IResponse<IAllCampusByUserIdResponse[]>>(
+          ApiCampus.getAllCampus(),
+          { params: { page: params.page, search: params.search } }
+        );
+        return response.data;
+      } catch (err) {
+        if (err instanceof AxiosError) {
+          throw new Error(err.response?.data?.message || "Error fetching campus");
+        }
+        throw new Error("Unexpected error occurred");
+      }
+    },
+    staleTime: 1000 * 60 * 5,
+    retry: 3,
+    refetchOnWindowFocus: false,
+    refetchOnMount: "always",
+    ...options,
+  });
+};
+
 export const useDeleteCampus = () => {
   return useMutation<IResponse, Error, string>(
     async (id) => {
@@ -110,4 +138,13 @@ export const useUpdateCampusMutation = () => {
     });
     return response.data;
   });
+};
+
+export const useVerifyCampus = () => {
+  return useMutation<IResponse, Error, IVerifyCampusRequest>(
+    async (data) => {
+      const response = await apiClient.post<IResponse>(ApiCampus.verifyCampus(), data);
+      return response.data;
+    }
+  );
 };

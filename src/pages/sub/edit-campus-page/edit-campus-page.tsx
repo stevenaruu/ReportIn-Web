@@ -187,7 +187,7 @@ const EditCampusPage = () => {
         <Card>
           <CardContent className="p-4 text-[#5d5d5d]">
             <h2 className="font-semibold mb-3">Site Name</h2>
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2 w-full">
               <Input
                 value={siteName}
                 onChange={(e) => setSiteName(e.target.value)}
@@ -197,7 +197,7 @@ const EditCampusPage = () => {
               <Input
                 value={"." + window.location.host}
                 disabled
-                className="text-black focus-visible:ring-0 focus-visible:ring-offset-0 cursor-not-allowed w-auto"
+                className="text-black focus-visible:ring-0 focus-visible:ring-offset-0 cursor-not-allowed w-full sm:w-auto"
               />
             </div>
           </CardContent>
@@ -224,10 +224,10 @@ const EditCampusPage = () => {
         </Card>
         <Card>
           <CardContent className="p-4 flex gap-6 text-[#5d5d5d]">
-            <div>
+            <div className="w-2/12 flex">
               <PreviewLogo color={primaryColor} className="w-16 h-16" />
             </div>
-            <div className="w-full">
+            <div className="w-10/12">
               <div className="flex items-center mb-3 gap-2">
                 <h2 className="font-semibold">Primary Color</h2>
                 <Tooltip>

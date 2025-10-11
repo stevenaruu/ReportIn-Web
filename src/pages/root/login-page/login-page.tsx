@@ -3,7 +3,7 @@ import { auth } from '@/config/firebase';
 import { useRedirect } from '@/hooks/use-redirect';
 import { getProviderLogo } from '@/lib/get-provider-logo';
 import { setUsername } from '@/store/auth/slice';
-import { setUser } from '@/store/user/slice';
+import { setUser, setUserActiveRole } from '@/store/user/slice';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { TailSpin } from 'react-loader-spinner';
 import { useDispatch } from 'react-redux';
@@ -26,8 +26,13 @@ const RootLoginPage = () => {
 
       login.mutate({ token: idToken }, {
         onSuccess: (data) => {
+          const roles = data.data?.role ?? [];
+          const activeRole = roles.find((r) => r.isDefault) ?? roles[0];
+          
           dispatch(setUsername(data.data?.name));
           dispatch(setUser(data.data));
+          dispatch(setUserActiveRole(activeRole));
+
           navigate("/dashboard");
         },
         onError: (error) => {
