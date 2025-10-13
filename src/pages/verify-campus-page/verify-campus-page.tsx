@@ -15,6 +15,7 @@ import { useVerifyCampus } from "@/api/services/campus";
 import { useSelector } from "react-redux";
 import { selectUser } from "@/store/user/selector";
 import { Modal } from "@/components/modal/Modal";
+import { Textarea } from "@/components/ui/textarea";
 
 const VerifyCampusPage = () => {
   const navigate = useNavigate();
@@ -40,6 +41,7 @@ const VerifyCampusPage = () => {
   const [open, setOpen] = useState(false)
   const [modalTitle, setModalTitle] = useState("")
   const [modalMessage, setModalMessage] = useState("")
+  const [comment] = useState(campus?.comment ?? "");
 
   const verifyCampus = useVerifyCampus();
 
@@ -278,6 +280,20 @@ const VerifyCampusPage = () => {
             )}
           </CardContent>
         </Card>
+        {/* Comment Input: Only show if campus exists */}
+        {campus ? (
+          <Card>
+            <CardContent className="p-4 text-[#5d5d5d]">
+              <h2 className="font-semibold mb-3">Comment</h2>
+              <Textarea
+                className="bg-neutral-100"
+                value={comment}
+                disabled
+                placeholder="No comment"
+              />
+            </CardContent>
+          </Card>
+        ) : null}
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-2 sm:gap-3 justify-center sm:justify-end pb-4 px-4 sm:px-0">

@@ -1,6 +1,6 @@
 import apiClient from "@/config/api-client";
 import { ApiPerson } from "@/constant/ApiPerson";
-import { ILoginRequest, IUpdatePersonRoleRequest } from "@/types/request/person";
+import { ILoginRequest, IUpdatePersonRoleRequest, IUpdatePersonStatusRequest } from "@/types/request/person";
 import { IResponse } from "@/types/response";
 import { IGetAllPersonResponse, ILoginResponse } from "@/types/response/person";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -19,6 +19,15 @@ export const useUpdatePersonRole = (id: string) => {
   return useMutation<IResponse, Error, IUpdatePersonRoleRequest>(
     async (data) => {
       const response = await apiClient.post<IResponse>(ApiPerson.role(id), data);
+      return response.data;
+    }
+  );
+};
+
+export const useUpdatePersonStatus = (id: string) => {
+  return useMutation<IResponse, Error, IUpdatePersonStatusRequest>(
+    async (data) => {
+      const response = await apiClient.post<IResponse>(ApiPerson.updateStatus(id), data);
       return response.data;
     }
   );

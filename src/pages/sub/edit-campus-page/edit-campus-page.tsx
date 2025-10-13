@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Textarea } from "@/components/ui/textarea";
 import { Modal } from "@/components/modal/Modal";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -19,6 +20,7 @@ import PreviewLogo from "@/assets/root/preview";
 const EditCampusPage = () => {
   const location = useLocation();
   const campus = location.state?.campus;
+  console.log({ campus });
   const updateCampus = useUpdateCampusMutation();
   const navigate = useNavigate();
   const user = useSelector(selectUser);
@@ -50,6 +52,8 @@ const EditCampusPage = () => {
   const [documents, setDocuments] = useState<(File | undefined)[]>([]);
   const [documentUrls, setDocumentUrls] = useState<string[]>(campus?.document ?? []);
   const [isLoadingFiles, setIsLoadingFiles] = useState(false);
+  // Comment state (read-only)
+  const [comment] = useState(campus?.comment ?? "");
 
   React.useEffect(() => {
     let isMounted = true;
@@ -377,6 +381,20 @@ const EditCampusPage = () => {
             )}
           </CardContent>
         </Card>
+        {/* Comment Input: Only show if campus exists */}
+        {campus ? (
+          <Card>
+            <CardContent className="p-4 text-[#5d5d5d]">
+              <h2 className="font-semibold mb-3">Comment</h2>
+              <Textarea
+                className="bg-gray-100"
+                value={comment}
+                disabled
+                placeholder="No comment"
+              />
+            </CardContent>
+          </Card>
+        ) : null}
         <div className="flex justify-center sm:justify-end pb-4 px-4 sm:px-0">
           <Button
             style={BACKGROUND_PRIMARY_COLOR(1)}

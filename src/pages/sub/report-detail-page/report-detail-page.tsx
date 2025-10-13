@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { SubLayout } from '@/layouts/layout'
 import { usePrimaryColor } from '@/lib/primary-color'
 import { selectCampus } from '@/store/campus/selector'
-import { selectPerson } from '@/store/person/selector'
+import { selectPerson, selectPersonActiveRole } from '@/store/person/selector'
 import { useSelector } from 'react-redux'
 import { useReportById } from '@/hooks/use-report'
 import CameraModal from '@/components/camera/camera-modal'
@@ -26,15 +26,25 @@ const ReportDetailPage = () => {
   const updateReport = useUpdateReportMutation()
 
   const person = useSelector(selectPerson)
+  const activeRole = useSelector(selectPersonActiveRole);
   const campus = useSelector(selectCampus)
   const { BACKGROUND_PRIMARY_COLOR } = usePrimaryColor()
 
   // Get mode from URL path
-  const isEditMode = location.pathname.includes('/edit/')
-  const isViewMode = location.pathname.includes('/view/')
+  // Initial mode detection
+  const initialEditMode = location.pathname.includes('/edit/');
+  const initialViewMode = location.pathname.includes('/view/');
 
   // Fetch report data
   const { report, loading, error } = useReportById(reportId)
+
+  // Mode state, guarded by report status
+  let isEditMode = initialEditMode;
+  let isViewMode = initialViewMode;
+  if (report && initialEditMode && report.status !== 'PENDING') {
+    isEditMode = false;
+    isViewMode = true;
+  }
 
   // Modal state
   const [open, setOpen] = useState(false)
@@ -138,6 +148,10 @@ const ReportDetailPage = () => {
       // Fallback: create empty file with proper type
       return new File([''], fileName, { type: 'image/jpeg' })
     }
+  }
+
+  const handleTakeReport = () => {
+
   }
 
   const handleSubmit = async () => {
@@ -268,18 +282,7 @@ const ReportDetailPage = () => {
     )
   }
 
-  // Check if current user can edit this report
-  const canEdit = report.complainant.some(c => c.personId === person?.id)
-
-  if (isEditMode && !canEdit) {
-    return (
-      <SubLayout>
-        <div className="flex justify-center items-center h-64">
-          <div className="text-red-500">You don't have permission to edit this report</div>
-        </div>
-      </SubLayout>
-    )
-  }
+  const isComplainant = activeRole.roleName === 'Custodian';
 
   const getHeaderTitle = () => {
     if (isEditMode) return "Edit Report"
@@ -314,11 +317,11 @@ const ReportDetailPage = () => {
                   <ChevronLeft className="w-4 h-4" />
                   Previous
                 </Button>
-                
+
                 <span className="text-sm text-gray-600">
                   Report {currentComplainantIndex + 1} of {report.complainant.length}
                 </span>
-                
+
                 <Button
                   onClick={handleNextComplainant}
                   disabled={currentComplainantIndex === report.complainant.length - 1}
@@ -378,9 +381,9 @@ const ReportDetailPage = () => {
         <Card>
           <CardContent className="p-4 text-[#5d5d5d]">
             <h2 className="font-semibold mb-3">Area</h2>
-            <Select 
+            <Select
               value={selectedAreaId}
-              onValueChange={handleAreaSelect} 
+              onValueChange={handleAreaSelect}
               disabled={isViewMode || isLoadingAreas}
             >
               <SelectTrigger className={`${isViewMode ? "bg-gray-100" : "bg-white focus:ring-0 focus:ring-offset-0"} border border-gray-200 w-full`}>
@@ -405,9 +408,9 @@ const ReportDetailPage = () => {
         <Card>
           <CardContent className="p-4 text-[#5d5d5d]">
             <h2 className="font-semibold mb-3">Category</h2>
-            <Select 
+            <Select
               value={selectedCategoryId}
-              onValueChange={handleCategorySelect} 
+              onValueChange={handleCategorySelect}
               disabled={isViewMode || isLoadingCategories}
             >
               <SelectTrigger className={`${isViewMode ? "bg-gray-100" : "bg-white focus:ring-0 focus:ring-offset-0"} border border-gray-200 w-full`}>
@@ -456,10 +459,10 @@ const ReportDetailPage = () => {
                 <h2 className="font-semibold mb-3">Upload File</h2>
                 {!isViewMode ? (
                   <div className="flex flex-col sm:flex-row gap-2">
-                    <Button 
-                      className='bg-neutral-50' 
-                      type="button" 
-                      variant="outline" 
+                    <Button
+                      className='bg-neutral-50'
+                      type="button"
+                      variant="outline"
                       onClick={openCameraApp}
                     >
                       Use Camera
@@ -483,7 +486,7 @@ const ReportDetailPage = () => {
                     {currentComplainant?.image ? "Image attached" : "No image"}
                   </div>
                 )}
-                
+
                 <p className='mt-3 text-xs'>
                   File must be an image (.jpg / .png) or use camera to take photo
                 </p>
@@ -502,12 +505,27 @@ const ReportDetailPage = () => {
               disabled={updateReport.isLoading || isProcessingImage}
               className="w-full sm:w-auto min-w-[120px]"
             >
-              {isProcessingImage 
-                ? "Processing Image..." 
-                : updateReport.isLoading 
-                  ? "Updating..." 
+              {isProcessingImage
+                ? "Processing Image..."
+                : updateReport.isLoading
+                  ? "Updating..."
                   : "Update"
               }
+            </Button>
+          </div>
+        )}
+
+        {/* Take Report - Only for Custodian */}
+        {isComplainant && (
+          <div className="flex justify-center sm:justify-end px-4 sm:px-0">
+            <Button
+              style={BACKGROUND_PRIMARY_COLOR(0.7)}
+              variant="default"
+              onClick={handleTakeReport}
+              disabled={updateReport.isLoading || isProcessingImage}
+              className="w-full sm:w-auto min-w-[120px]"
+            >
+              Take Report
             </Button>
           </div>
         )}

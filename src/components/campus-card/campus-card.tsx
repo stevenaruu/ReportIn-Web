@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { usePrimaryColor } from "@/lib/primary-color"
 import { IAllCampusByUserIdResponse } from "@/types/response/campus"
+import { useState } from "react"
 
 interface Privilege {
   view?: boolean
@@ -29,6 +30,7 @@ export const CampusCard = ({
   onEdit,
   onDelete,
 }: CampusCardProps) => {
+  const [comment] = useState(campus?.comment ?? "");
   const { BACKGROUND_PRIMARY_COLOR } = usePrimaryColor()
 
   if (isLoading) {
@@ -59,13 +61,24 @@ export const CampusCard = ({
       <CardContent className="flex-1 flex flex-col gap-1 md:ml-4 mt-3 md:mt-0 p-0 text-center md:text-left">
         <p className="font-semibold">{campus.name}</p>
         <p className="text-sm text-neutral-500">{campus.siteName}.{window.location.host}</p>
-        <Badge
-          style={BACKGROUND_PRIMARY_COLOR(1)}
-          className="text-white w-fit mt-1 mx-auto md:mx-0"
-          variant="outline"
-        >
-          {campus.status}
-        </Badge>
+        <div className="flex gap-2">
+          <Badge
+            style={BACKGROUND_PRIMARY_COLOR(1)}
+            className="text-white w-fit mt-1 mx-auto md:mx-0"
+            variant="outline"
+          >
+            {campus.status}
+          </Badge>
+          {comment && (
+            <Badge
+              style={BACKGROUND_PRIMARY_COLOR(1)}
+              className="text-white w-fit mt-1 mx-auto md:mx-0"
+              variant="outline"
+            >
+              <p className="line-clamp-1">{comment}</p>
+            </Badge>
+          )}
+        </div>
       </CardContent>
 
       {/* Actions Desktop */}

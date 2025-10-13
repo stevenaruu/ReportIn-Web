@@ -130,7 +130,7 @@ const ComplainantPage = () => {
           <div className="flex flex-col gap-4">
             {paginatedReports.length > 0
               ? paginatedReports.map((report) => {
-                const canEdit = report.complainant?.some(c => c.personId === person?.id);
+                const canEdit = report.status === 'PENDING' && report.complainant?.some(c => c.personId === person?.id);
                 return (
                   <ReportCard
                     key={report.id}

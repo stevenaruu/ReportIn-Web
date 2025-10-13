@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
+// Removed unused eslint-disable directive
 import { useLoginMutation } from '@/api/services/person';
 import LoginLogo from '@/assets/sub/login';
 import Footer from '@/components/footer/footer';
@@ -10,6 +10,7 @@ import { selectPerson } from '@/store/person/selector';
 import { setPerson, setPersonActiveRole } from '@/store/person/slice';
 import { GoogleAuthProvider, OAuthProvider, signInWithPopup } from 'firebase/auth';
 import { useEffect, useState } from 'react';
+import { Modal } from '@/components/modal/Modal';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { TailSpin } from 'react-loader-spinner'
@@ -24,9 +25,15 @@ const SubLoginPage = () => {
   const campus = useSelector(selectCampus);
   const { BACKGROUND_PRIMARY_COLOR } = usePrimaryColor();
 
+
+  // Modal state
+  const [open, setOpen] = useState(false);
+  const [modalTitle, setModalTitle] = useState('');
+  const [modalMessage, setModalMessage] = useState('');
+
   useEffect(() => {
     if (person) navigate('/dashboard');
-  }, [person]);
+    }, [person, navigate]);
 
   const handleLogin = () => {
     if (campus?.provider === 'Microsoft') {
@@ -52,8 +59,10 @@ const SubLoginPage = () => {
 
           navigate('/dashboard');
         },
-        onError: (error) => {
-          console.error('Login error:', error.message);
+        onError: (error: any) => {
+          setModalTitle('Login Error');
+          setModalMessage(error.message || 'Login failed. Please try again.');
+          setOpen(true);
         }
       }
     );
@@ -91,23 +100,29 @@ const SubLoginPage = () => {
 
   return (
     <div>
+      {/* Modal for error */}
+      <Modal
+        open={open}
+        onOpenChange={setOpen}
+        title={modalTitle}
+        message={modalMessage}
+        onConfirm={() => setOpen(false)}
+      />
+
       <div
         style={BACKGROUND_PRIMARY_COLOR(0.1)}
         className="min-h-screen flex flex-col justify-between"
       >
         <div className="flex flex-1 flex-col-reverse md:flex-row gap-12 items-center justify-center p-6 md:p-12">
-
           <div className="text-center md:text-left space-y-6 max-w-lg w-full">
             <div className="text-2xl md:text-3xl font-bold text-[#5D5D5D] leading-snug">
               <p className="md:whitespace-nowrap">Welcome to {campus?.name}</p>
               <p>Facility Complaint</p>
             </div>
-
             <p className="text-[#5D5D5D] text-base md:text-lg leading-relaxed">
               Empowering a better campus life by making it easier to report and
               resolve facility issues.
             </p>
-
             <button
               disabled={login.isLoading}
               onClick={handleLogin}
@@ -133,7 +148,6 @@ const SubLoginPage = () => {
               Sign In with {campus?.provider}
             </button>
           </div>
-
           <div className="flex justify-center md:justify-end w-full md:w-1/2">
             <LoginLogo
               className="w-2/3 sm:w-1/2 md:w-3/4 lg:w-2/3 max-w-sm"

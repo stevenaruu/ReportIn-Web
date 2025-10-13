@@ -8,11 +8,18 @@ import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { TailSpin } from 'react-loader-spinner';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { Modal } from '@/components/modal/Modal';
 
 const RootLoginPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const login = useLoginMutation();
+
+  // Modal state
+  const [open, setOpen] = useState(false);
+  const [modalTitle, setModalTitle] = useState('');
+  const [modalMessage, setModalMessage] = useState('');
 
   useRedirect();
 
@@ -36,17 +43,33 @@ const RootLoginPage = () => {
           navigate("/dashboard");
         },
         onError: (error) => {
-          console.error("Login error:", error.message);
+          setModalTitle('Login Error');
+          setModalMessage(error.message || 'Login failed. Please try again.');
+          setOpen(true);
         }
       })
 
-    } catch (err) {
-      console.error('Google Login failed:', err);
+    } catch (err: unknown) {
+      let message = 'Google Login failed. Please try again.';
+      if (err && typeof err === 'object' && 'message' in err) {
+        message = (err as { message?: string }).message || message;
+      }
+      setModalTitle('Google Login Error');
+      setModalMessage(message);
+      setOpen(true);
     }
   };
 
   return (
     <div className="flex flex-col md:flex-row h-screen bg-[#E5E5E5]">
+      {/* Modal for error */}
+      <Modal
+        open={open}
+        onOpenChange={setOpen}
+        title={modalTitle}
+        message={modalMessage}
+        onConfirm={() => setOpen(false)}
+      />
       <div className="w-full md:w-1/2 bg-gray-100 flex flex-1 flex-col items-center justify-center px-8 py-12 min-h-screen md:min-h-full">
         <h2 className="text-4xl text-[#5D5D5D] font-bold mb-2">SIGN IN</h2>
         <img className='w-48 my-6' src="/assets/images/email-consent.svg" alt="" />
