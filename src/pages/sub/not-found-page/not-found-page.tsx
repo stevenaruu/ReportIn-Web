@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 
 const NotFoundPage = () => {
   const handleRedirect = () => {
-    window.location.href = "https://www.reportin.my.id/";
+    window.location.href = "https://reportin.my.id/";
   };
 
   return (
