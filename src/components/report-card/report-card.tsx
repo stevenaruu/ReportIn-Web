@@ -41,6 +41,7 @@ export const ReportCard = <T extends IReport>({
   privilege = { view: true, take: false, edit: false, delete: false },
   onView,
   onEdit,
+  onTake,
   onDelete,
 }: ReportCardProps<T>) => {
   const { BACKGROUND_PRIMARY_COLOR } = usePrimaryColor();
@@ -107,7 +108,7 @@ export const ReportCard = <T extends IReport>({
             size="icon"
             variant="outline"
             className="rounded-md h-8 w-8"
-            onClick={() => onView?.(report)}
+            onClick={() => onTake?.(report)}
           >
             <Send className="h-4 w-4 text-white" />
           </Button>
@@ -240,7 +241,7 @@ export const ReportCard = <T extends IReport>({
               size="icon"
               variant="outline"
               className="rounded-md h-8 w-8"
-              onClick={() => onView?.(report)}
+              onClick={() => onTake?.(report)}
             >
               <Send className="h-4 w-4 text-white" />
             </Button>

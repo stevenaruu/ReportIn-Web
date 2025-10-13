@@ -10,3 +10,8 @@ export type ICreateReportRequest = {
   description: string,
   image: File
 }
+
+export type IUpdateReportStatusRequest = {
+  status: string
+  custodianId: string,
+}

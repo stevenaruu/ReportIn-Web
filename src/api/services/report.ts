@@ -1,6 +1,6 @@
 import apiClient from "@/config/api-client";
 import { ApiReport } from "@/constant/ApiReport";
-import { ICreateReportRequest } from "@/types/request/report";
+import { ICreateReportRequest, IUpdateReportStatusRequest } from "@/types/request/report";
 import { IResponse } from "@/types/response";
 import { useMutation } from "@tanstack/react-query";
 
@@ -50,6 +50,15 @@ export const useDeleteReport = () => {
   return useMutation<IResponse, Error, string>(
     async (id) => {
       const response = await apiClient.delete<IResponse>(ApiReport.deleteReport(id));
+      return response.data;
+    }
+  );
+};
+
+export const useUpdateReportStatus = () => {
+  return useMutation<IResponse, Error, { id: string; data: IUpdateReportStatusRequest }>(
+    async ({ id, data }) => {
+      const response = await apiClient.post<IResponse>(ApiReport.updateReportStatus(id), data);
       return response.data;
     }
   );

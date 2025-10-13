@@ -1,5 +1,6 @@
 import { useGetAllAreaQuery } from '@/api/services/area';
 import { useGetAllCategoryQuery } from '@/api/services/category';
+import { useUpdateReportStatus } from '@/api/services/report';
 import EmptyState from '@/components/empty-state/empty-state';
 import FilterSort from '@/components/filter-sort/filter-sort';
 import { Pagination } from '@/components/pagination/pagination';
@@ -13,9 +14,11 @@ import { usePrimaryColor } from '@/lib/primary-color';
 import { selectCampus } from '@/store/campus/selector';
 import { selectPerson } from '@/store/person/selector';
 import { IReport } from '@/types/model/report';
+import { IUpdateReportStatusRequest } from '@/types/request/report';
 import { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { Modal } from '@/components/modal/Modal';
 
 const CustodianPage = () => {
   const navigate = useNavigate();
@@ -77,16 +80,55 @@ const CustodianPage = () => {
     currentPage * ITEMS_PER_PAGE
   );
 
-  const handleTakeReport = () => {
-    
-  }
+  const takeReport = useUpdateReportStatus();
+
+  // Modal state
+  const [open, setOpen] = useState(false);
+  const [modalTitle, setModalTitle] = useState("");
+  const [modalMessage, setModalMessage] = useState("");
+
+  const handleTakeReport = (report: IReport) => {
+    const request: IUpdateReportStatusRequest = {
+      status: "IN PROGRESS",
+      custodianId: person?.id || "",
+    };
+
+    takeReport.mutate({
+      id: report.id,
+      data: request,
+    }, {
+      onSuccess: (res: unknown) => {
+        let message = "Report taken successfully.";
+        if (typeof res === 'object' && res !== null && 'message' in res) {
+          message = (res as { message?: string }).message || message;
+        }
+        setModalTitle("Success");
+        setModalMessage(message);
+        setOpen(true);
+      },
+      onError: (error: unknown) => {
+        let message = "Failed to take report.";
+        if (typeof error === 'object' && error !== null && 'message' in error) {
+          message = (error as { message?: string }).message || message;
+        }
+        setModalTitle("Error");
+        setModalMessage(message);
+        setOpen(true);
+      }
+    });
+  };
 
   return (
     <SubLayout>
+      <Modal
+        open={open}
+        onOpenChange={setOpen}
+        title={modalTitle}
+        message={modalMessage}
+      />
       {loading ? (
         <div className="flex flex-col">
           <SearchBar onSearch={handleSearch} placeholder="Search Report..." />
-
           <div className="flex flex-col gap-4">
             {Array.from({ length: 5 }).map((_, idx) => (
               <ReportCard key={`skeleton-${idx}`} isLoading report={{} as IReport} />
@@ -96,7 +138,6 @@ const CustodianPage = () => {
       ) : allReports.length > 0 ? (
         <>
           <SearchBar onSearch={handleSearch} placeholder="Search Report..." />
-
           <div className="flex flex-col gap-2 md:flex-row justify-between mb-4">
             <div className="flex gap-3">
               <Button
@@ -130,10 +171,9 @@ const CustodianPage = () => {
               }}
             />
           </div>
-
           <div className="flex flex-col gap-4">
             {paginatedReports.length > 0
-              ? paginatedReports.map((report : IReport) => {
+              ? paginatedReports.map((report: IReport) => {
                 const isPending = report.status === 'PENDING';
                 return (
                   <ReportCard
@@ -141,7 +181,7 @@ const CustodianPage = () => {
                     report={report}
                     privilege={{ view: true, take: isPending }}
                     onView={() => navigate(`/report/view/${report.id}`)}
-                    onTake={handleTakeReport}
+                    onTake={() => handleTakeReport(report)}
                   />
                 );
               })
@@ -152,7 +192,6 @@ const CustodianPage = () => {
               )
             }
           </div>
-
           {reports.length > 0 &&
             <div className="mt-6 flex flex-col md:flex-row gap-6 md:gap-0 justify-between items-center">
               <Pagination

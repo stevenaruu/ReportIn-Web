@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
-import { useUpdateReportMutation } from '@/api/services/report'
+import { useUpdateReportMutation, useUpdateReportStatus } from '@/api/services/report'
 import { useGetAllAreaQuery } from '@/api/services/area'
 import { useGetAllCategoryQuery } from '@/api/services/category'
 import Header from '@/components/header/header'
@@ -16,8 +16,9 @@ import { selectPerson, selectPersonActiveRole } from '@/store/person/selector'
 import { useSelector } from 'react-redux'
 import { useReportById } from '@/hooks/use-report'
 import CameraModal from '@/components/camera/camera-modal'
-import { IPersonReport } from '@/types/model/report'
+import { IPersonReport, IReport } from '@/types/model/report'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { IUpdateReportStatusRequest } from '@/types/request/report'
 
 const ReportDetailPage = () => {
   const { reportId } = useParams<{ reportId: string }>()
@@ -150,9 +151,38 @@ const ReportDetailPage = () => {
     }
   }
 
-  const handleTakeReport = () => {
+  const takeReport = useUpdateReportStatus();
 
-  }
+  const handleTakeReport = (report: IReport) => {
+    const request: IUpdateReportStatusRequest = {
+      status: "IN PROGRESS",
+      custodianId: person?.id || "",
+    };
+
+    takeReport.mutate({
+      id: report.id,
+      data: request,
+    }, {
+      onSuccess: (res: unknown) => {
+        let message = "Report taken successfully.";
+        if (typeof res === 'object' && res !== null && 'message' in res) {
+          message = (res as { message?: string }).message || message;
+        }
+        setModalTitle("Success");
+        setModalMessage(message);
+        setOpen(true);
+      },
+      onError: (error: unknown) => {
+        let message = "Failed to take report.";
+        if (typeof error === 'object' && error !== null && 'message' in error) {
+          message = (error as { message?: string }).message || message;
+        }
+        setModalTitle("Error");
+        setModalMessage(message);
+        setOpen(true);
+      }
+    });
+  };
 
   const handleSubmit = async () => {
     if (!report || !currentComplainant) return
@@ -521,11 +551,11 @@ const ReportDetailPage = () => {
             <Button
               style={BACKGROUND_PRIMARY_COLOR(0.7)}
               variant="default"
-              onClick={handleTakeReport}
-              disabled={updateReport.isLoading || isProcessingImage}
+              onClick={() => handleTakeReport(report)}
+              disabled={takeReport.isLoading}
               className="w-full sm:w-auto min-w-[120px]"
             >
-              Take Report
+              {takeReport.isLoading ? 'Taking...' : 'Take Report'}
             </Button>
           </div>
         )}
