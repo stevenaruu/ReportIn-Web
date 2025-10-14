@@ -141,18 +141,19 @@ const BeaconScanner: React.FC<BeaconScannerProps> = ({
 
   return (
     <Card>
-      <CardContent className="p-4 text-[#5d5d5d]">
-        <h2 className="font-semibold mb-3 flex items-center gap-2">
-          <Bluetooth className="w-4 h-4" />
-          Area
+      <CardContent className="p-4 sm:p-4 text-[#5d5d5d]">
+        <h2 className="font-semibold mb-4 flex items-center gap-2 text-lg sm:text-base">
+          <Bluetooth className="w-5 h-5 sm:w-4 sm:h-4" />
+          Area Detection
         </h2>
 
         {/* Bluetooth Detection Method */}
         <div className="space-y-3 mb-4">
-          <div className="flex items-center justify-between p-3 border rounded-lg">
+          {/* Mobile: Stack vertically, Desktop: Side by side */}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 border rounded-lg gap-3">
             <div className="flex items-center gap-3">
-              <Bluetooth className="w-5 h-5 text-blue-500" />
-              <div>
+              <Bluetooth className="w-5 h-5 text-blue-500 flex-shrink-0" />
+              <div className="min-w-0">
                 <p className="font-medium">Area Detection</p>
                 <p className="text-sm text-gray-500">
                   {!availableAreas || availableAreas.length === 0 
@@ -164,18 +165,21 @@ const BeaconScanner: React.FC<BeaconScannerProps> = ({
                 </p>
               </div>
             </div>
-            <div className="flex gap-2">
+            
+            {/* Mobile: Full width buttons, Desktop: Compact */}
+            <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
               <Button
                 variant="outline"
                 size="sm"
                 onClick={handleBluetoothScan}
                 disabled={!isBluetoothSupported || isScanning || !availableAreas || availableAreas.length === 0}
-                className="min-w-[80px]"
+                className="w-full sm:w-auto sm:min-w-[80px]"
               >
                 {isScanning ? (
                   <>
                     <RefreshCw className="w-4 h-4 mr-1 animate-spin" />
-                    Scanning...
+                    <span className="hidden sm:inline">Scanning...</span>
+                    <span className="sm:hidden">Scanning...</span>
                   </>
                 ) : !availableAreas || availableAreas.length === 0 ? (
                   'Loading...'
@@ -186,44 +190,47 @@ const BeaconScanner: React.FC<BeaconScannerProps> = ({
                 )}
               </Button>
               
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => {
-                  console.log('🚫 User cancelled beacon detection, switching to manual');
-                  onCancel?.();
-                }}
-                disabled={isScanning}
-                className="text-gray-600 hover:text-gray-800"
-              >
-                <X className="w-4 h-4 mr-1" />
-                Manual Select
-              </Button>
-              
-              {/* Show All Devices Button - fallback option */}
-              {allowShowAllDevices && (
+              <div className="flex gap-2">
                 <Button
-                  variant="ghost" 
+                  variant="ghost"
                   size="sm"
-                  onClick={handleShowAllDevices}
+                  onClick={() => {
+                    console.log('🚫 User cancelled beacon detection, switching to manual');
+                    onCancel?.();
+                  }}
                   disabled={isScanning}
-                  className="text-orange-600 hover:text-orange-700 text-xs"
+                  className="flex-1 sm:flex-none text-gray-600 hover:text-gray-800"
                 >
-                  Show All
+                  <X className="w-4 h-4 mr-1" />
+                  <span className="hidden sm:inline">Manual Select</span>
+                  <span className="sm:hidden">Manual</span>
                 </Button>
-              )}
+                
+                {/* Show All Devices Button - fallback option */}
+                {allowShowAllDevices && (
+                  <Button
+                    variant="ghost" 
+                    size="sm"
+                    onClick={handleShowAllDevices}
+                    disabled={isScanning}
+                    className="flex-1 sm:flex-none text-orange-600 hover:text-orange-700 text-xs"
+                  >
+                    Show All
+                  </Button>
+                )}
+              </div>
             </div>
           </div>
           
           {(!availableAreas || availableAreas.length === 0) && (
-            <div className="p-2 bg-yellow-50 border border-yellow-200 rounded text-sm text-yellow-700">
+            <div className="p-3 bg-yellow-50 border border-yellow-200 rounded text-sm text-yellow-700 text-center sm:text-left">
               <RefreshCw className="w-4 h-4 inline mr-2 animate-spin" />
               Loading available areas...
             </div>
           )}
           
           {!isBluetoothSupported && (
-            <div className="p-2 bg-red-50 border border-red-200 rounded text-sm text-red-600">
+            <div className="p-3 bg-red-50 border border-red-200 rounded text-sm text-red-600 text-center sm:text-left">
               Web Bluetooth is not supported in this browser
             </div>
           )}

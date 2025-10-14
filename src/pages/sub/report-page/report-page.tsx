@@ -134,16 +134,16 @@ const ReportPage = () => {
         onConfirm={isSuccessModal ? () => navigate("/dashboard") : undefined}
       />
 
-      <div className="space-y-4 px-4 sm:px-0">
+      <div className="space-y-6 px-4 sm:px-0">
         {/* Description */}
         <Card>
-          <CardContent className="p-4 text-[#5d5d5d]">
-            <h2 className="font-semibold mb-3">Description</h2>
+          <CardContent className="p-4 sm:p-4 text-[#5d5d5d]">
+            <h2 className="font-semibold mb-4 text-lg sm:text-base">Description</h2>
             <Input
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Description ..."
-              className="bg-neutral-50 focus-visible:ring-0 focus-visible:ring-offset-0 w-full"
+              className="h-12 text-base sm:h-10 sm:text-sm bg-neutral-50 focus-visible:ring-0 focus-visible:ring-offset-0 w-full"
             />
           </CardContent>
         </Card>
@@ -163,18 +163,18 @@ const ReportPage = () => {
 
         {/* Category Select */}
         <Card>
-          <CardContent className="p-4 text-[#5d5d5d]">
-            <h2 className="font-semibold mb-3">Category</h2>
+          <CardContent className="p-4 sm:p-4 text-[#5d5d5d]">
+            <h2 className="font-semibold mb-4 text-lg sm:text-base">Category</h2>
             <Select onValueChange={handleCategorySelect} disabled={isLoadingCategories}>
-              <SelectTrigger className="bg-white focus:ring-0 focus:ring-offset-0 border border-gray-200 w-full">
+              <SelectTrigger className="bg-white focus:ring-0 focus:ring-offset-0 border border-gray-200 w-full h-12 text-base sm:h-10 sm:text-sm">
                 <SelectValue placeholder={isLoadingCategories ? "Loading categories..." : "Select a category"} />
               </SelectTrigger>
-              <SelectContent className="bg-white border border-gray-200 shadow-lg w-full">
+              <SelectContent className="bg-white border border-gray-200 shadow-lg w-full max-h-60">
                 {categoriesData?.data?.map((category) => (
                   <SelectItem
                     key={category.id}
                     value={category.id}
-                    className="hover:bg-gray-50 cursor-pointer"
+                    className="hover:bg-gray-50 cursor-pointer py-3 text-base sm:py-2 sm:text-sm"
                   >
                     {category.name}
                   </SelectItem>
@@ -186,8 +186,9 @@ const ReportPage = () => {
 
         {/* Upload & Camera */}
         <Card>
-          <CardContent className="p-4 text-[#5d5d5d] flex flex-col gap-2">
-            <div className='flex flex-col sm:flex-row gap-4 items-start'>
+          <CardContent className="p-4 sm:p-4 text-[#5d5d5d] flex flex-col gap-3">
+            <h2 className="font-semibold text-lg sm:text-base">Upload Image</h2>
+            <div className='flex flex-col gap-4 items-start'>
               {/* Preview Box */}
               <div className="w-full sm:w-[120px] aspect-square bg-neutral-50 flex items-center justify-center text-sm text-gray-400 border rounded-md overflow-hidden relative">
                 {file ? (
@@ -237,13 +238,13 @@ const ReportPage = () => {
         </Card>
 
         {/* Submit */}
-        <div className="flex justify-center sm:justify-end px-4 sm:px-0">
+        <div className="flex justify-center sm:justify-end">
           <Button
             style={BACKGROUND_PRIMARY_COLOR(0.7)}
             variant="default"
             onClick={handleSubmit}
             disabled={report.isLoading}
-            className="w-full sm:w-auto min-w-[120px]"
+            className="w-full sm:w-auto min-w-[120px] py-3 text-base sm:py-2 sm:text-sm h-12 sm:h-10"
           >
             {report.isLoading ? "Submitting..." : "Submit"}
           </Button>

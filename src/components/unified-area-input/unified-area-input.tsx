@@ -138,27 +138,27 @@ const UnifiedAreaInput: React.FC<UnifiedAreaInputProps> = ({
   if (selectedAreaId && selectedAreaName) {
     return (
       <Card>
-        <CardContent className="p-4 text-[#5d5d5d]">
-          <h2 className="font-semibold mb-3 flex items-center gap-2">
-            <MapPin className="w-4 h-4" />
+        <CardContent className="p-4 sm:p-4 text-[#5d5d5d]">
+          <h2 className="font-semibold mb-4 flex items-center gap-2 text-lg sm:text-base">
+            <MapPin className="w-5 h-5 sm:w-4 sm:h-4" />
             Area Selected
           </h2>
-          <div className="flex items-center justify-between p-3 border rounded-lg bg-green-50 border-green-200">
-            <div>
-              <p className="font-medium text-green-800">{selectedAreaName}</p>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 border rounded-lg bg-green-50 border-green-200 gap-3">
+            <div className="min-w-0">
+              <p className="font-medium text-green-800 text-lg sm:text-base">{selectedAreaName}</p>
               <p className="text-sm text-green-600">Area confirmed</p>
             </div>
             <Button
               variant="outline"
-              size="sm"
+              size="default"
               onClick={() => {
                 setMode('beacon');
                 setHasTriedBeacon(false);
                 onAreaSelected?.('', ''); // Clear selection
               }}
-              className="text-blue-600 border-blue-300 hover:bg-blue-50"
+              className="w-full sm:w-auto text-blue-600 border-blue-300 hover:bg-blue-50 py-3 sm:py-2"
             >
-              Change
+              Change Area
             </Button>
           </div>
         </CardContent>
@@ -172,13 +172,13 @@ const UnifiedAreaInput: React.FC<UnifiedAreaInputProps> = ({
     if (isLoadingAreas || !availableAreas || availableAreas.length === 0) {
       return (
         <Card>
-          <CardContent className="p-4 text-[#5d5d5d]">
-            <h2 className="font-semibold mb-3 flex items-center gap-2">
-              <Bluetooth className="w-4 h-4 animate-pulse" />
+          <CardContent className="p-4 sm:p-4 text-[#5d5d5d]">
+            <h2 className="font-semibold mb-4 flex items-center gap-2 text-lg sm:text-base">
+              <Bluetooth className="w-5 h-5 sm:w-4 sm:h-4 animate-pulse" />
               Preparing Beacon Detection
             </h2>
-            <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
-              <p className="text-sm text-blue-600">
+            <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <p className="text-sm text-blue-600 text-center sm:text-left">
                 Loading areas...
               </p>
             </div>
@@ -205,30 +205,31 @@ const UnifiedAreaInput: React.FC<UnifiedAreaInputProps> = ({
   // Show manual selection mode
   return (
     <Card>
-      <CardContent className="p-4 text-[#5d5d5d]">
-        <h2 className="font-semibold mb-3 flex items-center gap-2">
-          <MapPin className="w-4 h-4" />
+      <CardContent className="p-4 sm:p-4 text-[#5d5d5d]">
+        <h2 className="font-semibold mb-4 flex items-center gap-2 text-lg sm:text-base">
+          <MapPin className="w-5 h-5 sm:w-4 sm:h-4" />
           Select Area
         </h2>
 
         <div className="space-y-3">
-          <div className="flex flex-col sm:flex-row gap-2">
+          {/* Mobile: Stack vertically with better spacing */}
+          <div className="flex flex-col gap-3">
             <Select
               value={selectedAreaId}
               onValueChange={handleManualAreaSelect}
               disabled={isLoadingAreas}
             >
-              <SelectTrigger className="bg-white focus:ring-0 focus:ring-offset-0 border border-gray-200 w-full">
+              <SelectTrigger className="bg-white focus:ring-0 focus:ring-offset-0 border border-gray-200 w-full h-12 text-base sm:h-10 sm:text-sm">
                 <SelectValue
                   placeholder={isLoadingAreas ? "Loading areas..." : "Choose your area"}
                 />
               </SelectTrigger>
-              <SelectContent className="bg-white border border-gray-200 shadow-lg w-full">
+              <SelectContent className="bg-white border border-gray-200 shadow-lg w-full max-h-60">
                 {availableAreas?.map((area) => (
                   <SelectItem
                     key={area.id}
                     value={area.id}
-                    className="hover:bg-gray-50 cursor-pointer"
+                    className="hover:bg-gray-50 cursor-pointer py-3 text-base sm:py-2 sm:text-sm"
                   >
                     {area.name}
                   </SelectItem>
@@ -236,26 +237,25 @@ const UnifiedAreaInput: React.FC<UnifiedAreaInputProps> = ({
               </SelectContent>
             </Select>
 
-            {/* Try Beacon Again Button - next to dropdown */}
+            {/* Try Beacon Again Button - Full width on mobile */}
             {hasTriedBeacon && (
               <Button
                 variant="outline"
-                size="sm"
+                size="default"
                 onClick={() => {
                   setMode('beacon');
                   setHasTriedBeacon(false);
                 }}
-                className="flex items-center gap-1 px-5 whitespace-nowrap min-w-[140px] sm:w-auto text-blue-600 border-blue-300 hover:bg-blue-50"
+                className="w-full sm:w-auto flex items-center justify-center gap-2 py-3 text-base sm:py-2 sm:text-sm text-blue-600 border-blue-300 hover:bg-blue-50"
               >
-                <Bluetooth className="w-4 h-4" />
-                <span className="hidden sm:inline">Try Beacon Again</span>
-                <span className="sm:hidden">Beacon</span>
+                <Bluetooth className="w-5 h-5 sm:w-4 sm:h-4" />
+                <span>Try Beacon Again</span>
               </Button>
             )}
           </div>
 
-          <div className="p-3 bg-gray-50 border border-gray-200 rounded-lg">
-            <p className="text-sm text-gray-600">
+          <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
+            <p className="text-sm sm:text-xs text-gray-600 text-center sm:text-left">
               {hasTriedBeacon 
                 ? 'Select your area from the list above.'
                 : 'Choose your area manually.'
