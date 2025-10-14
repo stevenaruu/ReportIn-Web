@@ -4,6 +4,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import BeaconScanner from '@/components/beacon-scanner/beacon-scanner';
 import { Button } from '@/components/ui/button';
 import { MapPin, Bluetooth } from 'lucide-react';
+import { usePrimaryColor } from '@/lib/primary-color';
 
 interface UnifiedAreaInputProps {
   onAreaSelected?: (areaId: string, areaName: string) => void;
@@ -22,6 +23,7 @@ const UnifiedAreaInput: React.FC<UnifiedAreaInputProps> = ({
 }) => {
   const [mode, setMode] = useState<'beacon' | 'manual'>('beacon');
   const [hasTriedBeacon, setHasTriedBeacon] = useState(false);
+  const { TEXT_PRIMARY_COLOR, BACKGROUND_PRIMARY_COLOR } = usePrimaryColor();
 
   const handleBeaconDetected = (beaconName: string) => {
     console.log('🔔 Beacon detected with name:', beaconName);
@@ -41,7 +43,7 @@ const UnifiedAreaInput: React.FC<UnifiedAreaInputProps> = ({
       .replace(/\s*-\s*beacon\s*$/i, '')  // Remove "- Beacon"
       .replace(/\s*beacon\s*$/i, '')      // Remove "Beacon"
       .trim();
-    
+
     console.log('🧹 Cleaned beacon name:', `"${cleanBeaconName}"`);
 
     // Find area that matches the beacon name (exact match)
@@ -49,9 +51,9 @@ const UnifiedAreaInput: React.FC<UnifiedAreaInputProps> = ({
       const areaNameLower = area.name.toLowerCase().trim();
       const cleanBeaconLower = cleanBeaconName.toLowerCase().trim();
       const isExactMatch = areaNameLower === cleanBeaconLower;
-      
-      console.log('🔍 Comparing exact:', { 
-        cleanBeacon: `"${cleanBeaconLower}"`, 
+
+      console.log('🔍 Comparing exact:', {
+        cleanBeacon: `"${cleanBeaconLower}"`,
         areaName: `"${areaNameLower}"`,
         isMatch: isExactMatch
       });
@@ -69,13 +71,13 @@ const UnifiedAreaInput: React.FC<UnifiedAreaInputProps> = ({
       const areaLower = area.name.toLowerCase().trim();
       const beaconLower = cleanBeaconName.toLowerCase().trim();
       const isPartialMatch = areaLower.includes(beaconLower) || beaconLower.includes(areaLower);
-      
-      console.log('🔍 Comparing partial:', { 
-        areaName: `"${areaLower}"`, 
+
+      console.log('🔍 Comparing partial:', {
+        areaName: `"${areaLower}"`,
         cleanBeacon: `"${beaconLower}"`,
         isMatch: isPartialMatch
       });
-      
+
       return isPartialMatch;
     });
 
@@ -90,13 +92,13 @@ const UnifiedAreaInput: React.FC<UnifiedAreaInputProps> = ({
       const areaLower = area.name.toLowerCase().trim();
       const originalBeaconLower = beaconName.toLowerCase().trim();
       const isOriginalMatch = areaLower.includes(originalBeaconLower) || originalBeaconLower.includes(areaLower);
-      
-      console.log('🔍 Comparing with original:', { 
-        areaName: `"${areaLower}"`, 
+
+      console.log('🔍 Comparing with original:', {
+        areaName: `"${areaLower}"`,
         originalBeacon: `"${originalBeaconLower}"`,
         isMatch: isOriginalMatch
       });
-      
+
       return isOriginalMatch;
     });
 
@@ -108,7 +110,7 @@ const UnifiedAreaInput: React.FC<UnifiedAreaInputProps> = ({
 
     console.log('❌ No area matched beacon name:', beaconName);
     console.log('📋 Available area names:', availableAreas?.map(a => `"${a.name}"`));
-    
+
     // Switch to manual mode if no match found
     setMode('manual');
     setHasTriedBeacon(true);
@@ -143,20 +145,20 @@ const UnifiedAreaInput: React.FC<UnifiedAreaInputProps> = ({
             <MapPin className="w-5 h-5 sm:w-4 sm:h-4" />
             Area Selected
           </h2>
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 border rounded-lg bg-green-50 border-green-200 gap-3">
+          <div style={BACKGROUND_PRIMARY_COLOR(0.1)} className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 border rounded-lg gap-3">
             <div className="min-w-0">
-              <p className="font-medium text-green-800 text-lg sm:text-base">{selectedAreaName}</p>
-              <p className="text-sm text-green-600">Area confirmed</p>
+              <p style={TEXT_PRIMARY_COLOR(1)} className="font-medium text-lg sm:text-base">{selectedAreaName}</p>
+              <p style={TEXT_PRIMARY_COLOR(0.8)} className="text-sm">Area confirmed</p>
             </div>
             <Button
-              variant="outline"
+              style={BACKGROUND_PRIMARY_COLOR(0.7)}
               size="default"
               onClick={() => {
                 setMode('beacon');
                 setHasTriedBeacon(false);
-                onAreaSelected?.('', ''); // Clear selection
+                onAreaSelected?.('', '');
               }}
-              className="w-full sm:w-auto text-blue-600 border-blue-300 hover:bg-blue-50 py-3 sm:py-2"
+              className="w-full sm:w-auto py-3 sm:py-2"
             >
               Change Area
             </Button>
@@ -188,7 +190,7 @@ const UnifiedAreaInput: React.FC<UnifiedAreaInputProps> = ({
     }
 
     console.log('🎯 Passing areas to BeaconScanner:', availableAreas?.map(a => a.name));
-    
+
     return (
       <BeaconScanner
         onBeaconDetected={handleBeaconDetected}
@@ -212,8 +214,8 @@ const UnifiedAreaInput: React.FC<UnifiedAreaInputProps> = ({
         </h2>
 
         <div className="space-y-3">
-          {/* Mobile: Stack vertically with better spacing */}
-          <div className="flex flex-col gap-3">
+          {/* Mobile: Stack vertically, Desktop: Side by side */}
+          <div className="flex flex-col sm:flex-row gap-3">
             <Select
               value={selectedAreaId}
               onValueChange={handleManualAreaSelect}
@@ -237,7 +239,7 @@ const UnifiedAreaInput: React.FC<UnifiedAreaInputProps> = ({
               </SelectContent>
             </Select>
 
-            {/* Try Beacon Again Button - Full width on mobile */}
+            {/* Try Beacon Again Button - Full width on mobile, inline on desktop */}
             {hasTriedBeacon && (
               <Button
                 variant="outline"
@@ -246,7 +248,7 @@ const UnifiedAreaInput: React.FC<UnifiedAreaInputProps> = ({
                   setMode('beacon');
                   setHasTriedBeacon(false);
                 }}
-                className="w-full sm:w-auto flex items-center justify-center gap-2 py-3 text-base sm:py-2 sm:text-sm text-blue-600 border-blue-300 hover:bg-blue-50"
+                className="w-full sm:w-fit sm:flex-shrink-0 flex items-center justify-center gap-2 py-3 text-base sm:py-2 sm:text-sm text-blue-600 border-blue-300 hover:bg-blue-50"
               >
                 <Bluetooth className="w-5 h-5 sm:w-4 sm:h-4" />
                 <span>Try Beacon Again</span>
@@ -256,7 +258,7 @@ const UnifiedAreaInput: React.FC<UnifiedAreaInputProps> = ({
 
           <div className="p-4 bg-gray-50 border border-gray-200 rounded-lg">
             <p className="text-sm sm:text-xs text-gray-600 text-center sm:text-left">
-              {hasTriedBeacon 
+              {hasTriedBeacon
                 ? 'Select your area from the list above.'
                 : 'Choose your area manually.'
               }
