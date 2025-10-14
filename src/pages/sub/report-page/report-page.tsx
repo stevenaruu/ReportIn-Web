@@ -15,6 +15,7 @@ import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { useGetAllCategoryQuery } from '@/api/services/category'
 import CameraModal from '@/components/camera/camera-modal'
+import UnifiedAreaInput from '@/components/unified-area-input/unified-area-input'
 
 const ReportPage = () => {
   const report = useCreateReportMutation();
@@ -113,14 +114,6 @@ const ReportPage = () => {
     })
   }
 
-  const handleAreaSelect = (areaId: string) => {
-    const selectedArea = areasData?.data?.find(area => area.id === areaId)
-    if (selectedArea) {
-      setSelectedAreaId(areaId)
-      setSelectedAreaName(selectedArea.name)
-    }
-  }
-
   const handleCategorySelect = (categoryId: string) => {
     const selectedCategory = categoriesData?.data?.find(category => category.id === categoryId)
     if (selectedCategory) {
@@ -155,28 +148,18 @@ const ReportPage = () => {
           </CardContent>
         </Card>
 
-        {/* Area Select */}
-        <Card>
-          <CardContent className="p-4 text-[#5d5d5d]">
-            <h2 className="font-semibold mb-3">Area</h2>
-            <Select onValueChange={handleAreaSelect} disabled={isLoadingAreas}>
-              <SelectTrigger className="bg-white focus:ring-0 focus:ring-offset-0 border border-gray-200 w-full">
-                <SelectValue placeholder={isLoadingAreas ? "Loading areas..." : "Select an area"} />
-              </SelectTrigger>
-              <SelectContent className="bg-white border border-gray-200 shadow-lg w-full">
-                {areasData?.data?.map((area) => (
-                  <SelectItem
-                    key={area.id}
-                    value={area.id}
-                    className="hover:bg-gray-50 cursor-pointer"
-                  >
-                    {area.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </CardContent>
-        </Card>
+        {/* Area Input - Unified Beacon Detection / Area Selection */}
+        <UnifiedAreaInput
+          onAreaSelected={(areaId, areaName) => {
+            console.log('🎯 Parent received area selection:', { areaId, areaName });
+            setSelectedAreaId(areaId);
+            setSelectedAreaName(areaName);
+          }}
+          availableAreas={areasData?.data || []}
+          isLoadingAreas={isLoadingAreas}
+          selectedAreaId={selectedAreaId}
+          selectedAreaName={selectedAreaName}
+        />
 
         {/* Category Select */}
         <Card>
@@ -222,10 +205,10 @@ const ReportPage = () => {
               <div className="flex-1">
                 <h2 className="font-semibold mb-3">Upload File</h2>
                 <div className="flex flex-col sm:flex-row gap-2">
-                  <Button 
-                    className='bg-neutral-50' 
-                    type="button" 
-                    variant="outline" 
+                  <Button
+                    className='bg-neutral-50'
+                    type="button"
+                    variant="outline"
                     onClick={openCameraApp}
                   >
                     Use Camera
@@ -244,7 +227,7 @@ const ReportPage = () => {
                     </Button>
                   )}
                 </div>
-                
+
                 <p className='mt-3 text-xs'>
                   File must be an image (.jpg / .png) or use camera to take photo
                 </p>
