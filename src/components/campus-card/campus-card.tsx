@@ -60,7 +60,7 @@ export const CampusCard = ({
       {/* Details */}
       <CardContent className="flex-1 flex flex-col gap-1 md:ml-4 mt-3 md:mt-0 p-0 text-center md:text-left">
         <p className="font-semibold">{campus.name}</p>
-        <p className="text-sm text-neutral-500">{campus.siteName}.{window.location.host}</p>
+        <p className="text-sm text-neutral-500">{campus.siteName}.{window.location.host.replace(/^www\./, '')}</p>
         <div className="flex gap-2">
           <Badge
             style={BACKGROUND_PRIMARY_COLOR(1)}
