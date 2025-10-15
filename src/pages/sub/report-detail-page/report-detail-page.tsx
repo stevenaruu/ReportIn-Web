@@ -151,15 +151,16 @@ const ReportDetailPage = () => {
     }
   }
 
-  const takeReport = useUpdateReportStatus();
+  const updateReportStatus = useUpdateReportStatus();
 
   const handleTakeReport = (report: IReport) => {
     const request: IUpdateReportStatusRequest = {
-      status: "IN PROGRESS",
       custodianId: person?.id || "",
+      campusId: campus?.campusId || "",
+      status: "IN PROGRESS",
     };
 
-    takeReport.mutate({
+    updateReportStatus.mutate({
       id: report.id,
       data: request,
     }, {
@@ -170,6 +171,7 @@ const ReportDetailPage = () => {
         }
         setModalTitle("Success");
         setModalMessage(message);
+        setIsSuccessModal(true);
         setOpen(true);
       },
       onError: (error: unknown) => {
@@ -179,6 +181,41 @@ const ReportDetailPage = () => {
         }
         setModalTitle("Error");
         setModalMessage(message);
+        setIsSuccessModal(true);
+        setOpen(true);
+      }
+    });
+  };
+
+  const handleCompleteReport = (report: IReport) => {
+    const request: IUpdateReportStatusRequest = {
+      custodianId: person?.id || "",
+      campusId: campus?.campusId || "",
+      status: "DONE",
+    };
+
+    updateReportStatus.mutate({
+      id: report.id,
+      data: request,
+    }, {
+      onSuccess: (res: unknown) => {
+        let message = "Report has been marked as completed successfully.";
+        if (typeof res === 'object' && res !== null && 'message' in res) {
+          message = (res as { message?: string }).message || message;
+        }
+        setModalTitle("Success");
+        setModalMessage(message);
+        setIsSuccessModal(true);
+        setOpen(true);
+      },
+      onError: (error: unknown) => {
+        let message = "Failed to complete report.";
+        if (typeof error === 'object' && error !== null && 'message' in error) {
+          message = (error as { message?: string }).message || message;
+        }
+        setModalTitle("Error");
+        setModalMessage(message);
+        setIsSuccessModal(true);
         setOpen(true);
       }
     });
@@ -393,6 +430,33 @@ const ReportDetailPage = () => {
           </Card>
         )}
 
+        {/* Custodian Information - Only for View Mode when report has custodian */}
+        {isViewMode && report.custodian && (
+          <Card>
+            <CardContent className="p-4 text-[#5d5d5d]">
+              <h2 className="font-semibold mb-3">Custodian Information</h2>
+              <div className="space-y-3">
+                <div>
+                  <label className="text-sm font-medium">Name</label>
+                  <Input
+                    value={report.custodian.name}
+                    disabled
+                    className="bg-gray-100"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium">Email</label>
+                  <Input
+                    value={report.custodian.email}
+                    disabled
+                    className="bg-gray-100"
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Description */}
         <Card>
           <CardContent className="p-4 text-[#5d5d5d]">
@@ -546,16 +610,31 @@ const ReportDetailPage = () => {
         )}
 
         {/* Take Report - Only for Custodian */}
-        {isComplainant && (
+        {isComplainant && report.status === 'PENDING' && (
           <div className="flex justify-center sm:justify-end px-4 sm:px-0">
             <Button
               style={BACKGROUND_PRIMARY_COLOR(0.7)}
               variant="default"
               onClick={() => handleTakeReport(report)}
-              disabled={takeReport.isLoading}
+              disabled={updateReportStatus.isLoading}
               className="w-full sm:w-auto min-w-[120px]"
             >
-              {takeReport.isLoading ? 'Taking...' : 'Take Report'}
+              {updateReportStatus.isLoading ? 'Taking...' : 'Take Report'}
+            </Button>
+          </div>
+        )}
+
+        {/* Done Report - Only for the Custodian who took the report */}
+        {isComplainant && report.status === 'IN PROGRESS' && report.custodian?.personId === person?.id && (
+          <div className="flex justify-center sm:justify-end px-4 sm:px-0">
+            <Button
+              style={BACKGROUND_PRIMARY_COLOR(0.7)}
+              variant="default"
+              onClick={() => handleCompleteReport(report)}
+              disabled={updateReportStatus.isLoading}
+              className="w-full sm:w-auto min-w-[120px]"
+            >
+              {updateReportStatus.isLoading ? 'Completing...' : 'Complete Report'}
             </Button>
           </div>
         )}

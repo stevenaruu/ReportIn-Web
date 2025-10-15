@@ -121,6 +121,17 @@ export const useBeaconDetection = (props?: UseBeaconDetectionProps) => {
             ]
           });
         } catch (firstError) {
+          // Check if user cancelled the operation
+          if (firstError instanceof Error && 
+              (firstError.name === 'NotFoundError' || 
+               firstError.name === 'AbortError' || 
+               firstError.message.includes('User cancelled') ||
+               firstError.message.includes('cancelled') ||
+               firstError.message.includes('canceled'))) {
+            console.log('🚫 User cancelled device selection');
+            throw firstError; // Don't retry if user cancelled
+          }
+          
           console.log('🚫 Specific filters failed, trying broader approach...', firstError);
           
           // Try with just area names (no prefixes) - more permissive
@@ -137,6 +148,17 @@ export const useBeaconDetection = (props?: UseBeaconDetectionProps) => {
               optionalServices: []
             });
           } catch (secondError) {
+            // Check if user cancelled the operation
+            if (secondError instanceof Error && 
+                (secondError.name === 'NotFoundError' || 
+                 secondError.name === 'AbortError' || 
+                 secondError.message.includes('User cancelled') ||
+                 secondError.message.includes('cancelled') ||
+                 secondError.message.includes('canceled'))) {
+              console.log('🚫 User cancelled device selection');
+              throw secondError; // Don't retry if user cancelled
+            }
+            
             console.log('🚫 Simple filters failed, trying minimal prefixes...', secondError);
             
             // Last attempt - very short prefixes (2 chars)
@@ -156,6 +178,17 @@ export const useBeaconDetection = (props?: UseBeaconDetectionProps) => {
                   optionalServices: []
                 });
               } catch (finalError) {
+                // Check if user cancelled the operation
+                if (finalError instanceof Error && 
+                    (finalError.name === 'NotFoundError' || 
+                     finalError.name === 'AbortError' || 
+                     finalError.message.includes('User cancelled') ||
+                     finalError.message.includes('cancelled') ||
+                     finalError.message.includes('canceled'))) {
+                  console.log('🚫 User cancelled device selection');
+                  throw finalError; // Don't retry if user cancelled
+                }
+                
                 console.log('❌ All filter attempts failed.', finalError);
                 
                 // Final fallback - show all devices if explicitly allowed
@@ -233,6 +266,21 @@ export const useBeaconDetection = (props?: UseBeaconDetectionProps) => {
 
     } catch (error: unknown) {
       setIsScanning(false);
+      
+      // Check if user cancelled the operation
+      if (error instanceof Error && 
+          (error.name === 'NotFoundError' || 
+           error.name === 'AbortError' || 
+           error.message.includes('User cancelled') ||
+           error.message.includes('cancelled') ||
+           error.message.includes('canceled'))) {
+        console.log('🚫 Bluetooth scan cancelled by user');
+        return {
+          success: false,
+          error: 'Scan cancelled by user'
+        };
+      }
+      
       console.error('Bluetooth detection error:', error);
       
       const errorMessage = error instanceof Error ? error.message : 'Failed to detect beacon';

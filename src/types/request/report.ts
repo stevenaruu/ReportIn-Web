@@ -12,6 +12,7 @@ export type ICreateReportRequest = {
 }
 
 export type IUpdateReportStatusRequest = {
-  status: string
   custodianId: string,
+  campusId: string,
+  status: string,
 }

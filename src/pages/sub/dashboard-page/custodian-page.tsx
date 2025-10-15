@@ -56,7 +56,7 @@ const CustodianPage = () => {
   };
 
   const tabbedReports = activeTab === "myReports"
-    ? reports.filter(r => r.complainant?.some(c => c.personId === person?.id))
+    ? reports.filter(r => r.custodian?.personId === person?.id)
     : reports;
 
   const filteredReports = tabbedReports.filter(
@@ -89,8 +89,9 @@ const CustodianPage = () => {
 
   const handleTakeReport = (report: IReport) => {
     const request: IUpdateReportStatusRequest = {
-      status: "IN PROGRESS",
       custodianId: person?.id || "",
+      campusId: campus?.campusId || "",
+      status: "IN PROGRESS",
     };
 
     takeReport.mutate({
