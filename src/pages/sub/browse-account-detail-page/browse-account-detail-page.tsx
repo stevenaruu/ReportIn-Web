@@ -120,7 +120,7 @@ const BrowseAccountDetailPage = () => {
                         onCheckedChange={() => handleToggleRole(role.roleId)}
                       />
                       <span>{role.roleName}</span>
-                    </label>
+                    </label>  
                   ))}
                 </div>
               </div>

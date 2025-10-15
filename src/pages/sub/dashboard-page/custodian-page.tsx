@@ -200,14 +200,6 @@ const CustodianPage = () => {
                 totalPages={totalPages}
                 onPageChange={setCurrentPage}
               />
-              <Button
-                style={BACKGROUND_PRIMARY_COLOR(0.7)}
-                className="w-full md:w-1/4"
-                variant="default"
-                onClick={() => navigate("/report")}
-              >
-                Create Report
-              </Button>
             </div>
           }
         </>

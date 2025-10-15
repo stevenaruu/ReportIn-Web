@@ -18,7 +18,7 @@ createRoot(document.getElementById('root')!).render(
         <TooltipProvider delayDuration={0}>
           <Provider store={store}>
             <PersistGate loading={null} persistor={persistor}>
-              <App />
+              <App /> 
             </PersistGate>
           </Provider>
         </TooltipProvider>
