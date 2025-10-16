@@ -175,13 +175,23 @@ const BrowseReportPage = () => {
             }
           </div>
 
-          <div className="mt-6 flex flex-col md:flex-row gap-6 md:gap-0 justify-between items-center">
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={setCurrentPage}
-            />
-          </div>
+          {reports.length > 0 &&
+            <div className="mt-6 flex flex-col md:flex-row gap-6 md:gap-0 justify-between items-center">
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+              />
+              <Button
+                style={BACKGROUND_PRIMARY_COLOR(0.7)}
+                className="w-full md:w-1/4"
+                variant="default"
+                onClick={() => navigate("/report/export")}
+              >
+                Export Report
+              </Button>
+            </div>
+          }
         </>
       ) : (
         <EmptyState count={allReports.length} type="privateReport" />

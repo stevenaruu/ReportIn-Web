@@ -35,6 +35,7 @@ import ReportDetailPage from './pages/sub/report-detail-page/report-detail-page'
 import CreateCampusPage from './pages/sub/create-campus-page/create-campus-page';
 import EditCampusPage from './pages/sub/edit-campus-page/edit-campus-page';
 import VerifyCampusPage from './pages/verify-campus-page/verify-campus-page';
+import ExportReportPage from './pages/sub/export-report-page/export-report-page';
 
 function App() {
   useServiceWorker({
@@ -88,6 +89,7 @@ function App() {
             <Route path="/report" element={<ReportPage />} />
             <Route path="/report/view/:reportId" element={<ReportDetailPage />} />
             <Route path="/report/edit/:reportId" element={<ReportDetailPage />} />
+            <Route path="/report/export" element={<ExportReportPage />} />
           </Route>
         </Routes>
       ) : (

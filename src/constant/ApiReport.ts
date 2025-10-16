@@ -5,4 +5,5 @@ export const ApiReport = {
   updateReport: (id: string) => `${ApiService.report}/${id}`,
   deleteReport: (id: string) => `${ApiService.report}/${id}`,
   updateReportStatus: (id: string) => `${ApiService.report}/status/${id}`,
+  exportReport: `${ApiService.report}/export`,
 }

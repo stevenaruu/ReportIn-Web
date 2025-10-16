@@ -1,6 +1,6 @@
 import apiClient from "@/config/api-client";
 import { ApiReport } from "@/constant/ApiReport";
-import { ICreateReportRequest, IUpdateReportStatusRequest } from "@/types/request/report";
+import { ICreateReportRequest, IExportReportRequest, IUpdateReportStatusRequest } from "@/types/request/report";
 import { IResponse } from "@/types/response";
 import { useMutation } from "@tanstack/react-query";
 
@@ -63,3 +63,13 @@ export const useUpdateReportStatus = () => {
     }
   );
 };
+
+export const useExportReportMutation = () => {
+  return useMutation<Blob, Error, IExportReportRequest>(async (data) => {
+    const response = await apiClient.post(ApiReport.exportReport, data, {
+      responseType: "blob",
+      headers: { "Content-Type": "application/json" },
+    })
+    return response.data as Blob
+  })
+}
