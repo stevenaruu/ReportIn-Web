@@ -42,8 +42,11 @@ const ExportReportPage = () => {
       return
     }
 
+    const formattedStart = new Date(`${startDate}T00:00:00.000Z`).toISOString()
+    const formattedEnd = new Date(`${endDate}T23:59:59.999Z`).toISOString()
+
     exportReport.mutate(
-      { startDate, endDate },
+      { startDate: formattedStart, endDate: formattedEnd },
       {
         onSuccess: (blob) => {
           const url = URL.createObjectURL(blob)
