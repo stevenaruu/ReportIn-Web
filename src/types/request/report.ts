@@ -20,4 +20,5 @@ export type IUpdateReportStatusRequest = {
 export type IExportReportRequest = {
   startDate: string // format: YYYY-MM-DD
   endDate: string // format: YYYY-MM-DD
+  campusId: string
 }

@@ -9,8 +9,11 @@ import { Modal } from "@/components/modal/Modal"
 import { Card, CardContent } from "@/components/ui/card"
 import { usePrimaryColor } from "@/lib/primary-color"
 import { useNavigate } from "react-router-dom"
+import { useSelector } from "react-redux"
+import { selectCampus } from "@/store/campus/selector"
 
 const ExportReportPage = () => {
+  const campus = useSelector(selectCampus);
   const todayStr = useMemo(() => new Date().toISOString().split("T")[0], [])
   const sevenDaysAgoStr = useMemo(() => {
     const d = new Date()
@@ -46,7 +49,7 @@ const ExportReportPage = () => {
     const formattedEnd = new Date(`${endDate}T23:59:59.999Z`).toISOString()
 
     exportReport.mutate(
-      { startDate: formattedStart, endDate: formattedEnd },
+      { startDate: formattedStart, endDate: formattedEnd, campusId: campus?.campusId || "" },
       {
         onSuccess: (blob) => {
           const url = URL.createObjectURL(blob)
