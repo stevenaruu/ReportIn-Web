@@ -1,52 +1,58 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCreateCategory } from "@/api/services/category"
 import Header from "@/components/header/header"
 import { Modal } from "@/components/modal/Modal"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { SubLayout } from "@/layouts/layout"
 import { usePrimaryColor } from "@/lib/primary-color"
 import { selectCampus } from "@/store/campus/selector"
-import { ICategoryRequest } from "@/types/request/category"
+import type { ICategoryRequest } from "@/types/request/category"
 import { useQueryClient } from "@tanstack/react-query"
 import { useState } from "react"
 import { useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
 
 const CreateCategoryPage = () => {
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient()
 
-  const campus = useSelector(selectCampus);
-  const navigate = useNavigate();
-  const { BACKGROUND_PRIMARY_COLOR, TEXT_PRIMARY_COLOR } = usePrimaryColor();
+  const campus = useSelector(selectCampus)
+  const navigate = useNavigate()
+  const { BACKGROUND_PRIMARY_COLOR, TEXT_PRIMARY_COLOR } = usePrimaryColor()
 
-  const createCategory = useCreateCategory();
+  const createCategory = useCreateCategory()
 
   // modal state
   const [open, setOpen] = useState(false)
   const [modalTitle, setModalTitle] = useState("")
   const [modalMessage, setModalMessage] = useState("")
 
-  const [name, setName] = useState('');
+  const [name, setName] = useState("")
+  const [estimationValue, setEstimationValue] = useState("")
+  const [estimationUnit, setEstimationUnit] = useState<"hours" | "days" | "weeks">("days")
 
   const handleSubmit = () => {
     const request: ICategoryRequest = {
-      campusId: campus?.campusId || '',
+      campusId: campus?.campusId || "",
       name: name,
+      estimationCompletionValue: estimationValue ? Number.parseInt(estimationValue) : undefined,
+      estimationCompletionUnit: estimationValue ? estimationUnit : undefined,
     }
 
     createCategory.mutate(request, {
       onSuccess: (res) => {
-        queryClient.refetchQueries({ queryKey: ["category"], exact: false });
-        setModalTitle("Success");
-        setModalMessage(res.message);
-        setOpen(true);
+        queryClient.refetchQueries({ queryKey: ["category"], exact: false })
+        setModalTitle("Success")
+        setModalMessage(res.message)
+        setOpen(true)
       },
       onError: (err) => {
-        setModalTitle("Error");
-        setModalMessage(err.message);
-        setOpen(true);
-      }
+        setModalTitle("Error")
+        setModalMessage(err.message)
+        setOpen(true)
+      },
     })
   }
 
@@ -75,19 +81,41 @@ const CreateCategoryPage = () => {
           </CardContent>
         </Card>
 
+        <Card>
+          <CardContent className="p-4 text-[#5d5d5d]">
+            <h2 className="font-semibold mb-3">Estimation Completion</h2>
+            <div className="flex gap-3 items-end">
+              <div className="flex-1">
+                <Input
+                  type="number"
+                  value={estimationValue}
+                  onChange={(e) => setEstimationValue(e.target.value)}
+                  placeholder="Enter number..."
+                  className="bg-neutral-50 focus-visible:ring-0 focus-visible:ring-offset-0"
+                  min="0"
+                />
+              </div>
+              <div className="w-fit">
+                <Select value={estimationUnit} onValueChange={(value: any) => setEstimationUnit(value)}>
+                  <SelectTrigger className="bg-white focus-visible:ring-0 focus-visible:ring-offset-0">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white">
+                    <SelectItem value="hours">Hours</SelectItem>
+                    <SelectItem value="days">Days</SelectItem>
+                    <SelectItem value="weeks">Weeks</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         <div className="flex justify-end gap-4">
-          <Button
-            style={TEXT_PRIMARY_COLOR(0.7)}
-            variant="outline"
-            onClick={() => navigate("/browse-category")}
-          >
+          <Button style={TEXT_PRIMARY_COLOR(0.7)} variant="outline" onClick={() => navigate("/browse-category")}>
             Back
           </Button>
-          <Button
-            onClick={handleSubmit}
-            style={BACKGROUND_PRIMARY_COLOR(0.7)}
-            disabled={createCategory.isLoading}
-          >
+          <Button onClick={handleSubmit} style={BACKGROUND_PRIMARY_COLOR(0.7)} disabled={createCategory.isLoading}>
             {createCategory.isLoading ? "Submitting..." : "Submit"}
           </Button>
         </div>

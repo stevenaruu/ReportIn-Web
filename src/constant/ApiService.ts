@@ -11,4 +11,5 @@ export const ApiService: IApi = {
   campus: `${BASE_URL}/campus`,
   leaderboard: `${BASE_URL}/leaderboard`,
   category: `${BASE_URL}/category`,
+  technicianPreference: `${BASE_URL}/technician-preference`,
 }
