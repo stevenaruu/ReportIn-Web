@@ -8,19 +8,11 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { ChevronDown, Filter } from "lucide-react"
 import { hexToRgba } from "@/lib/hex-to-rgba"
 import { Checkbox } from "../ui/checkbox"
-import {
-  usePrimaryColor,
-} from "@/lib/primary-color"
+import { usePrimaryColor } from "@/lib/primary-color"
 import { useSelector } from "react-redux"
 import { selectCampus } from "@/store/campus/selector"
 
@@ -31,6 +23,9 @@ type Status = "PENDING" | "IN PROGRESS" | "DONE"
 interface FilterSortProps {
   areas: string[]
   categories: string[]
+  initialStatus?: Status[]
+  initialAreas?: string[]
+  initialCategories?: string[]
   onApply: (filters: {
     sortBy: SortBy
     sortDirection: SortDirection
@@ -49,20 +44,45 @@ function useMediaQuery(query: string) {
     const listener = () => setMatches(media.matches)
     media.addEventListener("change", listener)
     return () => media.removeEventListener("change", listener)
-  }, [matches, query])
+  }, [query])
   return matches
 }
 
-export default function FilterSort({ areas, categories, onApply }: FilterSortProps) { 
-  const campus = useSelector(selectCampus);
-  const { BACKGROUND_PRIMARY_COLOR, TEXT_PRIMARY_COLOR } = usePrimaryColor();
+export default function FilterSort({
+  areas,
+  categories,
+  initialStatus = [],
+  initialAreas = [],
+  initialCategories = [],
+  onApply,
+}: FilterSortProps) {
+  const campus = useSelector(selectCampus)
+  const { BACKGROUND_PRIMARY_COLOR, TEXT_PRIMARY_COLOR } = usePrimaryColor()
 
   const [open, setOpen] = useState(false)
   const [sortBy, setSortBy] = useState<SortBy>("count")
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc")
-  const [selectedStatus, setSelectedStatus] = useState<Status[]>([])
-  const [selectedAreas, setSelectedAreas] = useState<string[]>([])
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([])
+  const [selectedStatus, setSelectedStatus] = useState<Status[]>(initialStatus)
+  const [selectedAreas, setSelectedAreas] = useState<string[]>(initialAreas)
+  const [selectedCategories, setSelectedCategories] = useState<string[]>(initialCategories)
+
+  useEffect(() => {
+    if (JSON.stringify(selectedCategories) !== JSON.stringify(initialCategories)) {
+      setSelectedCategories(initialCategories)
+    }
+  }, [initialCategories])
+
+  useEffect(() => {
+    if (JSON.stringify(selectedAreas) !== JSON.stringify(initialAreas)) {
+      setSelectedAreas(initialAreas)
+    }
+  }, [initialAreas])
+
+  useEffect(() => {
+    if (JSON.stringify(selectedStatus) !== JSON.stringify(initialStatus)) {
+      setSelectedStatus(initialStatus)
+    }
+  }, [initialStatus])
 
   const isMobile = useMediaQuery("(max-width: 768px)")
 
@@ -89,10 +109,6 @@ export default function FilterSort({ areas, categories, onApply }: FilterSortPro
     setOpen(false)
   }
 
-  useEffect(() => {
-    applyFilters()
-  }, [sortBy, sortDirection])
-
   const filterContent = (
     <div className="space-y-4 max-h-[400px] overflow-y-auto">
       {/* Status */}
@@ -104,16 +120,11 @@ export default function FilterSort({ areas, categories, onApply }: FilterSortPro
               <Checkbox
                 style={{
                   backgroundColor: selectedStatus.includes(s as Status)
-                    ? hexToRgba(
-                      campus?.customization.primaryColor,
-                      0.7
-                    )
+                    ? hexToRgba(campus?.customization.primaryColor, 0.7)
                     : undefined,
                 }}
                 checked={selectedStatus.includes(s as Status)}
-                onCheckedChange={() =>
-                  toggleArrayValue(selectedStatus, s as Status, setSelectedStatus)
-                }
+                onCheckedChange={() => toggleArrayValue(selectedStatus, s as Status, setSelectedStatus)}
               />
               {s}
             </label>
@@ -130,16 +141,11 @@ export default function FilterSort({ areas, categories, onApply }: FilterSortPro
               <Checkbox
                 style={{
                   backgroundColor: selectedAreas.includes(a)
-                    ? hexToRgba(
-                      campus?.customization.primaryColor,
-                      0.7
-                    )
+                    ? hexToRgba(campus?.customization.primaryColor, 0.7)
                     : undefined,
                 }}
                 checked={selectedAreas.includes(a)}
-                onCheckedChange={() =>
-                  toggleArrayValue(selectedAreas, a, setSelectedAreas)
-                }
+                onCheckedChange={() => toggleArrayValue(selectedAreas, a, setSelectedAreas)}
               />
               {a}
             </label>
@@ -156,20 +162,11 @@ export default function FilterSort({ areas, categories, onApply }: FilterSortPro
               <Checkbox
                 style={{
                   backgroundColor: selectedCategories.includes(c)
-                    ? hexToRgba(
-                      campus?.customization.primaryColor,
-                      0.7
-                    )
+                    ? hexToRgba(campus?.customization.primaryColor, 0.7)
                     : undefined,
                 }}
                 checked={selectedCategories.includes(c)}
-                onCheckedChange={() =>
-                  toggleArrayValue(
-                    selectedCategories,
-                    c,
-                    setSelectedCategories
-                  )
-                }
+                onCheckedChange={() => toggleArrayValue(selectedCategories, c, setSelectedCategories)}
               />
               {c}
             </label>
@@ -232,7 +229,7 @@ export default function FilterSort({ areas, categories, onApply }: FilterSortPro
             <Button
               style={BACKGROUND_PRIMARY_COLOR(0.7)}
               variant="outline"
-              className="flex items-center rounded-full gap-2 text-white"
+              className="flex items-center rounded-full gap-2 text-white bg-transparent"
             >
               <Filter className="w-4 h-4" /> Filter & Sort
             </Button>
@@ -243,11 +240,7 @@ export default function FilterSort({ areas, categories, onApply }: FilterSortPro
             </DialogHeader>
             {filterContent}
             <div className="flex justify-end mt-4">
-              <Button
-                className="px-10"
-                style={BACKGROUND_PRIMARY_COLOR(0.7)}
-                onClick={handleApply}
-              >
+              <Button className="px-10" style={BACKGROUND_PRIMARY_COLOR(0.7)} onClick={handleApply}>
                 Apply
               </Button>
             </div>
@@ -262,7 +255,7 @@ export default function FilterSort({ areas, categories, onApply }: FilterSortPro
               <Button
                 style={BACKGROUND_PRIMARY_COLOR(0.7)}
                 variant="outline"
-                className="flex items-center"
+                className="flex items-center bg-transparent"
               >
                 <Filter className="w-4 h-4 text-white" />
               </Button>
@@ -273,11 +266,7 @@ export default function FilterSort({ areas, categories, onApply }: FilterSortPro
               </DialogHeader>
               {filterContent}
               <div className="flex justify-end mt-4">
-                <Button
-                  className="px-10"
-                  style={BACKGROUND_PRIMARY_COLOR(0.7)}
-                  onClick={handleApply}
-                >
+                <Button className="px-10" style={BACKGROUND_PRIMARY_COLOR(0.7)} onClick={handleApply}>
                   Apply
                 </Button>
               </div>
@@ -292,14 +281,11 @@ export default function FilterSort({ areas, categories, onApply }: FilterSortPro
                 variant="default"
                 className="text-white flex items-center gap-2"
               >
-                Sort by: {sortBy.charAt(0).toUpperCase() + sortBy.slice(1)}{" "}
-                <ChevronDown className="w-4 h-4" />
+                Sort by: {sortBy.charAt(0).toUpperCase() + sortBy.slice(1)} <ChevronDown className="w-4 h-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-              <DropdownMenuLabel style={TEXT_PRIMARY_COLOR(0.7)}>
-                Sort by
-              </DropdownMenuLabel>
+              <DropdownMenuLabel style={TEXT_PRIMARY_COLOR(0.7)}>Sort by</DropdownMenuLabel>
               <DropdownMenuRadioGroup
                 style={TEXT_PRIMARY_COLOR(0.7)}
                 value={sortBy}
@@ -316,22 +302,15 @@ export default function FilterSort({ areas, categories, onApply }: FilterSortPro
           {/* Sort Direction */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button
-                style={BACKGROUND_PRIMARY_COLOR(0.7)}
-                variant="default"
-                className="flex items-center gap-2"
-              >
-                {sortDirection === "asc" ? "Ascending" : "Descending"}{" "}
-                <ChevronDown className="w-4 h-4" />
+              <Button style={BACKGROUND_PRIMARY_COLOR(0.7)} variant="default" className="flex items-center gap-2">
+                {sortDirection === "asc" ? "Ascending" : "Descending"} <ChevronDown className="w-4 h-4" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
               <DropdownMenuRadioGroup
                 style={TEXT_PRIMARY_COLOR(0.7)}
                 value={sortDirection}
-                onValueChange={(val: string) =>
-                  setSortDirection(val as SortDirection)
-                }
+                onValueChange={(val: string) => setSortDirection(val as SortDirection)}
               >
                 <DropdownMenuRadioItem value="asc">Ascending</DropdownMenuRadioItem>
                 <DropdownMenuRadioItem value="desc">Descending</DropdownMenuRadioItem>

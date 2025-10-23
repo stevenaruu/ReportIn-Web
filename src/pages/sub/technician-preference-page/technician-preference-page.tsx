@@ -16,7 +16,7 @@ import { usePrimaryColor } from "@/lib/primary-color"
 import { Modal } from "@/components/modal/Modal"
 import { useGetAllCategoryQuery } from "@/api/services/category"
 import type { IGetCategoryResponse } from "@/types/response/category"
-import { useCreateTechnicianPreference } from "@/api/services/technician-preference"
+import { useCreateTechnicianPreference, useGetTechnicianPreferenceQuery } from "@/api/services/technician-preference"
 
 const TechnicianPreferencePage = () => {
   const location = useLocation()
@@ -26,20 +26,19 @@ const TechnicianPreferencePage = () => {
   const { BACKGROUND_PRIMARY_COLOR } = usePrimaryColor()
 
   const { data: categoryData, isLoading: isCategoryLoading } = useGetAllCategoryQuery(campus?.campusId ?? "")
+  const { data: preferenceData, isLoading: isPreferenceLoading } = useGetTechnicianPreferenceQuery(
+    person?.id ?? "",
+    campus?.campusId ?? "",
+  )
   const { mutate: createTechnicianPreference, isPending: isSubmitting } = useCreateTechnicianPreference()
 
   const [selectedCategories, setSelectedCategories] = useState<string[]>([])
 
-  // modal state
-  const [open, setOpen] = useState(false)
-  const [modalTitle, setModalTitle] = useState("")
-  const [modalMessage, setModalMessage] = useState("")
-
-  // useEffect(() => {
-  //   if (person?.technicianPreference) {
-  //     setSelectedCategories(person.technicianPreference.map((pref: any) => pref.categoryId))
-  //   }
-  // }, [person])
+  useEffect(() => {
+    if (preferenceData?.data) {
+      setSelectedCategories(preferenceData.data)
+    }
+  }, [preferenceData])
 
   const handleToggleCategory = (categoryId: string) => {
     setSelectedCategories((prev) =>
@@ -78,6 +77,11 @@ const TechnicianPreferencePage = () => {
 
   const categories = categoryData?.data || []
 
+  // modal state
+  const [open, setOpen] = useState(false)
+  const [modalTitle, setModalTitle] = useState("")
+  const [modalMessage, setModalMessage] = useState("")
+
   return (
     <SubLayout>
       <Header title="Technician Preference" />
@@ -94,7 +98,7 @@ const TechnicianPreferencePage = () => {
         <div className="space-y-4">
           <Card>
             <CardContent className="p-4 text-[#5d5d5d]">
-              {isCategoryLoading ? (
+              {isCategoryLoading || isPreferenceLoading ? (
                 <div className="border rounded-md">
                   <div className="grid grid-cols-1 divide-y">
                     <div className="p-3">
@@ -138,7 +142,7 @@ const TechnicianPreferencePage = () => {
                 <Button
                   onClick={handleSubmit}
                   style={BACKGROUND_PRIMARY_COLOR(0.7)}
-                  disabled={isCategoryLoading || isSubmitting}
+                  disabled={isCategoryLoading || isSubmitting || isPreferenceLoading}
                 >
                   Submit
                 </Button>
