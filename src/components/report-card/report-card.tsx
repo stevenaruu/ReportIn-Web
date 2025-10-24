@@ -205,6 +205,15 @@ export const ReportCard = <T extends IReport>({
               {report.count} Similar Reports
             </Badge>
           )}
+          {report.category.estimationCompletion && (
+            <Badge
+              style={BACKGROUND_PRIMARY_COLOR(0.5)}
+              className="text-white"
+              variant="outline"
+            >
+              {report.category.estimationCompletion.toLocaleUpperCase()}
+            </Badge>
+          )}
         </div>
 
         <div className="flex flex-col md:flex-row items-center gap-2 w-full">
