@@ -211,7 +211,7 @@ export const ReportCard = <T extends IReport>({
               className="text-white"
               variant="outline"
             >
-              {report.category.estimationCompletion.toLocaleUpperCase()}
+              EST. TIME: {report.category.estimationCompletion.toLocaleUpperCase()}
             </Badge>
           )}
         </div>
