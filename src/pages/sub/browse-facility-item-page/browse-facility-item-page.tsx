@@ -112,7 +112,7 @@ const BrowseFacilityItemPage = () => {
           edit: true,
           delete: true,
         }}
-        onView={(row) => navigate(`/browse-facility-item/${row.id}/logs`)}
+        onView={(row) => navigate(`/browse-facility-item/${areaId}/logs/${row.id}`)}
         onEdit={(row) => navigate("/browse-facility-item/edit/" + row.id, { state: row })}
         onDelete={(row) => {
           setFacilityItemIdToDelete(row.id)

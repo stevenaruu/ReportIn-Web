@@ -41,6 +41,8 @@ import RootBrowseAccountPage from "./pages/root/browse-account-page/browse-accou
 import RootBrowseAccountDetailPage from "./pages/root/browse-account-detail-page/browse-account-detail-page"
 import BrowseFacilityItemPage from "./pages/sub/browse-facility-item-page/browse-facility-item-page"
 import FacilityItemLogPage from "./pages/sub/facility-item-log-page/facility-item-log-page"
+import CreateFacilityItemPage from "./pages/sub/create-facility-item-page/create-facility-item-page"
+import EditFacilityItemPage from "./pages/sub/edit-facility-item-page/edit-facility-item-page"
 
 function App() {
   useServiceWorker({
@@ -86,8 +88,10 @@ function App() {
             <Route path="/browse-area" element={<BrowseAreaPage />} />
             <Route path="/browse-area/create" element={<CreateAreaPage />} />
             <Route path="/browse-area/edit/:areaId" element={<EditAreaPage />} />
+            <Route path="/browse-facility-item/create" element={<CreateFacilityItemPage />} />
+            <Route path="/browse-facility-item/edit/:facilityItemId" element={<EditFacilityItemPage />} />
+            <Route path="/browse-facility-item/:areaId/logs/:facilityItemId" element={<FacilityItemLogPage />} />
             <Route path="/browse-facility-item/:areaId" element={<BrowseFacilityItemPage />} />
-            <Route path="/facility-item-log/:facilityItemId" element={<FacilityItemLogPage />} />
             <Route path="/browse-account" element={<BrowseAccountPage />} />
             <Route path="/browse-account/:personId" element={<BrowseAccountDetailPage />} />
             <Route path="/technician-preference" element={<TechnicianPreferencePage />} />

@@ -2,26 +2,22 @@
 import { useGetFacilityItemLogQuery } from "@/api/services/facility-item"
 import { type Column, DataTable } from "@/components/data-table/data-table"
 import { SearchBar } from "@/components/search-bar/search-bar"
-import { Button } from "@/components/ui/button"
 import { SubLayout } from "@/layouts/layout"
 import { formatTableDate } from "@/lib/format-date"
 import { useState } from "react"
-import { useNavigate, useParams } from "react-router-dom"
-import { ArrowLeft } from "lucide-react"
+import { useParams } from "react-router-dom"
 
 const FacilityItemLogPage = () => {
-  const { itemId } = useParams<{ itemId: string }>()
+  const { facilityItemId } = useParams<{ areaId: string; facilityItemId: string }>()
 
   const [search, setSearch] = useState("")
   const [page, setPage] = useState(1)
 
   const { data, isLoading } = useGetFacilityItemLogQuery({
-    itemId: itemId ?? "",
+    itemId: facilityItemId ?? "",
     page,
     search,
   })
-
-  const navigate = useNavigate()
 
   const handleSearch = (value: string) => {
     setSearch(value)
@@ -40,7 +36,7 @@ const FacilityItemLogPage = () => {
     },
     {
       key: "person",
-      header: "Person",
+      header: "Technician",
       render: (row) => `${row.person.name}\n${row.person.email}`,
     },
     { key: "issue", header: "Issue" },
@@ -53,13 +49,6 @@ const FacilityItemLogPage = () => {
 
   return (
     <SubLayout>
-      <div className="mb-4 flex items-center gap-2">
-        <Button variant="outline" size="icon" onClick={() => navigate(-1)}>
-          <ArrowLeft className="w-4 h-4" />
-        </Button>
-        <h2 className="text-xl font-semibold">Facility Item Logs</h2>
-      </div>
-
       <SearchBar onSearch={handleSearch} placeholder="Search Logs..." />
       <DataTable
         isLoading={isLoading}

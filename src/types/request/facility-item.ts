@@ -11,3 +11,8 @@ export type IFacilityItemRequest = {
   areaId: string
   name: string
 }
+
+export type IFacilityItemEditRequest = {
+  name: string
+}
+

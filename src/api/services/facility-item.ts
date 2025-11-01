@@ -1,7 +1,7 @@
 import apiClient from "@/config/api-client"
 import { ApiFacilityItem } from "@/constant/ApiFacilityItem"
 import { ApiFacilityItemLog } from "@/constant/ApiFacilityItemLog"
-import { IFacilityItemRequest, IGetFacilityItemRequest } from "@/types/request/facility-item"
+import { IFacilityItemEditRequest, IFacilityItemRequest, IGetFacilityItemRequest } from "@/types/request/facility-item"
 import { IGetFacilityItemLogRequest } from "@/types/request/facility-item-log"
 import type { IResponse } from "@/types/response"
 import { IGetFacilityItemResponse } from "@/types/response/facility-item"
@@ -70,7 +70,7 @@ export const useCreateFacilityItem = () => {
 }
 
 export const useUpdateFacilityItem = (id: string) => {
-  return useMutation<IResponse, Error, IFacilityItemRequest>(async (data) => {
+  return useMutation<IResponse, Error, IFacilityItemEditRequest>(async (data) => {
     const response = await apiClient.put<IResponse>(ApiFacilityItem.editFacilityItem(id), data)
     return response.data
   })
