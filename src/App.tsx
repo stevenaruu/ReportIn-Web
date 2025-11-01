@@ -39,6 +39,8 @@ import ExportReportPage from "./pages/sub/export-report-page/export-report-page"
 import TechnicianPreferencePage from "./pages/sub/technician-preference-page/technician-preference-page"
 import RootBrowseAccountPage from "./pages/root/browse-account-page/browse-account-page"
 import RootBrowseAccountDetailPage from "./pages/root/browse-account-detail-page/browse-account-detail-page"
+import BrowseFacilityItemPage from "./pages/sub/browse-facility-item-page/browse-facility-item-page"
+import FacilityItemLogPage from "./pages/sub/facility-item-log-page/facility-item-log-page"
 
 function App() {
   useServiceWorker({
@@ -84,6 +86,8 @@ function App() {
             <Route path="/browse-area" element={<BrowseAreaPage />} />
             <Route path="/browse-area/create" element={<CreateAreaPage />} />
             <Route path="/browse-area/edit/:areaId" element={<EditAreaPage />} />
+            <Route path="/browse-facility-item/:areaId" element={<BrowseFacilityItemPage />} />
+            <Route path="/facility-item-log/:facilityItemId" element={<FacilityItemLogPage />} />
             <Route path="/browse-account" element={<BrowseAccountPage />} />
             <Route path="/browse-account/:personId" element={<BrowseAccountDetailPage />} />
             <Route path="/technician-preference" element={<TechnicianPreferencePage />} />

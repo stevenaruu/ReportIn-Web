@@ -1,6 +1,6 @@
-import { IApi } from "@/interfaces/IApi";
+import type { IApi } from "@/interfaces/IApi"
 
-export const BASE_URL = 'https://api.reportin.my.id';
+export const BASE_URL = "https://api.reportin.my.id"
 
 export const ApiService: IApi = {
   user: `${BASE_URL}/user`,
@@ -12,4 +12,6 @@ export const ApiService: IApi = {
   leaderboard: `${BASE_URL}/leaderboard`,
   category: `${BASE_URL}/category`,
   technicianPreference: `${BASE_URL}/technician-preference`,
+  facilityItem: `${BASE_URL}/facility-item`,
+  facilityItemLog: `${BASE_URL}/facility-item-log`,
 }

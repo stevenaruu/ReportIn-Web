@@ -1,3 +1,5 @@
+import type React from "react"
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -17,9 +19,9 @@ interface DataTableProps<T> {
   data: T[]
   isLoading?: boolean
   privilege?: {
-    view?: boolean
-    edit?: boolean
-    delete?: boolean
+    view?: boolean | { enabled: boolean; icon?: React.ReactNode }
+    edit?: boolean | { enabled: boolean; icon?: React.ReactNode }
+    delete?: boolean | { enabled: boolean; icon?: React.ReactNode }
   }
   onView?: (row: T) => void
   onEdit?: (row: T) => void
@@ -35,27 +37,32 @@ export function DataTable<T>({
   onEdit,
   onDelete,
 }: DataTableProps<T>) {
-  const { BACKGROUND_PRIMARY_COLOR } = usePrimaryColor();
-  const campus = useSelector(selectCampus);
+  const { BACKGROUND_PRIMARY_COLOR } = usePrimaryColor()
+  const campus = useSelector(selectCampus)
+
+  // Helper function to get privilege config
+  const getPrivilegeConfig = (priv: boolean | { enabled: boolean; icon?: React.ReactNode } | undefined) => {
+    if (typeof priv === "boolean") {
+      return { enabled: priv, icon: null }
+    }
+    return priv || { enabled: false, icon: null }
+  }
+
+  const viewPriv = getPrivilegeConfig(privilege?.view)
+  const editPriv = getPrivilegeConfig(privilege?.edit)
+  const deletePriv = getPrivilegeConfig(privilege?.delete)
 
   return (
     <div className="overflow-x-auto rounded-md border">
       <table className="w-full border-collapse">
-        <thead
-          style={BACKGROUND_PRIMARY_COLOR(campus ? 0.7 : 1)}
-        >
+        <thead style={BACKGROUND_PRIMARY_COLOR(campus ? 0.7 : 1)}>
           <tr>
             {columns.map((col, i) => (
-              <th
-                key={i}
-                className="px-4 py-2 text-left text-sm font-medium text-white border-b"
-              >
+              <th key={i} className="px-4 py-2 text-left text-sm font-medium text-white border-b">
                 {col.header}
               </th>
             ))}
-            <th className="text-center px-4 py-2 text-sm font-medium text-white border-b">
-              Action
-            </th>
+            <th className="text-center px-4 py-2 text-sm font-medium text-white border-b">Action</th>
           </tr>
         </thead>
         <tbody>
@@ -79,35 +86,21 @@ export function DataTable<T>({
             ))
           ) : data.length === 0 ? (
             <tr>
-              <td
-                colSpan={columns.length + 1}
-                className="px-4 py-4 text-center text-sm text-[#5d5d5d]"
-              >
+              <td colSpan={columns.length + 1} className="px-4 py-4 text-center text-sm text-[#5d5d5d]">
                 No data available
               </td>
             </tr>
           ) : (
             data.map((row, rowIndex) => (
-              <tr
-                key={rowIndex}
-                className={cn(
-                  "hover:bg-gray-50",
-                  rowIndex % 2 === 1 && "bg-gray-50/50"
-                )}
-              >
+              <tr key={rowIndex} className={cn("hover:bg-gray-50", rowIndex % 2 === 1 && "bg-gray-50/50")}>
                 {columns.map((col, colIndex) => {
-                  const value = col.render
-                    ? col.render(row, rowIndex)
-                    : (row as any)[col.key]
+                  const value = col.render ? col.render(row, rowIndex) : (row as any)[col.key]
 
                   // jika value adalah string dengan pola "NAME\nDATE"
                   if (typeof value === "string" && value.includes("\n")) {
                     const [name, date] = value.split("\n")
                     return (
-                      <td
-                        key={colIndex}
-                        className="px-4 py-2 text-sm text-[#5d5d5d] border-b"
-                      >
+                      <td key={colIndex} className="px-4 py-2 text-sm text-[#5d5d5d] border-b">
                         <div className="flex flex-col">
                           <span>{name}</span>
                           <span className="text-xs text-gray-500">{date}</span>
@@ -117,41 +110,26 @@ export function DataTable<T>({
                   }
 
                   return (
-                    <td
-                      key={colIndex}
-                      className="px-4 py-2 text-sm text-[#5d5d5d] border-b"
-                    >
+                    <td key={colIndex} className="px-4 py-2 text-sm text-[#5d5d5d] border-b">
                       {value}
                     </td>
                   )
                 })}
                 <td className="px-4 py-2 text-sm text-[#5d5d5d] border-b">
                   <div className="flex justify-center items-center gap-2">
-                    {privilege.view && (
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        onClick={() => onView?.(row)}
-                      >
-                        <Eye className="w-4 h-4 text-[#5d5d5d]" />
+                    {viewPriv.enabled && (
+                      <Button size="icon" variant="ghost" onClick={() => onView?.(row)}>
+                        {viewPriv.icon || <Eye className="w-4 h-4 text-[#5d5d5d]" />}
                       </Button>
                     )}
-                    {privilege.edit && (
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        onClick={() => onEdit?.(row)}
-                      >
-                        <Edit className="w-4 h-4 text-[#5d5d5d]" />
+                    {editPriv.enabled && (
+                      <Button size="icon" variant="ghost" onClick={() => onEdit?.(row)}>
+                        {editPriv.icon || <Edit className="w-4 h-4 text-[#5d5d5d]" />}
                       </Button>
                     )}
-                    {privilege.delete && (
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        onClick={() => onDelete?.(row)}
-                      >
-                        <Trash className="w-4 h-4 text-[#5d5d5d]" />
+                    {deletePriv.enabled && (
+                      <Button size="icon" variant="ghost" onClick={() => onDelete?.(row)}>
+                        {deletePriv.icon || <Trash className="w-4 h-4 text-[#5d5d5d]" />}
                       </Button>
                     )}
                   </div>

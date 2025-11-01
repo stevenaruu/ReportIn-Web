@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useDeleteArea, useGetAreaQuery } from "@/api/services/area"
+import { useDeleteFacilityItem, useGetFacilityItemQuery } from "@/api/services/facility-item"
 import { type Column, DataTable } from "@/components/data-table/data-table"
 import { Modal } from "@/components/modal/Modal"
 import { Pagination } from "@/components/pagination/pagination"
@@ -12,29 +12,31 @@ import { selectCampus } from "@/store/campus/selector"
 import { useQueryClient } from "@tanstack/react-query"
 import { useState } from "react"
 import { useSelector } from "react-redux"
-import { useNavigate } from "react-router-dom"
-import { Package } from "lucide-react"
+import { useNavigate, useParams } from "react-router-dom"
+import { Eye } from "lucide-react"
 
-const BrowseAreaPage = () => {
+const BrowseFacilityItemPage = () => {
   const queryClient = useQueryClient()
+  const { areaId } = useParams<{ areaId: string }>()
 
   const campus = useSelector(selectCampus)
   const { BACKGROUND_PRIMARY_COLOR } = usePrimaryColor()
 
   // modal state
-  const [modalTitle, setModalTitle] = useState("Delete Area")
+  const [modalTitle, setModalTitle] = useState("Delete Facility Item")
   const [modalMessage, setModalMessage] = useState(
-    "Are you sure you want to delete this area? This action cannot be undone.",
+    "Are you sure you want to delete this facility item? This action cannot be undone.",
   )
   const [modalType, setModalType] = useState<"confirmDelete" | "result" | null>(null)
 
   const [search, setSearch] = useState("")
   const [page, setPage] = useState(1)
-  const [areaIdToDelete, setAreaIdToDelete] = useState("")
-  const deleteArea = useDeleteArea()
+  const [facilityItemIdToDelete, setFacilityItemIdToDelete] = useState("")
+  const deleteFacilityItem = useDeleteFacilityItem()
 
-  const { data, isLoading } = useGetAreaQuery({
+  const { data, isLoading } = useGetFacilityItemQuery({
     campusId: campus?.campusId ?? "",
+    areaId: areaId ?? "",
     page,
     search,
   })
@@ -47,9 +49,9 @@ const BrowseAreaPage = () => {
   }
 
   const handleDelete = () => {
-    deleteArea.mutate(areaIdToDelete, {
+    deleteFacilityItem.mutate(facilityItemIdToDelete, {
       onSuccess: (res) => {
-        queryClient.invalidateQueries({ queryKey: ["area"], exact: false })
+        queryClient.invalidateQueries({ queryKey: ["facilityItem"], exact: false })
 
         setModalTitle("Success")
         setModalMessage(res.message)
@@ -74,7 +76,6 @@ const BrowseAreaPage = () => {
       },
     },
     { key: "name", header: "Name" },
-    { key: "beaconId", header: "Beacon ID" },
     {
       key: "createdBy",
       header: "Created By-Date",
@@ -83,7 +84,7 @@ const BrowseAreaPage = () => {
     {
       key: "updatedBy",
       header: "Updated By-Date",
-      render: (row) => `${row.lastUpdatedBy}\n${formatTableDate(row.createdDate)}`,
+      render: (row) => `${row.lastUpdatedBy}\n${formatTableDate(row.lastUpdatedDate)}`,
     },
   ]
 
@@ -98,23 +99,23 @@ const BrowseAreaPage = () => {
         confirmText={modalType === "confirmDelete" ? "Delete" : "OK"}
         onCancel={modalType === "confirmDelete" ? () => setModalType(null) : undefined}
         cancelText="Cancel"
-        loading={deleteArea.isLoading}
+        loading={deleteFacilityItem.isLoading}
       />
 
-      <SearchBar onSearch={handleSearch} placeholder="Search Area..." />
+      <SearchBar onSearch={handleSearch} placeholder="Search Facility Item..." />
       <DataTable
         isLoading={isLoading}
         columns={columns}
         data={data?.data ?? []}
         privilege={{
-          view: { enabled: true, icon: <Package className="w-4 h-4 text-[#5d5d5d]" /> },
+          view: { enabled: true, icon: <Eye className="w-4 h-4 text-[#5d5d5d]" /> },
           edit: true,
           delete: true,
         }}
-        onView={(row) => navigate(`/browse-facility-item/${row.id}`, { state: row })}
-        onEdit={(row) => navigate("/browse-area/edit/" + row.id, { state: row })}
+        onView={(row) => navigate(`/browse-facility-item/${row.id}/logs`)}
+        onEdit={(row) => navigate("/browse-facility-item/edit/" + row.id, { state: row })}
         onDelete={(row) => {
-          setAreaIdToDelete(row.id)
+          setFacilityItemIdToDelete(row.id)
           setModalType("confirmDelete")
         }}
       />
@@ -125,9 +126,9 @@ const BrowseAreaPage = () => {
             style={BACKGROUND_PRIMARY_COLOR(0.7)}
             className="w-full md:w-1/4"
             variant="default"
-            onClick={() => navigate("/browse-area/create")}
+            onClick={() => navigate("/browse-facility-item/create", { state: { areaId } })}
           >
-            Create Area
+            Create Facility Item
           </Button>
         </div>
       )}
@@ -135,4 +136,4 @@ const BrowseAreaPage = () => {
   )
 }
 
-export default BrowseAreaPage
+export default BrowseFacilityItemPage
