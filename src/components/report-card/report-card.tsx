@@ -1,11 +1,21 @@
 import { Card, CardContent } from "@/components/ui/card"
-import { Eye, Pencil, Trash, Send, Clock, CheckCircle } from "lucide-react"
+import {
+  Eye,
+  Pencil,
+  Trash,
+  Send,
+  Clock,
+  CheckCircle,
+  ThumbsUp,
+} from "lucide-react"
 import { IReport } from "@/types/model/report"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { usePrimaryColor } from "@/lib/primary-color"
+import { useSelector } from "react-redux"
+import { selectPerson } from "@/store/person/selector"
 
 interface ReportCardProps<T = IReport> {
   report: T
@@ -44,18 +54,30 @@ export const ReportCard = <T extends IReport>({
   onTake,
   onDelete,
 }: ReportCardProps<T>) => {
-  const { BACKGROUND_PRIMARY_COLOR } = usePrimaryColor();
+  const { BACKGROUND_PRIMARY_COLOR } = usePrimaryColor()
+  const person = useSelector(selectPerson);
 
   const [currentImage, setCurrentImage] = useState(0)
+  const [liked, setLiked] = useState(
+    report.upvote?.includes(person?.id ?? "") ?? false
+  );
+  const [likeCount, setLikeCount] = useState(report.upvote?.length ?? 0)
 
   const images = report.complainant || []
-  const description = report.complainant?.[0].description || "No description"
-  const extraDescriptions =
-    report.complainant?.length > 1 ? report.complainant.length - 1 : 0
+  const description = report.complainant?.[0]?.description || "No description"
 
-  const handleDotClick = (index: number) => {
-    setCurrentImage(index)
+  const handleDotClick = (index: number) => setCurrentImage(index)
+
+  const handleLike = () => {
+    // toggle like status & update count instantly
+    setLiked((prev) => !prev)
+    setLikeCount((prev) => (liked ? prev - 1 : prev + 1))
   }
+
+  useEffect(() => {
+    setLiked(report.upvote?.includes(person?.id ?? "") ?? false);
+    setLikeCount(report.upvote?.length ?? 0);
+  }, [report.upvote, person?.id]);
 
   if (isLoading) {
     return (
@@ -78,7 +100,7 @@ export const ReportCard = <T extends IReport>({
 
   return (
     <Card className="text-[#5d5d5d] relative flex flex-col items-center md:items-start md:flex-row p-4 shadow-sm rounded-md bg-neutral-50">
-      {/* Action buttons (Desktop: top-right) */}
+      {/* Action buttons (Desktop) */}
       <div className="hidden md:flex gap-2 absolute top-3 right-3">
         {privilege.delete && (
           <Button
@@ -126,7 +148,7 @@ export const ReportCard = <T extends IReport>({
         )}
       </div>
 
-      {/* Image Carousel */}
+      {/* Image Section */}
       <div className="flex flex-col items-center mb-3 md:mb-0 md:mr-4 self-center">
         <div className="relative w-28 h-28 md:w-20 md:h-20 overflow-hidden rounded-lg">
           <div
@@ -152,7 +174,6 @@ export const ReportCard = <T extends IReport>({
           </div>
         </div>
 
-        {/* Dot indicators */}
         {images.length > 1 && (
           <div className="flex gap-1 mt-2">
             {images.slice(0, 5).map((_, idx) => (
@@ -205,79 +226,54 @@ export const ReportCard = <T extends IReport>({
               {report.count} Similar Reports
             </Badge>
           )}
-          {report.category.estimationCompletion && (
+          {report.category?.estimationCompletion && (
             <Badge
               style={BACKGROUND_PRIMARY_COLOR(0.5)}
               className="text-white"
               variant="outline"
             >
-              EST. TIME: {report.category.estimationCompletion.toLocaleUpperCase()}
+              EST. TIME:{" "}
+              {report.category.estimationCompletion.toLocaleUpperCase()}
             </Badge>
           )}
         </div>
 
+        {/* Like Button */}
         <div className="flex flex-col md:flex-row items-center gap-2 w-full">
           <p className="text-sm text-neutral-600 line-clamp-1 flex-1">
             {description}
           </p>
-          {extraDescriptions > 0 && (
-            <Badge variant="outline" className="text-xs shrink-0 bg-gray-100">
-              +{extraDescriptions} more
-            </Badge>
-          )}
+
+          <Button
+            variant="ghost"
+            onClick={handleLike}
+            className="flex items-center gap-1 px-3 py-1 rounded-full border transition-all"
+            style={{
+              backgroundColor: liked
+                ? BACKGROUND_PRIMARY_COLOR(0.1).backgroundColor
+                : "#f9fafb",
+              borderColor: "#e5e7eb",
+            }}
+          >
+            <span className="text-sm text-gray-700">{likeCount}</span>
+            <ThumbsUp
+              className="h-4 w-4 transition-all"
+              style={
+                liked
+                  ? {
+                    color: BACKGROUND_PRIMARY_COLOR(0.9).backgroundColor,
+                    fill: BACKGROUND_PRIMARY_COLOR(0.9).backgroundColor,
+                    stroke: BACKGROUND_PRIMARY_COLOR(0.9).backgroundColor,
+                  }
+                  : { color: "#6b7280", stroke: "#6b7280" }
+              }
+            />
+          </Button>
         </div>
 
         <p className="text-xs text-neutral-500">
           Last Updated By: {report.lastUpdatedBy}
         </p>
-
-        {/* Action buttons (Mobile: bottom) */}
-        <div className="flex md:hidden gap-2 justify-center mt-3">
-          {privilege.view && (
-            <Button
-              style={BACKGROUND_PRIMARY_COLOR(0.5)}
-              size="icon"
-              variant="outline"
-              className="rounded-md h-8 w-8"
-              onClick={() => onView?.(report)}
-            >
-              <Eye className="h-4 w-4 text-white" />
-            </Button>
-          )}
-          {privilege.take && (
-            <Button
-              style={BACKGROUND_PRIMARY_COLOR(0.5)}
-              size="icon"
-              variant="outline"
-              className="rounded-md h-8 w-8"
-              onClick={() => onTake?.(report)}
-            >
-              <Send className="h-4 w-4 text-white" />
-            </Button>
-          )}
-          {privilege.edit && (
-            <Button
-              style={BACKGROUND_PRIMARY_COLOR(0.5)}
-              size="icon"
-              variant="outline"
-              className="rounded-md h-8 w-8"
-              onClick={() => onEdit?.(report)}
-            >
-              <Pencil className="h-4 w-4 text-white" />
-            </Button>
-          )}
-          {privilege.delete && (
-            <Button
-              style={BACKGROUND_PRIMARY_COLOR(0.5)}
-              size="icon"
-              variant="destructive"
-              className="rounded-md h-8 w-8"
-              onClick={() => onDelete?.(report)}
-            >
-              <Trash className="h-4 w-4 text-white" />
-            </Button>
-          )}
-        </div>
       </CardContent>
     </Card>
   )
