@@ -395,7 +395,15 @@ const EditCampusPage = () => {
             </CardContent>
           </Card>
         ) : null}
-        <div className="flex justify-center sm:justify-end pb-4 px-4 sm:px-0">
+        <div className="flex flex-col sm:flex-row gap-2 sm:justify-end justify-center pb-4 px-4 sm:px-0 w-full">
+          <Button
+            style={BACKGROUND_PRIMARY_COLOR(1)}
+            variant="default"
+            onClick={() => navigate(`/browse-account/${campus.id}`)}
+            className="w-full sm:w-auto min-w-[120px]"
+          >
+            Browse Account
+          </Button>
           <Button
             style={BACKGROUND_PRIMARY_COLOR(1)}
             variant="default"

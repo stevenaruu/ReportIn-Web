@@ -37,6 +37,8 @@ import EditCampusPage from "./pages/sub/edit-campus-page/edit-campus-page"
 import VerifyCampusPage from "./pages/verify-campus-page/verify-campus-page"
 import ExportReportPage from "./pages/sub/export-report-page/export-report-page"
 import TechnicianPreferencePage from "./pages/sub/technician-preference-page/technician-preference-page"
+import RootBrowseAccountPage from "./pages/root/browse-account-page/browse-account-page"
+import RootBrowseAccountDetailPage from "./pages/root/browse-account-detail-page/browse-account-detail-page"
 
 function App() {
   useServiceWorker({
@@ -105,6 +107,8 @@ function App() {
             <Route path="/campus" element={<CreateCampusPage />} />
             <Route path="/campus/edit/:campusId" element={<EditCampusPage />} />
             <Route path="/campus/verify/:campusId" element={<VerifyCampusPage />} />
+            <Route path="/browse-account/:campusId" element={<RootBrowseAccountPage />} />
+            <Route path="/browse-account/detail/:personId" element={<RootBrowseAccountDetailPage />} />
           </Route>
         </Routes>
       )}

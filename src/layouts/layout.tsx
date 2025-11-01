@@ -6,13 +6,14 @@ import Snackbar from '@/components/snackbar/snackbar';
 
 type LayoutProps = {
   children: ReactNode;
+  className?: string;
 }
 
-const RootLayout: React.FC<LayoutProps> = ({ children }) => {
+const RootLayout: React.FC<LayoutProps> = ({ children, className }) => {
   return (
-    <div className="min-h-screen">
+    <div>
       <RootNavbar />
-      <Container>
+      <Container className={className}>
         {children}
       </Container>
     </div>

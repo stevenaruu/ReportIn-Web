@@ -3,6 +3,8 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Eye, Edit, Trash } from "lucide-react"
 import { usePrimaryColor } from "@/lib/primary-color"
+import { useSelector } from "react-redux"
+import { selectCampus } from "@/store/campus/selector"
 
 export interface Column<T> {
   key: keyof T | string
@@ -34,12 +36,13 @@ export function DataTable<T>({
   onDelete,
 }: DataTableProps<T>) {
   const { BACKGROUND_PRIMARY_COLOR } = usePrimaryColor();
+  const campus = useSelector(selectCampus);
 
   return (
     <div className="overflow-x-auto rounded-md border">
       <table className="w-full border-collapse">
         <thead
-          style={BACKGROUND_PRIMARY_COLOR(0.7)}
+          style={BACKGROUND_PRIMARY_COLOR(campus ? 0.7 : 1)}
         >
           <tr>
             {columns.map((col, i) => (
