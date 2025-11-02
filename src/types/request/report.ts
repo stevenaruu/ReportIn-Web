@@ -15,6 +15,8 @@ export type IUpdateReportStatusRequest = {
   custodianId: string
   campusId: string
   status: string
+  issue?: string
+  itemId?: string
 }
 
 export type IExportReportRequest = {
@@ -26,4 +28,8 @@ export type IExportReportRequest = {
 export type IUpvoteReportRequest = {
   reportId: string
   personId: string
+}
+
+export type IDeleteReportRequest = {
+  deletionRemark: string
 }

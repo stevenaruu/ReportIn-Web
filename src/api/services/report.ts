@@ -5,6 +5,7 @@ import type {
   IExportReportRequest,
   IUpdateReportStatusRequest,
   IUpvoteReportRequest,
+  IDeleteReportRequest,
 } from "@/types/request/report"
 import type { IResponse } from "@/types/response"
 import { useMutation } from "@tanstack/react-query"
@@ -56,8 +57,10 @@ export const useUpdateReportMutation = () => {
 }
 
 export const useDeleteReport = () => {
-  return useMutation<IResponse, Error, string>(async (id) => {
-    const response = await apiClient.delete<IResponse>(ApiReport.deleteReport(id))
+  return useMutation<IResponse, Error, { id: string; data: IDeleteReportRequest }>(async ({ id, data }) => {
+    const response = await apiClient.delete<IResponse>(ApiReport.deleteReport(id), {
+      data,
+    })
     return response.data
   })
 }
