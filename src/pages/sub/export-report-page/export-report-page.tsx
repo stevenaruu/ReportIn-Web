@@ -28,7 +28,7 @@ const ExportReportPage = () => {
   const [modalMessage, setModalMessage] = useState("")
 
   const navigate = useNavigate()
-  const { BACKGROUND_PRIMARY_COLOR } = usePrimaryColor()
+  const { BACKGROUND_PRIMARY_COLOR, TEXT_PRIMARY_COLOR } = usePrimaryColor()
 
   const exportReport = useExportReportMutation()
 
@@ -116,7 +116,7 @@ const ExportReportPage = () => {
         </Card>
 
         <div className="flex justify-end gap-4">
-          <Button style={BACKGROUND_PRIMARY_COLOR(0.7)} variant="default" onClick={() => navigate("/browse-report")}>
+          <Button style={TEXT_PRIMARY_COLOR(0.7)} variant="outline" onClick={() => navigate("/browse-report")}>
             Back
           </Button>
           <Button

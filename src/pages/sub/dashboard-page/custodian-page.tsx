@@ -44,16 +44,19 @@ const CustodianPage = () => {
   const [areaFilter, setAreaFilter] = useState<string[]>([])
   const [categoryFilter, setCategoryFilter] = useState<string[]>([])
 
-  const areas = useMemo(() => areasData?.data?.map(a => a.name) || [], [areasData]);
-  const categories = useMemo(() => categoriesData?.data?.map(c => c.name) || [], [categoriesData]);
+  const [isPreferencesInitialized, setIsPreferencesInitialized] = useState(false)
+
+  const areas = useMemo(() => areasData?.data?.map((a) => a.name) || [], [areasData])
+  const categories = useMemo(() => categoriesData?.data?.map((c) => c.name) || [], [categoriesData])
 
   useEffect(() => {
-    if (!preferencesLoading && preferencesData?.data && categoriesData?.data) {
+    if (!isPreferencesInitialized && !preferencesLoading && preferencesData?.data && categoriesData?.data) {
       const preferenceIds = preferencesData.data
       const categoryNames = categoriesData.data.filter((cat) => preferenceIds.includes(cat.id)).map((cat) => cat.name)
       setCategoryFilter(categoryNames)
+      setIsPreferencesInitialized(true) // Mark as initialized to prevent re-running
     }
-  }, [preferencesLoading, preferencesData, categoriesData])
+  }, [isPreferencesInitialized, preferencesLoading, preferencesData, categoriesData])
 
   const reportOptions = useMemo(
     () => ({

@@ -12,15 +12,21 @@ import { selectCampus } from "@/store/campus/selector"
 import { useQueryClient } from "@tanstack/react-query"
 import { useState } from "react"
 import { useSelector } from "react-redux"
-import { useNavigate, useParams } from "react-router-dom"
+import { useLocation, useNavigate, useParams } from "react-router-dom"
 import { Eye } from "lucide-react"
+import Header from "@/components/header/header"
+import { IGetAreaResponse } from "@/types/response/area"
 
 const BrowseFacilityItemPage = () => {
   const queryClient = useQueryClient()
+
+  const location = useLocation()
+  const area = location.state as IGetAreaResponse;
+
   const { areaId } = useParams<{ areaId: string }>()
 
   const campus = useSelector(selectCampus)
-  const { BACKGROUND_PRIMARY_COLOR } = usePrimaryColor()
+  const { BACKGROUND_PRIMARY_COLOR, TEXT_PRIMARY_COLOR } = usePrimaryColor()
 
   // modal state
   const [modalTitle, setModalTitle] = useState("Delete Facility Item")
@@ -90,6 +96,8 @@ const BrowseFacilityItemPage = () => {
 
   return (
     <SubLayout>
+      <Header title="Browse Facility Item" subheader={`Area: ${area.name}`} />
+
       <Modal
         open={modalType !== null}
         onOpenChange={() => setModalType(null)}
@@ -112,7 +120,7 @@ const BrowseFacilityItemPage = () => {
           edit: true,
           delete: true,
         }}
-        onView={(row) => navigate(`/browse-facility-item/${areaId}/logs/${row.id}`)}
+        onView={(row) => navigate(`/browse-facility-item/${areaId}/logs/${row.id}`, { state: row })}
         onEdit={(row) => navigate("/browse-facility-item/edit/" + row.id, { state: row })}
         onDelete={(row) => {
           setFacilityItemIdToDelete(row.id)
@@ -122,14 +130,24 @@ const BrowseFacilityItemPage = () => {
       {data?.meta && (
         <div className="mt-6 flex flex-col md:flex-row gap-6 md:gap-0 justify-between items-center">
           <Pagination currentPage={page} totalPages={data.meta.totalPages} onPageChange={setPage} />
-          <Button
-            style={BACKGROUND_PRIMARY_COLOR(0.7)}
-            className="w-full md:w-1/4"
-            variant="default"
-            onClick={() => navigate("/browse-facility-item/create", { state: { areaId } })}
-          >
-            Create Facility Item
-          </Button>
+          <div className="w-full md:w-auto flex flex-col md:flex-row gap-3 md:gap-2">
+            <Button
+              style={TEXT_PRIMARY_COLOR(0.7)}
+              className="w-full md:w-auto bg-transparent"
+              variant="outline"
+              onClick={() => navigate("/browse-area")}
+            >
+              Back
+            </Button>
+            <Button
+              style={BACKGROUND_PRIMARY_COLOR(0.7)}
+              className="w-full md:w-auto"
+              variant="default"
+              onClick={() => navigate("/browse-facility-item/create", { state: { areaId } })}
+            >
+              Create Facility Item
+            </Button>
+          </div>
         </div>
       )}
     </SubLayout>

@@ -52,6 +52,8 @@ export function DataTable<T>({
   const editPriv = getPrivilegeConfig(privilege?.edit)
   const deletePriv = getPrivilegeConfig(privilege?.delete)
 
+  const hasAnyPrivilege = viewPriv.enabled || editPriv.enabled || deletePriv.enabled
+
   return (
     <div className="overflow-x-auto rounded-md border">
       <table className="w-full border-collapse">
@@ -62,7 +64,9 @@ export function DataTable<T>({
                 {col.header}
               </th>
             ))}
-            <th className="text-center px-4 py-2 text-sm font-medium text-white border-b">Action</th>
+            {hasAnyPrivilege && (
+              <th className="text-center px-4 py-2 text-sm font-medium text-white border-b">Action</th>
+            )}
           </tr>
         </thead>
         <tbody>
@@ -75,18 +79,23 @@ export function DataTable<T>({
                     <div className="h-5 w-full rounded bg-gray-200 animate-pulse" />
                   </td>
                 ))}
-                <td className="px-4 py-2 border-b">
-                  <div className="flex justify-center items-center gap-2">
-                    <div className="h-6 w-6 rounded-full bg-gray-200 animate-pulse" />
-                    <div className="h-6 w-6 rounded-full bg-gray-200 animate-pulse" />
-                    <div className="h-6 w-6 rounded-full bg-gray-200 animate-pulse" />
-                  </div>
-                </td>
+                {hasAnyPrivilege && (
+                  <td className="px-4 py-2 border-b">
+                    <div className="flex justify-center items-center gap-2">
+                      <div className="h-6 w-6 rounded-full bg-gray-200 animate-pulse" />
+                      <div className="h-6 w-6 rounded-full bg-gray-200 animate-pulse" />
+                      <div className="h-6 w-6 rounded-full bg-gray-200 animate-pulse" />
+                    </div>
+                  </td>
+                )}
               </tr>
             ))
           ) : data.length === 0 ? (
             <tr>
-              <td colSpan={columns.length + 1} className="px-4 py-4 text-center text-sm text-[#5d5d5d]">
+              <td
+                colSpan={hasAnyPrivilege ? columns.length + 1 : columns.length}
+                className="px-4 py-4 text-center text-sm text-[#5d5d5d]"
+              >
                 No data available
               </td>
             </tr>
@@ -115,25 +124,27 @@ export function DataTable<T>({
                     </td>
                   )
                 })}
-                <td className="px-4 py-2 text-sm text-[#5d5d5d] border-b">
-                  <div className="flex justify-center items-center gap-2">
-                    {viewPriv.enabled && (
-                      <Button size="icon" variant="ghost" onClick={() => onView?.(row)}>
-                        {viewPriv.icon || <Eye className="w-4 h-4 text-[#5d5d5d]" />}
-                      </Button>
-                    )}
-                    {editPriv.enabled && (
-                      <Button size="icon" variant="ghost" onClick={() => onEdit?.(row)}>
-                        {editPriv.icon || <Edit className="w-4 h-4 text-[#5d5d5d]" />}
-                      </Button>
-                    )}
-                    {deletePriv.enabled && (
-                      <Button size="icon" variant="ghost" onClick={() => onDelete?.(row)}>
-                        {deletePriv.icon || <Trash className="w-4 h-4 text-[#5d5d5d]" />}
-                      </Button>
-                    )}
-                  </div>
-                </td>
+                {hasAnyPrivilege && (
+                  <td className="px-4 py-2 text-sm text-[#5d5d5d] border-b">
+                    <div className="flex justify-center items-center gap-2">
+                      {viewPriv.enabled && (
+                        <Button size="icon" variant="ghost" onClick={() => onView?.(row)}>
+                          {viewPriv.icon || <Eye className="w-4 h-4 text-[#5d5d5d]" />}
+                        </Button>
+                      )}
+                      {editPriv.enabled && (
+                        <Button size="icon" variant="ghost" onClick={() => onEdit?.(row)}>
+                          {editPriv.icon || <Edit className="w-4 h-4 text-[#5d5d5d]" />}
+                        </Button>
+                      )}
+                      {deletePriv.enabled && (
+                        <Button size="icon" variant="ghost" onClick={() => onDelete?.(row)}>
+                          {deletePriv.icon || <Trash className="w-4 h-4 text-[#5d5d5d]" />}
+                        </Button>
+                      )}
+                    </div>
+                  </td>
+                )}
               </tr>
             ))
           )}

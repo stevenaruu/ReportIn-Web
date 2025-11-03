@@ -24,7 +24,7 @@ const BrowseAccountDetailPage = () => {
   const person = location.state as IGetAllPersonResponse
   const updateRole = useUpdatePersonRole(person.id)
   const campus = useSelector(selectCampus)
-  const { BACKGROUND_PRIMARY_COLOR } = usePrimaryColor()
+  const { BACKGROUND_PRIMARY_COLOR, TEXT_PRIMARY_COLOR } = usePrimaryColor()
 
   const [selectedRoles, setSelectedRoles] = useState<string[]>(person?.role.map((r) => r.roleId) || [])
 
@@ -126,14 +126,24 @@ const BrowseAccountDetailPage = () => {
                   ))}
                 </div>
               </div>
-              <Button
-                onClick={handleSubmit}
-                style={BACKGROUND_PRIMARY_COLOR(0.7)}
-                className="mt-4"
-                disabled={updateRole.isLoading}
-              >
-                {updateRole.isLoading ? "Submitting..." : "Submit"}
-              </Button>
+              <div className="flex flex-col md:flex-row gap-3 md:gap-2 mt-4">
+                <Button
+                  style={TEXT_PRIMARY_COLOR(0.7)}
+                  className="w-full md:w-auto bg-transparent"
+                  variant="outline"
+                  onClick={() => navigate("/browse-account")}
+                >
+                  Back
+                </Button>
+                <Button
+                  onClick={handleSubmit}
+                  style={BACKGROUND_PRIMARY_COLOR(0.7)}
+                  className="w-full md:w-auto"
+                  disabled={updateRole.isLoading}
+                >
+                  {updateRole.isLoading ? "Submitting..." : "Submit"}
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </div>
