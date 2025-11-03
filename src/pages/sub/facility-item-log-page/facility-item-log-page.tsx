@@ -59,7 +59,7 @@ const FacilityItemLogPage = () => {
 
   return (
     <SubLayout>
-      <Header title="Facility Item Logs" subheader={`Facility Item: ${facilityItem.name}`} />
+      <Header title="Facility Item Logs" subheader={facilityItem ? `Facility Item: ${facilityItem.name}` : undefined} />
       <SearchBar onSearch={handleSearch} placeholder="Search Logs..." />
       <DataTable
         isLoading={isLoading}

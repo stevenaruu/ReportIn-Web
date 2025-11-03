@@ -96,7 +96,7 @@ const BrowseFacilityItemPage = () => {
 
   return (
     <SubLayout>
-      <Header title="Browse Facility Item" subheader={`Area: ${area.name}`} />
+      <Header title="Browse Facility Item" subheader={area ? `Area: ${area.name}` : undefined} />
 
       <Modal
         open={modalType !== null}
