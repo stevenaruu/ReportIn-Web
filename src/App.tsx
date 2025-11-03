@@ -43,11 +43,12 @@ import BrowseFacilityItemPage from "./pages/sub/browse-facility-item-page/browse
 import FacilityItemLogPage from "./pages/sub/facility-item-log-page/facility-item-log-page"
 import CreateFacilityItemPage from "./pages/sub/create-facility-item-page/create-facility-item-page"
 import EditFacilityItemPage from "./pages/sub/edit-facility-item-page/edit-facility-item-page"
+import PWAInstallPrompt from "./components/pwa-install-prompt/pwa-install-prompt"
 
 function App() {
   useServiceWorker({
-    onSuccess: () => {},
-    onUpdate: () => {},
+    onSuccess: () => { },
+    onUpdate: () => { },
   })
 
   const dispatch = useDispatch()
@@ -71,56 +72,59 @@ function App() {
   }
 
   return (
-    <BrowserRouter>
-      {isSubdomain ? (
-        <Routes>
-          <Route path="*" element={<Navigate to="/login" replace />} />
-          <Route path="/login" element={<SubLoginPage />} />
-          <Route path="/logout" element={<SubLogoutPage />} />
+    <>
+      <PWAInstallPrompt />
+      <BrowserRouter>
+        {isSubdomain ? (
+          <Routes>
+            <Route path="*" element={<Navigate to="/login" replace />} />
+            <Route path="/login" element={<SubLoginPage />} />
+            <Route path="/logout" element={<SubLogoutPage />} />
 
-          <Route element={<SubPrivateLayout />}>
-            <Route path="/dashboard" element={<SubDashboardPage />} />
-            <Route path="/leaderboard" element={<LeaderboardPage />} />
-            <Route path="/browse-report" element={<BrowseReportPage />} />
-            <Route path="/browse-category" element={<BrowseCategoryPage />} />
-            <Route path="/browse-category/create" element={<CreateCategoryPage />} />
-            <Route path="/browse-category/edit/:categoryId" element={<EditCategoryPage />} />
-            <Route path="/browse-area" element={<BrowseAreaPage />} />
-            <Route path="/browse-area/create" element={<CreateAreaPage />} />
-            <Route path="/browse-area/edit/:areaId" element={<EditAreaPage />} />
-            <Route path="/browse-facility-item/create" element={<CreateFacilityItemPage />} />
-            <Route path="/browse-facility-item/edit/:facilityItemId" element={<EditFacilityItemPage />} />
-            <Route path="/browse-facility-item/:areaId/logs/:facilityItemId" element={<FacilityItemLogPage />} />
-            <Route path="/browse-facility-item/:areaId" element={<BrowseFacilityItemPage />} />
-            <Route path="/browse-account" element={<BrowseAccountPage />} />
-            <Route path="/browse-account/:personId" element={<BrowseAccountDetailPage />} />
-            <Route path="/technician-preference" element={<TechnicianPreferencePage />} />
-            <Route path="/report" element={<ReportPage />} />
-            <Route path="/report/view/:reportId" element={<ReportDetailPage />} />
-            <Route path="/report/edit/:reportId" element={<ReportDetailPage />} />
-            <Route path="/report/export" element={<ExportReportPage />} />
-          </Route>
-        </Routes>
-      ) : (
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/login" element={<RootLoginPage />} />
-          <Route path="/features" element={<FeaturePage />} />
-          <Route path="/how-it-works" element={<HowItWorkPage />} />
-          <Route path="/contact" element={<ContactPage />} />
-          <Route path="/logout" element={<RootLogoutPage />} />
+            <Route element={<SubPrivateLayout />}>
+              <Route path="/dashboard" element={<SubDashboardPage />} />
+              <Route path="/leaderboard" element={<LeaderboardPage />} />
+              <Route path="/browse-report" element={<BrowseReportPage />} />
+              <Route path="/browse-category" element={<BrowseCategoryPage />} />
+              <Route path="/browse-category/create" element={<CreateCategoryPage />} />
+              <Route path="/browse-category/edit/:categoryId" element={<EditCategoryPage />} />
+              <Route path="/browse-area" element={<BrowseAreaPage />} />
+              <Route path="/browse-area/create" element={<CreateAreaPage />} />
+              <Route path="/browse-area/edit/:areaId" element={<EditAreaPage />} />
+              <Route path="/browse-facility-item/create" element={<CreateFacilityItemPage />} />
+              <Route path="/browse-facility-item/edit/:facilityItemId" element={<EditFacilityItemPage />} />
+              <Route path="/browse-facility-item/:areaId/logs/:facilityItemId" element={<FacilityItemLogPage />} />
+              <Route path="/browse-facility-item/:areaId" element={<BrowseFacilityItemPage />} />
+              <Route path="/browse-account" element={<BrowseAccountPage />} />
+              <Route path="/browse-account/:personId" element={<BrowseAccountDetailPage />} />
+              <Route path="/technician-preference" element={<TechnicianPreferencePage />} />
+              <Route path="/report" element={<ReportPage />} />
+              <Route path="/report/view/:reportId" element={<ReportDetailPage />} />
+              <Route path="/report/edit/:reportId" element={<ReportDetailPage />} />
+              <Route path="/report/export" element={<ExportReportPage />} />
+            </Route>
+          </Routes>
+        ) : (
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/login" element={<RootLoginPage />} />
+            <Route path="/features" element={<FeaturePage />} />
+            <Route path="/how-it-works" element={<HowItWorkPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="/logout" element={<RootLogoutPage />} />
 
-          <Route element={<RootPrivateLayout />}>
-            <Route path="/dashboard" element={<RootDashboardPage />} />
-            <Route path="/campus" element={<CreateCampusPage />} />
-            <Route path="/campus/edit/:campusId" element={<EditCampusPage />} />
-            <Route path="/campus/verify/:campusId" element={<VerifyCampusPage />} />
-            <Route path="/browse-account/:campusId" element={<RootBrowseAccountPage />} />
-            <Route path="/browse-account/detail/:personId" element={<RootBrowseAccountDetailPage />} />
-          </Route>
-        </Routes>
-      )}
-    </BrowserRouter>
+            <Route element={<RootPrivateLayout />}>
+              <Route path="/dashboard" element={<RootDashboardPage />} />
+              <Route path="/campus" element={<CreateCampusPage />} />
+              <Route path="/campus/edit/:campusId" element={<EditCampusPage />} />
+              <Route path="/campus/verify/:campusId" element={<VerifyCampusPage />} />
+              <Route path="/browse-account/:campusId" element={<RootBrowseAccountPage />} />
+              <Route path="/browse-account/detail/:personId" element={<RootBrowseAccountDetailPage />} />
+            </Route>
+          </Routes>
+        )}
+      </BrowserRouter>
+    </>
   )
 }
 
