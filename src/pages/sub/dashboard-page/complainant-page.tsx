@@ -8,7 +8,7 @@ import { useReports } from "@/hooks/use-report";
 import { IReport } from "@/types/model/report";
 import { useSelector } from "react-redux";
 import { selectPerson } from "@/store/person/selector";
-import FilterSort from "@/components/filter-sort/filter-sort";
+import FilterSort, { Status } from "@/components/filter-sort/filter-sort";
 import { useNavigate } from "react-router-dom";
 import { selectCampus } from "@/store/campus/selector";
 import EmptyState from "@/components/empty-state/empty-state";
@@ -31,7 +31,7 @@ const ComplainantPage = () => {
   // filter & sort state
   const [sortBy, setSortBy] = useState<"status" | "area" | "category" | "count">("count");
   const [order, setOrder] = useState<"asc" | "desc">("desc");
-  const [statusFilter, setStatusFilter] = useState<string[]>([]);
+  const [statusFilter, setStatusFilter] = useState<Status[]>([]);
   const [areaFilter, setAreaFilter] = useState<string[]>([]);
   const [categoryFilter, setCategoryFilter] = useState<string[]>([]);
 
@@ -117,6 +117,9 @@ const ComplainantPage = () => {
             <FilterSort
               areas={areasData?.data?.map(area => area.name) || []}
               categories={categoriesData?.data?.map(category => category.name) || []}
+              initialCategories={categoryFilter}
+              initialAreas={areaFilter}
+              initialStatus={statusFilter}
               onApply={({ sortBy, sortDirection, status, areas, categories }) => {
                 setSortBy(sortBy);
                 setOrder(sortDirection);

@@ -3,7 +3,7 @@ import { useGetAllCategoryQuery } from "@/api/services/category"
 import { useGetTechnicianPreferenceQuery } from "@/api/services/technician-preference"
 import { useUpdateReportStatus } from "@/api/services/report"
 import EmptyState from "@/components/empty-state/empty-state"
-import FilterSort from "@/components/filter-sort/filter-sort"
+import FilterSort, { Status } from "@/components/filter-sort/filter-sort"
 import { Pagination } from "@/components/pagination/pagination"
 import { ReportCard } from "@/components/report-card/report-card"
 import { SearchBar } from "@/components/search-bar/search-bar"
@@ -40,7 +40,7 @@ const CustodianPage = () => {
   // filter & sort state
   const [sortBy, setSortBy] = useState<"status" | "area" | "category" | "count">("count")
   const [order, setOrder] = useState<"asc" | "desc">("desc")
-  const [statusFilter, setStatusFilter] = useState<string[]>([])
+  const [statusFilter, setStatusFilter] = useState<Status[]>([])
   const [areaFilter, setAreaFilter] = useState<string[]>([])
   const [categoryFilter, setCategoryFilter] = useState<string[]>([])
 
@@ -183,6 +183,8 @@ const CustodianPage = () => {
               areas={areas}
               categories={categories}
               initialCategories={categoryFilter}
+              initialAreas={areaFilter}
+              initialStatus={statusFilter}
               onApply={({ sortBy, sortDirection, status, areas, categories }) => {
                 setSortBy(sortBy)
                 setOrder(sortDirection)

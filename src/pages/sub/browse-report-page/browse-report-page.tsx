@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { useReports } from "@/hooks/use-report"
 import { useDeleteReport } from "@/api/services/report"
 import type { IReport } from "@/types/model/report"
-import FilterSort from "@/components/filter-sort/filter-sort"
+import FilterSort, { Status } from "@/components/filter-sort/filter-sort"
 import { useSelector } from "react-redux"
 import { selectCampus } from "@/store/campus/selector"
 import EmptyState from "@/components/empty-state/empty-state"
@@ -44,7 +44,7 @@ const BrowseReportPage = () => {
   // filter & sort state
   const [sortBy, setSortBy] = useState<"status" | "area" | "category" | "count">("count")
   const [order, setOrder] = useState<"asc" | "desc">("desc")
-  const [statusFilter, setStatusFilter] = useState<string[]>([])
+  const [statusFilter, setStatusFilter] = useState<Status[]>([])
   const [areaFilter, setAreaFilter] = useState<string[]>([])
   const [categoryFilter, setCategoryFilter] = useState<string[]>([])
 
@@ -163,6 +163,9 @@ const BrowseReportPage = () => {
             <FilterSort
               areas={areasData?.data?.map((area) => area.name) || []}
               categories={categoriesData?.data?.map((category) => category.name) || []}
+              initialCategories={categoryFilter}
+              initialAreas={areaFilter}
+              initialStatus={statusFilter}
               onApply={({ sortBy, sortDirection, status, areas, categories }) => {
                 setSortBy(sortBy)
                 setOrder(sortDirection)

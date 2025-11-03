@@ -18,7 +18,7 @@ import { selectCampus } from "@/store/campus/selector"
 
 type SortBy = "status" | "area" | "category" | "count"
 type SortDirection = "asc" | "desc"
-type Status = "PENDING" | "IN PROGRESS" | "DONE"
+export type Status = "PENDING" | "IN PROGRESS" | "DONE"
 
 interface FilterSortProps {
   areas: string[]
