@@ -5,4 +5,5 @@ export type IGetFacilityItemResponse = {
   campusId: string
   areaId: string
   name: string
+  point?: number
 } & IAccess

@@ -31,12 +31,14 @@ const CreateFacilityItemPage = () => {
   const [modalMessage, setModalMessage] = useState("")
 
   const [name, setName] = useState("")
+  const [point, setPoint] = useState("")
 
   const handleSubmit = () => {
     const request: IFacilityItemRequest = {
       campusId: campus?.campusId || "",
       areaId: areaId || "",
       name: name,
+      ...(point ? { point: Number.parseInt(point, 10) } : {}),
     }
 
     createFacilityItem.mutate(request, {
@@ -74,6 +76,19 @@ const CreateFacilityItemPage = () => {
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Facility Item Name ..."
+              className="bg-neutral-50 focus-visible:ring-0 focus-visible:ring-offset-0"
+            />
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4 text-[#5d5d5d]">
+            <h2 className="font-semibold mb-3">Point</h2>
+            <Input
+              value={point}
+              onChange={(e) => setPoint(e.target.value)}
+              placeholder="Enter point value..."
+              type="number"
               className="bg-neutral-50 focus-visible:ring-0 focus-visible:ring-offset-0"
             />
           </CardContent>

@@ -17,6 +17,7 @@ export type IUpdateReportStatusRequest = {
   status: string
   issue?: string
   itemId?: string
+  difficulty?: number
 }
 
 export type IExportReportRequest = {

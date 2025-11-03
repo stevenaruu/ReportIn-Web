@@ -1,5 +1,3 @@
-"use client"
-
 import { useUpdateFacilityItem } from "@/api/services/facility-item"
 import Header from "@/components/header/header"
 import { Modal } from "@/components/modal/Modal"
@@ -31,10 +29,12 @@ const EditFacilityItemPage = () => {
   const [modalMessage, setModalMessage] = useState("")
 
   const [name, setName] = useState(facilityItem.name)
+  const [point, setPoint] = useState(facilityItem.point?.toString() || "")
 
   const handleSubmit = () => {
     const request: IFacilityItemEditRequest = {
       name: name,
+      ...(point ? { point: Number.parseInt(point, 10) } : {}),
     }
 
     updateFacilityItem.mutate(request, {
@@ -72,6 +72,19 @@ const EditFacilityItemPage = () => {
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Facility Item Name ..."
+              className="bg-neutral-50 focus-visible:ring-0 focus-visible:ring-offset-0"
+            />
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4 text-[#5d5d5d]">
+            <h2 className="font-semibold mb-3">Point</h2>
+            <Input
+              value={point}
+              onChange={(e) => setPoint(e.target.value)}
+              placeholder="Enter point value..."
+              type="number"
               className="bg-neutral-50 focus-visible:ring-0 focus-visible:ring-offset-0"
             />
           </CardContent>

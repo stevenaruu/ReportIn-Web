@@ -18,7 +18,7 @@ import type { IGetFacilityItemResponse } from "@/types/response/facility-item"
 interface CompleteReportModalProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  onConfirm: (issue: string, itemId: string) => void
+  onConfirm: (issue: string, itemId: string, difficulty: number) => void
   loading?: boolean
   campusId: string
   areaId: string
@@ -34,6 +34,7 @@ const CompleteReportModal: React.FC<CompleteReportModalProps> = ({
 }) => {
   const [issue, setIssue] = useState("")
   const [selectedItemId, setSelectedItemId] = useState("")
+  const [difficulty, setDifficulty] = useState<number | "">("")
   const [error, setError] = useState("")
   const { BACKGROUND_PRIMARY_COLOR } = usePrimaryColor()
 
@@ -49,17 +50,30 @@ const CompleteReportModal: React.FC<CompleteReportModalProps> = ({
       setError("Please provide an issue description.")
       return
     }
+    if (difficulty === "") {
+      setError("Please select a difficulty level.")
+      return
+    }
     setError("")
-    onConfirm(issue, selectedItemId)
+    onConfirm(issue, selectedItemId, difficulty as number)
     handleClose()
   }
 
   const handleClose = () => {
     setIssue("")
     setSelectedItemId("")
+    setDifficulty("")
     setError("")
     onOpenChange(false)
   }
+
+  const difficultyOptions = [
+    { value: 1, label: "Very easy" },
+    { value: 2, label: "Somewhat easy" },
+    { value: 3, label: "Neutral / Neither easy nor difficult" },
+    { value: 4, label: "Somewhat difficult" },
+    { value: 5, label: "Very difficult" },
+  ]
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
@@ -90,6 +104,32 @@ const CompleteReportModal: React.FC<CompleteReportModalProps> = ({
                 {facilityItemsData?.data?.map((item: IGetFacilityItemResponse) => (
                   <SelectItem key={item.id} value={item.id} className="hover:bg-gray-50 cursor-pointer">
                     {item.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <label className="text-sm font-medium">How difficult was it to complete this report?</label>
+            <Select
+              value={difficulty === "" ? "" : difficulty.toString()}
+              onValueChange={(value) => {
+                setDifficulty(Number.parseInt(value, 10))
+                if (error) setError("")
+              }}
+            >
+              <SelectTrigger className="focus:ring-0 focus:ring-offset-0 border border-gray-200">
+                <SelectValue placeholder="Select difficulty level" />
+              </SelectTrigger>
+              <SelectContent className="bg-white border border-gray-200 shadow-lg">
+                {difficultyOptions.map((option) => (
+                  <SelectItem
+                    key={option.value}
+                    value={option.value.toString()}
+                    className="hover:bg-gray-50 cursor-pointer"
+                  >
+                    {option.label}
                   </SelectItem>
                 ))}
               </SelectContent>

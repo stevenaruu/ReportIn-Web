@@ -15,13 +15,13 @@ import { useSelector } from "react-redux"
 import { useLocation, useNavigate, useParams } from "react-router-dom"
 import { Eye } from "lucide-react"
 import Header from "@/components/header/header"
-import { IGetAreaResponse } from "@/types/response/area"
+import type { IGetAreaResponse } from "@/types/response/area"
 
 const BrowseFacilityItemPage = () => {
   const queryClient = useQueryClient()
 
   const location = useLocation()
-  const area = location.state as IGetAreaResponse;
+  const area = location.state as IGetAreaResponse
 
   const { areaId } = useParams<{ areaId: string }>()
 
@@ -82,6 +82,11 @@ const BrowseFacilityItemPage = () => {
       },
     },
     { key: "name", header: "Name" },
+    {
+      key: "point",
+      header: "Point",
+      render: (row) => row.point || "-",
+    },
     {
       key: "createdBy",
       header: "Created By-Date",

@@ -199,7 +199,7 @@ const ReportDetailPage = () => {
     setCompleteReportModalOpen(true)
   }
 
-  const handleCompleteReportConfirm = (issue: string, itemId: string) => {
+  const handleCompleteReportConfirm = (issue: string, itemId: string, difficulty: number) => {
     if (!report) return
 
     const request: IUpdateReportStatusRequest = {
@@ -208,6 +208,7 @@ const ReportDetailPage = () => {
       status: "DONE",
       issue: issue,
       itemId: itemId,
+      difficulty: difficulty,
     }
 
     updateReportStatus.mutate(
@@ -394,7 +395,7 @@ const ReportDetailPage = () => {
       <CompleteReportModal
         open={completeReportModalOpen}
         onOpenChange={setCompleteReportModalOpen}
-        onConfirm={handleCompleteReportConfirm}
+        onConfirm={(issue, itemId, difficulty) => handleCompleteReportConfirm(issue, itemId, difficulty)}
         loading={updateReportStatus.isLoading}
         campusId={campus?.campusId || ""}
         areaId={report.area.areaId}
