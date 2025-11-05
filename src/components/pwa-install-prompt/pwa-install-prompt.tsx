@@ -1,8 +1,10 @@
 import { X, Download } from "lucide-react"
 import { usePWAInstall } from "@/hooks/use-pwa-install"
 import "./pwa-install-prompt.css"
+import { usePrimaryColor } from "@/lib/primary-color"
 
 export default function PWAInstallPrompt() {
+  const { BACKGROUND_PRIMARY_COLOR } = usePrimaryColor();
   const { isInstallPromptVisible, isInstalled, handleInstall, handleCancel } = usePWAInstall()
 
   if (isInstalled || !isInstallPromptVisible) {
@@ -37,7 +39,7 @@ export default function PWAInstallPrompt() {
           <button onClick={handleCancel} className="pwa-prompt-btn-secondary">
             Cancel
           </button>
-          <button onClick={handleInstall} className="pwa-prompt-btn-primary">
+          <button onClick={handleInstall} style={BACKGROUND_PRIMARY_COLOR(0.7)} className="pwa-prompt-btn-primary">
             <Download size={18} />
             Install
           </button>

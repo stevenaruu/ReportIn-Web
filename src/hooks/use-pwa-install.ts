@@ -14,6 +14,18 @@ interface UsePWAInstallReturn {
   handleCancel: () => void
 }
 
+const isSubdomainOnly = (): boolean => {
+  const hostname = window.location.hostname
+
+  if (hostname === "localhost") return true;
+
+  const rootDomain = "reportin.my.id"
+  // Only show prompt if it's a subdomain (e.g., contoh.reportin.my.id)
+  // Don't show on root domain (reportin.my.id) or www.reportin.my.id
+  const isRoot = hostname === rootDomain || hostname === `www.${rootDomain}`
+  return !isRoot
+}
+
 export const usePWAInstall = (): UsePWAInstallReturn => {
   const [installEvent, setInstallEvent] = useState<BeforeInstallPromptEvent | null>(null)
   const [isInstallPromptVisible, setIsInstallPromptVisible] = useState(false)
@@ -40,6 +52,12 @@ export const usePWAInstall = (): UsePWAInstallReturn => {
   useEffect(() => {
     const handleBeforeInstallPrompt = (e: Event) => {
       console.log("[PWA] beforeinstallprompt event triggered")
+
+      if (!isSubdomainOnly()) {
+        console.log("[PWA] Root domain detected - PWA prompt disabled on root domain")
+        return
+      }
+
       e.preventDefault()
 
       const now = Date.now()
