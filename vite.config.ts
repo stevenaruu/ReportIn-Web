@@ -10,7 +10,7 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       devOptions: {
-        enabled: false
+        enabled: true
       },
       includeAssets: [
         "**/*",
@@ -48,33 +48,47 @@ export default defineConfig({
         ],
       },
       manifest: {
-        name: 'Global Progressive Web App',
-        short_name: 'GlobalPWA',
-        description: 'Comprehensive Progressive Web Application',
-        theme_color: '#ffffff',
-        background_color: '#ffffff',
-        display: 'standalone',
-        orientation: 'portrait',
+        name: "ReportIn",
+        short_name: "ReportIn",
+        description:
+          "ReportIn is a modern SaaS platform for campus facility complaints, enabling students and staff to report, monitor, and manage issues quickly and transparently from any device.",
+        theme_color: "#2563eb",
+        background_color: "#ffffff",
+        display: "standalone",
+        orientation: "portrait-primary",
+        start_url: "/",
+        scope: "/",
+        categories: ["productivity", "utilities"],
+        screenshots: [
+          {
+            src: "/icon.png",
+            sizes: "192x192",
+            type: "image/png",
+            form_factor: "narrow",
+          },
+        ],
         icons: [
           {
-            src: '/icons/icon-192x192.png',
-            sizes: '192x192',
-            type: 'image/png'
+            src: "/icon.png",
+            sizes: "192x192",
+            type: "image/png",
+            purpose: "any",
           },
           {
-            src: '/icons/icon-512x512.png',
-            sizes: '512x512',
-            type: 'image/png'
+            src: "/icon.png",
+            sizes: "512x512",
+            type: "image/png",
+            purpose: "any",
           },
           {
-            src: '/icons/maskable-icon.png',
-            sizes: '512x512',
-            type: 'image/png',
-            purpose: 'maskable'
-          }
-        ]
+            src: "/icon.png",
+            sizes: "512x512",
+            type: "image/png",
+            purpose: "maskable",
+          },
+        ],
       },
-    })
+    }),
   ],
   resolve: {
     alias: {

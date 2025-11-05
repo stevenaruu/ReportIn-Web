@@ -20,6 +20,15 @@ export const usePWAInstall = (): UsePWAInstallReturn => {
   const [isInstalled, setIsInstalled] = useState(false)
   const [dismissedUntil, setDismissedUntil] = useState<number | null>(null)
 
+  const handleCancel = useCallback(() => {
+    // Dismiss for 24 hours
+    const dismissUntil = Date.now() + 24 * 60 * 60 * 1000
+    setDismissedUntil(dismissUntil)
+    localStorage.setItem("pwaInstallDismissedUntil", dismissUntil.toString())
+    setIsInstallPromptVisible(false)
+    console.log("[PWA] Installation prompt dismissed for 24 hours")
+  }, [])
+
   // Check if app is already installed
   useEffect(() => {
     if (window.matchMedia("(display-mode: standalone)").matches) {
@@ -30,24 +39,40 @@ export const usePWAInstall = (): UsePWAInstallReturn => {
   // Listen for install prompt
   useEffect(() => {
     const handleBeforeInstallPrompt = (e: Event) => {
+      console.log("[PWA] beforeinstallprompt event triggered")
       e.preventDefault()
 
-      // Check if user dismissed it recently (24 hours)
       const now = Date.now()
       if (dismissedUntil && now < dismissedUntil) {
         console.log("[PWA] Install prompt dismissed until:", new Date(dismissedUntil))
         return
       }
 
-      setInstallEvent(e as BeforeInstallPromptEvent)
+      const beforeInstallEvent = e as BeforeInstallPromptEvent
+      if (!beforeInstallEvent.prompt) {
+        console.warn("[PWA] beforeinstallprompt event missing prompt method")
+        return
+      }
+
+      setInstallEvent(beforeInstallEvent)
       setIsInstallPromptVisible(true)
-      console.log("[PWA] Install prompt ready")
+      console.log("[PWA] Install prompt ready and visible")
     }
 
     window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt)
 
+    const handleAppInstalled = () => {
+      console.log("[PWA] App successfully installed")
+      setIsInstalled(true)
+      setIsInstallPromptVisible(false)
+      setInstallEvent(null)
+    }
+
+    window.addEventListener("appinstalled", handleAppInstalled)
+
     return () => {
       window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt)
+      window.removeEventListener("appinstalled", handleAppInstalled)
     }
   }, [dismissedUntil])
 
@@ -60,33 +85,55 @@ export const usePWAInstall = (): UsePWAInstallReturn => {
   }, [])
 
   const handleInstall = useCallback(async () => {
-    if (!installEvent) return
+    if (!installEvent) {
+      console.log("[PWA] No install event available - this browser may not support PWA installation")
+      return
+    }
+
+    if (!installEvent.prompt || typeof installEvent.prompt !== "function") {
+      console.error("[PWA] prompt() method not available - trying alternative installation methods")
+      alert(
+        "To install this app:\n\n1. Tap the menu button (⋮) in your browser\n2. Select 'Install app' or 'Add to Home Screen'\n\nOr look for an install banner at the top of your screen.",
+      )
+      return
+    }
 
     try {
+      console.log("[PWA] Showing install prompt")
       await installEvent.prompt()
-      const { outcome } = await installEvent.userChoice
 
-      if (outcome === "accepted") {
-        console.log("[PWA] Installation accepted by user")
+      if (installEvent.userChoice && typeof installEvent.userChoice.then === "function") {
+        const choiceResult = await Promise.race([
+          installEvent.userChoice,
+          new Promise((_, reject) => setTimeout(() => reject(new Error("userChoice timeout")), 5000)),
+        ])
+
+        const { outcome } = choiceResult as { outcome: "accepted" | "dismissed" }
+
+        if (outcome === "accepted") {
+          console.log("[PWA] Installation accepted by user")
+          setIsInstallPromptVisible(false)
+          setInstallEvent(null)
+          setIsInstalled(true)
+        } else {
+          console.log("[PWA] Installation dismissed by user")
+          handleCancel()
+        }
+      } else {
+        console.warn("[PWA] userChoice not available - installation may have completed silently")
         setIsInstallPromptVisible(false)
         setInstallEvent(null)
-        setIsInstalled(true)
-      } else {
-        console.log("[PWA] Installation dismissed by user")
       }
     } catch (error) {
-      console.error("[PWA] Installation error:", error)
+      console.error("[PWA] Installation error:", error instanceof Error ? error.message : String(error))
+
+      if (error instanceof Error && error.message.includes("timeout")) {
+        console.warn("[PWA] Installation timed out")
+      }
+
+      alert("Installation could not be completed automatically. Please use your browser's menu to install this app.")
     }
   }, [installEvent])
-
-  const handleCancel = useCallback(() => {
-    // Dismiss for 24 hours
-    const dismissUntil = Date.now() + 24 * 60 * 60 * 1000
-    setDismissedUntil(dismissUntil)
-    localStorage.setItem("pwaInstallDismissedUntil", dismissUntil.toString())
-    setIsInstallPromptVisible(false)
-    console.log("[PWA] Installation prompt dismissed for 24 hours")
-  }, [])
 
   // Load dismissal time from localStorage on mount
   useEffect(() => {
