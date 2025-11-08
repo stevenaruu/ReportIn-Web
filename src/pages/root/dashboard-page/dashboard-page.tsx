@@ -8,7 +8,7 @@ const RootDashboardPage = () => {
   const userActiveRole = useSelector(selectUserActiveRole);
 
   useEffect(() => {
-    if (!['Administrator University', 'Super Admin'].includes(userActiveRole.roleName)) {
+    if (!['Administrator University', 'Super Administrator'].includes(userActiveRole.roleName)) {
       window.location.href = '/logout';
     }
   }, [userActiveRole]);
