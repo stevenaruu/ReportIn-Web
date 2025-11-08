@@ -9,7 +9,7 @@ const SubDashboardPage = () => {
   const personActiveRole = useSelector(selectPersonActiveRole);
 
   useEffect(() => {
-    if (!['FacilityUser', 'Technician', 'Building Management'].includes(personActiveRole.roleName)) {
+    if (!['Facility User', 'Technician', 'Building Management'].includes(personActiveRole.roleName)) {
       window.location.href = '/logout';
     }
   }, [personActiveRole]);

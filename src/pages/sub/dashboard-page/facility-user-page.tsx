@@ -1,81 +1,80 @@
-import { useState, useEffect, useMemo } from "react";
-import { SearchBar } from "@/components/search-bar/search-bar";
-import { SubLayout } from "@/layouts/layout";
-import { ReportCard } from "@/components/report-card/report-card";
-import { Pagination } from "@/components/pagination/pagination";
-import { Button } from "@/components/ui/button";
-import { useReports } from "@/hooks/use-report";
-import { IReport } from "@/types/model/report";
-import { useSelector } from "react-redux";
-import { selectPerson } from "@/store/person/selector";
-import FilterSort, { Status } from "@/components/filter-sort/filter-sort";
-import { useNavigate } from "react-router-dom";
-import { selectCampus } from "@/store/campus/selector";
-import EmptyState from "@/components/empty-state/empty-state";
-import { usePrimaryColor } from "@/lib/primary-color";
-import { ITEMS_PER_PAGE } from "@/lib/item-per-page";
-import { useGetAllAreaQuery } from "@/api/services/area";
-import { useGetAllCategoryQuery } from "@/api/services/category";
+import { useState, useEffect, useMemo } from "react"
+import { SearchBar } from "@/components/search-bar/search-bar"
+import { SubLayout } from "@/layouts/layout"
+import { ReportCard } from "@/components/report-card/report-card"
+import { Pagination } from "@/components/pagination/pagination"
+import { Button } from "@/components/ui/button"
+import { useReports } from "@/hooks/use-report"
+import type { IReport } from "@/types/model/report"
+import { useSelector } from "react-redux"
+import { selectPerson } from "@/store/person/selector"
+import FilterSort, { type Status } from "@/components/filter-sort/filter-sort"
+import { useNavigate } from "react-router-dom"
+import { selectCampus } from "@/store/campus/selector"
+import EmptyState from "@/components/empty-state/empty-state"
+import { usePrimaryColor } from "@/lib/primary-color"
+import { ITEMS_PER_PAGE } from "@/lib/item-per-page"
+import { useGetAllAreaQuery } from "@/api/services/area"
+import { useGetAllCategoryQuery } from "@/api/services/category"
 
 const FacilityUserPage = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
-  const person = useSelector(selectPerson);
-  const campus = useSelector(selectCampus);
-  const { BACKGROUND_PRIMARY_COLOR } = usePrimaryColor();
+  const person = useSelector(selectPerson)
+  const campus = useSelector(selectCampus)
+  const { BACKGROUND_PRIMARY_COLOR } = usePrimaryColor()
 
   // Fetch master data for areas and categories
-  const { data: areasData } = useGetAllAreaQuery(campus?.campusId || "");
-  const { data: categoriesData } = useGetAllCategoryQuery(campus?.campusId || "");
+  const { data: areasData } = useGetAllAreaQuery(campus?.campusId || "")
+  const { data: categoriesData } = useGetAllCategoryQuery(campus?.campusId || "")
 
   // filter & sort state
-  const [sortBy, setSortBy] = useState<"status" | "area" | "category" | "count">("count");
-  const [order, setOrder] = useState<"asc" | "desc">("desc");
-  const [statusFilter, setStatusFilter] = useState<Status[]>([]);
-  const [areaFilter, setAreaFilter] = useState<string[]>([]);
-  const [categoryFilter, setCategoryFilter] = useState<string[]>([]);
+  const [sortBy, setSortBy] = useState<"status" | "area" | "category" | "count" | "upvote">("count")
+  const [order, setOrder] = useState<"asc" | "desc">("desc")
+  const [statusFilter, setStatusFilter] = useState<Status[]>([])
+  const [areaFilter, setAreaFilter] = useState<string[]>([])
+  const [categoryFilter, setCategoryFilter] = useState<string[]>([])
 
-  const reportOptions = useMemo(() => ({
-    sortBy,
-    order,
-    filters: { status: statusFilter, areas: areaFilter, categories: categoryFilter }
-  }), [sortBy, order, statusFilter, areaFilter, categoryFilter]);
+  const reportOptions = useMemo(
+    () => ({
+      sortBy,
+      order,
+      filters: { status: statusFilter, areas: areaFilter, categories: categoryFilter },
+    }),
+    [sortBy, order, statusFilter, areaFilter, categoryFilter],
+  )
 
-  const { allReports, reports, loading } = useReports(campus?.campusId, reportOptions);
+  const { allReports, reports, loading } = useReports(campus?.campusId, reportOptions)
 
-  const [searchTerm, setSearchTerm] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [activeTab, setActiveTab] = useState<"reports" | "myReports">("reports");
+  const [searchTerm, setSearchTerm] = useState("")
+  const [currentPage, setCurrentPage] = useState(1)
+  const [activeTab, setActiveTab] = useState<"reports" | "myReports">("reports")
 
   const handleSearch = (value: string) => {
-    setSearchTerm(value.toLowerCase());
-    setCurrentPage(1);
-  };
+    setSearchTerm(value.toLowerCase())
+    setCurrentPage(1)
+  }
 
-  const tabbedReports = activeTab === "myReports"
-    ? reports.filter(r => r.facilityUser?.some(c => c.personId === person?.id))
-    : reports;
+  const tabbedReports =
+    activeTab === "myReports" ? reports.filter((r) => r.facilityUser?.some((c) => c.personId === person?.id)) : reports
 
   const filteredReports = tabbedReports.filter(
     (r) =>
       r.area?.name?.toLowerCase().includes(searchTerm) ||
-      r.facilityUser?.some(c => c.description.toLowerCase().includes(searchTerm)) ||
+      r.facilityUser?.some((c) => c.description.toLowerCase().includes(searchTerm)) ||
       r.category?.name?.toLowerCase().includes(searchTerm) ||
-      r.lastUpdatedBy?.toLowerCase().includes(searchTerm)
-  );
+      r.lastUpdatedBy?.toLowerCase().includes(searchTerm),
+  )
 
-  const totalPages = Math.ceil(filteredReports.length / ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(filteredReports.length / ITEMS_PER_PAGE)
 
   useEffect(() => {
     if (currentPage > totalPages) {
-      setCurrentPage(totalPages || 1);
+      setCurrentPage(totalPages || 1)
     }
-  }, [totalPages, currentPage]);
+  }, [totalPages, currentPage])
 
-  const paginatedReports = filteredReports.slice(
-    (currentPage - 1) * ITEMS_PER_PAGE,
-    currentPage * ITEMS_PER_PAGE
-  );
+  const paginatedReports = filteredReports.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE)
 
   return (
     <SubLayout>
@@ -115,25 +114,26 @@ const FacilityUserPage = () => {
               </Button>
             </div>
             <FilterSort
-              areas={areasData?.data?.map(area => area.name) || []}
-              categories={categoriesData?.data?.map(category => category.name) || []}
+              areas={areasData?.data?.map((area) => area.name) || []}
+              categories={categoriesData?.data?.map((category) => category.name) || []}
               initialCategories={categoryFilter}
               initialAreas={areaFilter}
               initialStatus={statusFilter}
               onApply={({ sortBy, sortDirection, status, areas, categories }) => {
-                setSortBy(sortBy);
-                setOrder(sortDirection);
-                setStatusFilter(status);
-                setAreaFilter(areas);
-                setCategoryFilter(categories);
+                setSortBy(sortBy)
+                setOrder(sortDirection)
+                setStatusFilter(status)
+                setAreaFilter(areas)
+                setCategoryFilter(categories)
               }}
             />
           </div>
 
           <div className="flex flex-col gap-4">
-            {paginatedReports.length > 0
-              ? paginatedReports.map((report) => {
-                const canEdit = report.status === 'PENDING' && report.facilityUser?.some(c => c.personId === person?.id);
+            {paginatedReports.length > 0 ? (
+              paginatedReports.map((report) => {
+                const canEdit =
+                  report.status === "PENDING" && report.facilityUser?.some((c) => c.personId === person?.id)
                 return (
                   <ReportCard
                     key={report.id}
@@ -142,23 +142,18 @@ const FacilityUserPage = () => {
                     onView={() => navigate(`/report/view/${report.id}`)}
                     onEdit={() => navigate(`/report/edit/${report.id}`)}
                   />
-                );
+                )
               })
-              : (
-                <div className="flex justify-center items-center">
-                  <EmptyState className="w-3/6 mt-10" count={reports.length} type="filterReport" />
-                </div>
-              )
-            }
+            ) : (
+              <div className="flex justify-center items-center">
+                <EmptyState className="w-3/6 mt-10" count={reports.length} type="filterReport" />
+              </div>
+            )}
           </div>
 
-          {reports.length > 0 &&
+          {reports.length > 0 && (
             <div className="mt-6 flex flex-col md:flex-row gap-6 md:gap-0 justify-between items-center">
-              <Pagination
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={setCurrentPage}
-              />
+              <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
               <Button
                 style={BACKGROUND_PRIMARY_COLOR(0.7)}
                 className="w-full md:w-1/4"
@@ -168,7 +163,7 @@ const FacilityUserPage = () => {
                 Create Report
               </Button>
             </div>
-          }
+          )}
         </>
       ) : (
         <EmptyState count={allReports.length} type="publicReport">
@@ -183,7 +178,7 @@ const FacilityUserPage = () => {
         </EmptyState>
       )}
     </SubLayout>
-  );
-};
+  )
+}
 
-export default FacilityUserPage;
+export default FacilityUserPage

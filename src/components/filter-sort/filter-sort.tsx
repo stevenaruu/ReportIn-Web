@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -16,7 +16,7 @@ import { usePrimaryColor } from "@/lib/primary-color"
 import { useSelector } from "react-redux"
 import { selectCampus } from "@/store/campus/selector"
 
-type SortBy = "status" | "area" | "category" | "count"
+type SortBy = "status" | "area" | "category" | "count" | "upvote"
 type SortDirection = "asc" | "desc"
 export type Status = "PENDING" | "IN PROGRESS" | "DONE"
 
@@ -60,7 +60,7 @@ export default function FilterSort({
   const { BACKGROUND_PRIMARY_COLOR, TEXT_PRIMARY_COLOR } = usePrimaryColor()
 
   const [open, setOpen] = useState(false)
-  const [sortBy, setSortBy] = useState<SortBy>("count")
+  const [sortBy, setSortBy] = useState<SortBy>("upvote")
   const [sortDirection, setSortDirection] = useState<SortDirection>("desc")
   const [selectedStatus, setSelectedStatus] = useState<Status[]>(initialStatus)
   const [selectedAreas, setSelectedAreas] = useState<string[]>(initialAreas)
@@ -94,7 +94,7 @@ export default function FilterSort({
     }
   }
 
-  const applyFilters = () => {
+  const applyFilters = useCallback(() => {
     onApply({
       sortBy,
       sortDirection,
@@ -102,7 +102,11 @@ export default function FilterSort({
       areas: selectedAreas,
       categories: selectedCategories,
     })
-  }
+  }, [sortBy, sortDirection, selectedStatus, selectedAreas, selectedCategories, onApply])
+
+  useEffect(() => {
+    applyFilters()
+  }, [sortBy, sortDirection, applyFilters])
 
   const handleApply = () => {
     applyFilters()
@@ -178,7 +182,7 @@ export default function FilterSort({
       <div className="md:hidden">
         <h4 className="font-medium mb-2">Sort By</h4>
         <div className="flex flex-col gap-1">
-          {["count", "status", "area", "category"].map((val) => (
+          {["upvote", "count", "status", "area", "category"].map((val) => (
             <label
               key={val}
               className="flex items-center gap-2 cursor-pointer"
@@ -291,6 +295,7 @@ export default function FilterSort({
                 value={sortBy}
                 onValueChange={(val: string) => setSortBy(val as SortBy)}
               >
+                <DropdownMenuRadioItem value="upvote">Upvote</DropdownMenuRadioItem>
                 <DropdownMenuRadioItem value="count">Count</DropdownMenuRadioItem>
                 <DropdownMenuRadioItem value="status">Status</DropdownMenuRadioItem>
                 <DropdownMenuRadioItem value="area">Area</DropdownMenuRadioItem>

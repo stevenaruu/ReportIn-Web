@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { useReports } from "@/hooks/use-report"
 import { useDeleteReport } from "@/api/services/report"
 import type { IReport } from "@/types/model/report"
-import FilterSort, { Status } from "@/components/filter-sort/filter-sort"
+import FilterSort, { type Status } from "@/components/filter-sort/filter-sort"
 import { useSelector } from "react-redux"
 import { selectCampus } from "@/store/campus/selector"
 import EmptyState from "@/components/empty-state/empty-state"
@@ -42,7 +42,7 @@ const BrowseReportPage = () => {
   const [reportIdToDelete, setReportIdToDelete] = useState("")
 
   // filter & sort state
-  const [sortBy, setSortBy] = useState<"status" | "area" | "category" | "count">("count")
+  const [sortBy, setSortBy] = useState<"status" | "area" | "category" | "count" | "upvote">("count")
   const [order, setOrder] = useState<"asc" | "desc">("desc")
   const [statusFilter, setStatusFilter] = useState<Status[]>([])
   const [areaFilter, setAreaFilter] = useState<string[]>([])

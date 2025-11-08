@@ -3,7 +3,7 @@ import { useGetAllCategoryQuery } from "@/api/services/category"
 import { useGetTechnicianPreferenceQuery } from "@/api/services/technician-preference"
 import { useUpdateReportStatus } from "@/api/services/report"
 import EmptyState from "@/components/empty-state/empty-state"
-import FilterSort, { Status } from "@/components/filter-sort/filter-sort"
+import FilterSort, { type Status } from "@/components/filter-sort/filter-sort"
 import { Pagination } from "@/components/pagination/pagination"
 import { ReportCard } from "@/components/report-card/report-card"
 import { SearchBar } from "@/components/search-bar/search-bar"
@@ -38,7 +38,7 @@ const TechnicianPage = () => {
   )
 
   // filter & sort state
-  const [sortBy, setSortBy] = useState<"status" | "area" | "category" | "count">("count")
+  const [sortBy, setSortBy] = useState<"status" | "area" | "category" | "count" | "upvote">("count")
   const [order, setOrder] = useState<"asc" | "desc">("desc")
   const [statusFilter, setStatusFilter] = useState<Status[]>([])
   const [areaFilter, setAreaFilter] = useState<string[]>([])
