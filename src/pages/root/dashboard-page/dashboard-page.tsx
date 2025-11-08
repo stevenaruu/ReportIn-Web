@@ -16,7 +16,7 @@ const RootDashboardPage = () => {
   switch (userActiveRole.roleName) {
     case 'Administrator University':
       return <AdministratorUniversityPage />;
-    case 'Super Admin':
+    case 'Super Administrator':
       return <SuperAdminPage />;
     default:
       return null;
