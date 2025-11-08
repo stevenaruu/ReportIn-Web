@@ -119,7 +119,7 @@ function App() {
               <Route path="/campus/edit/:campusId" element={<EditCampusPage />} />
               <Route path="/campus/verify/:campusId" element={<VerifyCampusPage />} />
               <Route path="/browse-account/:campusId" element={<RootBrowseAccountPage />} />
-              <Route path="/browse-account/detail/:personId" element={<RootBrowseAccountDetailPage />} />
+              <Route path="/browse-account/detail/:personId/campus/:campusId" element={<RootBrowseAccountDetailPage />} />
             </Route>
           </Routes>
         )}

@@ -1,4 +1,4 @@
-import { useLocation } from "react-router-dom"
+import { useLocation, useParams } from "react-router-dom"
 import { useState } from "react"
 import { RootLayout } from "@/layouts/layout"
 import type { IGetAllPersonResponse } from "@/types/response/person"
@@ -10,8 +10,6 @@ import { ROLES } from "@/lib/roles"
 import Header from "@/components/header/header"
 import type { IUpdatePersonRoleRequest } from "@/types/request/person"
 import { useUpdatePersonRole } from "@/api/services/person"
-import { useSelector } from "react-redux"
-import { selectCampus } from "@/store/campus/selector"
 import { usePrimaryColor } from "@/lib/primary-color"
 import { Modal } from "@/components/modal/Modal"
 
@@ -19,8 +17,8 @@ const RootBrowseAccountDetailPage = () => {
   const location = useLocation()
   const person = location.state as IGetAllPersonResponse
   const updateRole = useUpdatePersonRole(person.id)
-  const campus = useSelector(selectCampus)
   const { BACKGROUND_PRIMARY_COLOR } = usePrimaryColor()
+    const { campusId } = useParams<{ campusId: string }>();
 
   const buildingManagementRole = ROLES.filter((r) => r.roleName === "Building Management")
 
@@ -39,7 +37,7 @@ const RootBrowseAccountDetailPage = () => {
     const checkedRoles = buildingManagementRole.filter((r) => selectedRoles.includes(r.roleId))
 
     const request: IUpdatePersonRoleRequest = {
-      campusId: campus?.campusId ?? "",
+      campusId: campusId ?? "",
       role: checkedRoles.map((role) => ({
         roleId: role.roleId,
         roleName: role.roleName,

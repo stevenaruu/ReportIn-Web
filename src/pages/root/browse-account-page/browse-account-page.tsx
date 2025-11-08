@@ -43,7 +43,7 @@ const RootBrowseAccountPage = () => {
         columns={columns}
         data={data?.data ?? []}
         privilege={{ view: true }}
-        onView={(row) => navigate('/browse-account/detail/' + row.id, { state: row })}
+        onView={(row) => navigate('/browse-account/detail/' + row.id + '/campus/' + campusId, { state: row })}
       />
     </RootLayout>
   )
