@@ -113,7 +113,7 @@ const BrowseAccountDetailPage = () => {
                         />
                         <span>{role.roleName}</span>
                       </div>
-                      {role.roleName === "Custodian" && (
+                      {role.roleName === "Technician" && (
                         <button
                           onClick={handleEditTechnicianPreference}
                           className="p-1 hover:bg-gray-100 rounded-md transition-colors"

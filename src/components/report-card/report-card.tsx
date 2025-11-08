@@ -55,8 +55,8 @@ export const ReportCard = <T extends IReport>({
   const [liked, setLiked] = useState(report.upvote?.includes(person?.id ?? "") ?? false)
   const [likeCount, setLikeCount] = useState(report.upvote?.length ?? 0)
 
-  const images = report.complainant || []
-  const description = report.complainant?.[0]?.description || "No description"
+  const images = report.facilityUser || []
+  const description = report.facilityUser?.[0]?.description || "No description"
 
   const handleDotClick = (index: number) => setCurrentImage(index)
 

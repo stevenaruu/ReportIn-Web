@@ -17,7 +17,7 @@ import { ITEMS_PER_PAGE } from "@/lib/item-per-page";
 import { useGetAllAreaQuery } from "@/api/services/area";
 import { useGetAllCategoryQuery } from "@/api/services/category";
 
-const ComplainantPage = () => {
+const FacilityUserPage = () => {
   const navigate = useNavigate();
 
   const person = useSelector(selectPerson);
@@ -53,13 +53,13 @@ const ComplainantPage = () => {
   };
 
   const tabbedReports = activeTab === "myReports"
-    ? reports.filter(r => r.complainant?.some(c => c.personId === person?.id))
+    ? reports.filter(r => r.facilityUser?.some(c => c.personId === person?.id))
     : reports;
 
   const filteredReports = tabbedReports.filter(
     (r) =>
       r.area?.name?.toLowerCase().includes(searchTerm) ||
-      r.complainant?.some(c => c.description.toLowerCase().includes(searchTerm)) ||
+      r.facilityUser?.some(c => c.description.toLowerCase().includes(searchTerm)) ||
       r.category?.name?.toLowerCase().includes(searchTerm) ||
       r.lastUpdatedBy?.toLowerCase().includes(searchTerm)
   );
@@ -133,7 +133,7 @@ const ComplainantPage = () => {
           <div className="flex flex-col gap-4">
             {paginatedReports.length > 0
               ? paginatedReports.map((report) => {
-                const canEdit = report.status === 'PENDING' && report.complainant?.some(c => c.personId === person?.id);
+                const canEdit = report.status === 'PENDING' && report.facilityUser?.some(c => c.personId === person?.id);
                 return (
                   <ReportCard
                     key={report.id}
@@ -186,4 +186,4 @@ const ComplainantPage = () => {
   );
 };
 
-export default ComplainantPage;
+export default FacilityUserPage;

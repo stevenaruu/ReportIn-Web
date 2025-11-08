@@ -21,7 +21,7 @@ import { useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
 import { Modal } from "@/components/modal/Modal"
 
-const CustodianPage = () => {
+const TechnicianPage = () => {
   const navigate = useNavigate()
 
   const person = useSelector(selectPerson)
@@ -79,12 +79,12 @@ const CustodianPage = () => {
   }
 
   const tabbedReports =
-    activeTab === "myReports" ? reports.filter((r) => r.custodian?.personId === person?.id) : reports
+    activeTab === "myReports" ? reports.filter((r) => r.technician?.personId === person?.id) : reports
 
   const filteredReports = tabbedReports.filter(
     (r) =>
       r.area?.name?.toLowerCase().includes(searchTerm) ||
-      r.complainant?.some((c) => c.description.toLowerCase().includes(searchTerm)) ||
+      r.facilityUser?.some((c) => c.description.toLowerCase().includes(searchTerm)) ||
       r.category?.name?.toLowerCase().includes(searchTerm) ||
       r.lastUpdatedBy?.toLowerCase().includes(searchTerm),
   )
@@ -108,7 +108,7 @@ const CustodianPage = () => {
 
   const handleTakeReport = (report: IReport) => {
     const request: IUpdateReportStatusRequest = {
-      custodianId: person?.id || "",
+      technicianId: person?.id || "",
       campusId: campus?.campusId || "",
       status: "IN PROGRESS",
     }
@@ -236,4 +236,4 @@ const CustodianPage = () => {
   )
 }
 
-export default CustodianPage
+export default TechnicianPage

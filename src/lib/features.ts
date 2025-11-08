@@ -11,7 +11,7 @@ export const features = [
   },
   {
     title: "AI Duplicate Check",
-    desc: "Built-in AI prevents duplicate reports by checking photo similarity, saving custodian time and reducing spam.",
+    desc: "Built-in AI prevents duplicate reports by checking photo similarity, saving technician time and reducing spam.",
     icon: "/assets/images/duplicate.svg"
   },
   {

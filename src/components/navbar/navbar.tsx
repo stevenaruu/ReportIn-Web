@@ -23,10 +23,10 @@ export default function SubNavbar({ onToggleSidebar }: { onToggleSidebar: () => 
   const personActiveRole = useSelector(selectPersonActiveRole);
   const { BACKGROUND_PRIMARY_COLOR } = usePrimaryColor();
 
-  const [custodianActive, setCustodianActive] = useState(false);
+  const [technicianActive, setTechnicianActive] = useState(false);
   const updateStatus = useUpdatePersonStatus(person?.id || '');
 
-  const updateCustodianStatus = async (active: boolean) => {
+  const updateTechnicianStatus = async (active: boolean) => {
     try {
       const request: IUpdatePersonStatusRequest = {
         campusId: person?.campusId || '',
@@ -35,22 +35,22 @@ export default function SubNavbar({ onToggleSidebar }: { onToggleSidebar: () => 
 
       await updateStatus.mutate(request, {
         onSuccess: (res) => {
-          console.log('Successfully updated custodian status:', res);
+          console.log('Successfully updated technician status:', res);
         },
         onError: (err) => {
-          console.error('Failed to update custodian status:', err);
+          console.error('Failed to update technician status:', err);
         }
       })
 
     } catch (error) {
-      console.error('Failed to update custodian status:', error);
+      console.error('Failed to update technician status:', error);
     }
   };
 
   // Handler checkbox
-  const handleCustodianCheckbox = (checked: boolean) => {
-    setCustodianActive(checked);
-    updateCustodianStatus(checked);
+  const handleTechnicianCheckbox = (checked: boolean) => {
+    setTechnicianActive(checked);
+    updateTechnicianStatus(checked);
   };
   const [open, setOpen] = useState(false);
   const popoverRef = useRef<HTMLDivElement | null>(null);
@@ -78,7 +78,7 @@ export default function SubNavbar({ onToggleSidebar }: { onToggleSidebar: () => 
     return () => {
       document.removeEventListener("click", handleClickOutside);
     };
-  }, [open, custodianActive]);
+  }, [open, technicianActive]);
 
   return (
     <nav className="flex items-center justify-between px-4 md:px-8 py-4 text-[#5D5D5D] shadow relative z-50">
@@ -112,13 +112,13 @@ export default function SubNavbar({ onToggleSidebar }: { onToggleSidebar: () => 
           <div className="absolute right-0 mt-2 w-64 rounded-md bg-white shadow-lg ring-1 ring-black/5 z-20">
             <div className="p-4 text-gray-700 text-sm space-y-2">
               <p className="font-semibold">{person?.name}</p>
-              {/* Checkbox hanya untuk custodian */}
-              {personActiveRole?.roleName?.toLowerCase() === 'custodian' && (
+              {/* Checkbox hanya untuk technician */}
+              {personActiveRole?.roleName?.toLowerCase() === 'technician' && (
                 <label className="flex items-center mt-2 gap-2 p-0">
                   <Checkbox
-                    style={{ backgroundColor: custodianActive ? BACKGROUND_PRIMARY_COLOR(0.7).backgroundColor : undefined }}
-                    checked={custodianActive}
-                    onCheckedChange={handleCustodianCheckbox}
+                    style={{ backgroundColor: technicianActive ? BACKGROUND_PRIMARY_COLOR(0.7).backgroundColor : undefined }}
+                    checked={technicianActive}
+                    onCheckedChange={handleTechnicianCheckbox}
                   />
                   <span className="font-semibold select-none">Active Status</span>
                 </label>

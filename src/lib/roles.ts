@@ -1,11 +1,11 @@
 export const ROLES = [
   {
     "roleId": "gNTymOZbhsyxJ5pmO5VX",
-    "roleName": "Complainant",
+    "roleName": "Facility User",
   },
   {
     "roleId": "yPeHOYORTebVl9evpcET",
-    "roleName": "Custodian",
+    "roleName": "Technician",
   },
   {
     "roleId": "oBYYLlM7W9oUjHZSmqPv",

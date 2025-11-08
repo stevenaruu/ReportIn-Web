@@ -1,8 +1,8 @@
 export type ICreateReportRequest = {
   campusId: string
-  complainantId: string
-  complainantName: string
-  complainantEmail: string
+  facilityUserId: string
+  facilityUserName: string
+  facilityUserEmail: string
   areaId: string
   areaName: string
   categoryId: string
@@ -12,7 +12,7 @@ export type ICreateReportRequest = {
 }
 
 export type IUpdateReportStatusRequest = {
-  custodianId: string
+  technicianId: string
   campusId: string
   status: string
   issue?: string

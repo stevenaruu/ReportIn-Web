@@ -27,8 +27,8 @@ const EmptyState: React.FC<EmptyStateProps> = ({ type, count, className, childre
     leaderboard: {
       logo: LeaderboardLogo,
       messages: [
-        "The leaderboard currently does not have any custodians listed.",
-        "Please check back later, as new custodians may appear once they join or complete their activities.",
+        "The leaderboard currently does not have any technicians listed.",
+        "Please check back later, as new technicians may appear once they join or complete their activities.",
       ],
     },
     publicReport: {

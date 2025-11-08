@@ -89,9 +89,9 @@ const ReportPage = () => {
 
     report.mutate({
       campusId: campus?.campusId || '',
-      complainantId: person?.id || '',
-      complainantName: person?.name || '',
-      complainantEmail: person?.email || '',
+      facilityUserId: person?.id || '',
+      facilityUserName: person?.name || '',
+      facilityUserEmail: person?.email || '',
       areaId: selectedAreaId,
       areaName: selectedAreaName,
       categoryId: selectedCategoryId,

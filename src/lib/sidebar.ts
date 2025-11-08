@@ -1,12 +1,12 @@
 export const sidebarConfig = [
   {
-    role: "Complainant",
+    role: "Facility User",
     menus: [
       { label: "Dashboard", path: "/dashboard" },
     ],
   },
   {
-    role: "Custodian",
+    role: "Technician",
     menus: [
       { label: "Dashboard", path: "/dashboard" },
       { label: "Leaderboard", path: "/leaderboard" },

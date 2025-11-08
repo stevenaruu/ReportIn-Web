@@ -70,28 +70,28 @@ const ReportDetailPage = () => {
   const [isCameraModalOpen, setIsCameraModalOpen] = useState(false)
   const [isProcessingImage, setIsProcessingImage] = useState(false)
 
-  // Multiple complainants navigation
-  const [currentComplainantIndex, setCurrentComplainantIndex] = useState(0)
-  const [currentComplainant, setCurrentComplainant] = useState<IPersonReport | null>(null)
+  // Multiple facilityUsers navigation
+  const [currentFacilityUserIndex, setCurrentFacilityUserIndex] = useState(0)
+  const [currentFacilityUser, setCurrentFacilityUser] = useState<IPersonReport | null>(null)
 
   const { data: areasData, isLoading: isLoadingAreas } = useGetAllAreaQuery(campus?.campusId || "")
   const { data: categoriesData, isLoading: isLoadingCategories } = useGetAllCategoryQuery(campus?.campusId || "")
 
-  // Find current user's complainant data
+  // Find current user's facilityUser data
   useEffect(() => {
     if (report && person) {
       if (isEditMode) {
-        // For edit mode, find the current user's complainant data
-        const userComplainant = report.complainant.find((c) => c.personId === person.id)
-        if (userComplainant) {
-          setCurrentComplainant(userComplainant)
-          setDescription(userComplainant.description)
+        // For edit mode, find the current user's facilityUser data
+        const userFacilityUser = report.facilityUser.find((c) => c.personId === person.id)
+        if (userFacilityUser) {
+          setCurrentFacilityUser(userFacilityUser)
+          setDescription(userFacilityUser.description)
         }
       } else if (isViewMode) {
-        // For view mode, start with the first complainant
-        if (report.complainant.length > 0) {
-          setCurrentComplainant(report.complainant[0])
-          setDescription(report.complainant[0].description)
+        // For view mode, start with the first facilityUser
+        if (report.facilityUser.length > 0) {
+          setCurrentFacilityUser(report.facilityUser[0])
+          setDescription(report.facilityUser[0].description)
         }
       }
     }
@@ -107,22 +107,22 @@ const ReportDetailPage = () => {
     }
   }, [report])
 
-  // Handle complainant navigation for view mode
-  const handlePreviousComplainant = () => {
-    if (report && currentComplainantIndex > 0) {
-      const newIndex = currentComplainantIndex - 1
-      setCurrentComplainantIndex(newIndex)
-      setCurrentComplainant(report.complainant[newIndex])
-      setDescription(report.complainant[newIndex].description)
+  // Handle facilityUser navigation for view mode
+  const handlePreviousFacilityUser = () => {
+    if (report && currentFacilityUserIndex > 0) {
+      const newIndex = currentFacilityUserIndex - 1
+      setCurrentFacilityUserIndex(newIndex)
+      setCurrentFacilityUser(report.facilityUser[newIndex])
+      setDescription(report.facilityUser[newIndex].description)
     }
   }
 
-  const handleNextComplainant = () => {
-    if (report && currentComplainantIndex < report.complainant.length - 1) {
-      const newIndex = currentComplainantIndex + 1
-      setCurrentComplainantIndex(newIndex)
-      setCurrentComplainant(report.complainant[newIndex])
-      setDescription(report.complainant[newIndex].description)
+  const handleNextFacilityUser = () => {
+    if (report && currentFacilityUserIndex < report.facilityUser.length - 1) {
+      const newIndex = currentFacilityUserIndex + 1
+      setCurrentFacilityUserIndex(newIndex)
+      setCurrentFacilityUser(report.facilityUser[newIndex])
+      setDescription(report.facilityUser[newIndex].description)
     }
   }
 
@@ -160,7 +160,7 @@ const ReportDetailPage = () => {
 
   const handleTakeReport = (report: IReport) => {
     const request: IUpdateReportStatusRequest = {
-      custodianId: person?.id || "",
+      technicianId: person?.id || "",
       campusId: campus?.campusId || "",
       status: "IN PROGRESS",
     }
@@ -203,7 +203,7 @@ const ReportDetailPage = () => {
     if (!report) return
 
     const request: IUpdateReportStatusRequest = {
-      custodianId: person?.id || "",
+      technicianId: person?.id || "",
       campusId: campus?.campusId || "",
       status: "DONE",
       issue: issue,
@@ -242,12 +242,12 @@ const ReportDetailPage = () => {
   }
 
   const handleSubmit = async () => {
-    if (!report || !currentComplainant) return
+    if (!report || !currentFacilityUser) return
 
     setIsProcessingImage(true)
 
     // For update, if no new file is selected, we need to handle the existing image
-    if (!file && !currentComplainant.image) {
+    if (!file && !currentFacilityUser.image) {
       setModalTitle("Error")
       setModalMessage("Please upload a file")
       setIsSuccessModal(false)
@@ -279,10 +279,10 @@ const ReportDetailPage = () => {
     if (file) {
       // User uploaded a new file
       imageToUpload = file
-    } else if (currentComplainant.image) {
+    } else if (currentFacilityUser.image) {
       // Convert existing image URL to File object
       try {
-        imageToUpload = await convertImageUrlToFile(currentComplainant.image)
+        imageToUpload = await convertImageUrlToFile(currentFacilityUser.image)
       } catch {
         setModalTitle("Error")
         setModalMessage("Failed to process existing image")
@@ -308,9 +308,9 @@ const ReportDetailPage = () => {
         id: reportId!,
         data: {
           campusId: campus?.campusId || "",
-          complainantId: person?.id || "",
-          complainantName: person?.name || "",
-          complainantEmail: person?.email || "",
+          facilityUserId: person?.id || "",
+          facilityUserName: person?.name || "",
+          facilityUserEmail: person?.email || "",
           areaId: selectedAreaId,
           areaName: selectedAreaName,
           categoryId: selectedCategoryId,
@@ -372,7 +372,7 @@ const ReportDetailPage = () => {
     )
   }
 
-  const isComplainant = activeRole.roleName === "Custodian"
+  const isFacilityUser = activeRole.roleName === "Technician"
 
   const getHeaderTitle = () => {
     if (isEditMode) return "Edit Report"
@@ -402,14 +402,14 @@ const ReportDetailPage = () => {
       />
 
       <div className="space-y-4 px-4 sm:px-0">
-        {/* Multiple Complainants Navigation - Only for View Mode */}
-        {isViewMode && report.complainant.length > 1 && (
+        {/* Multiple FacilityUsers Navigation - Only for View Mode */}
+        {isViewMode && report.facilityUser.length > 1 && (
           <Card>
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <Button
-                  onClick={handlePreviousComplainant}
-                  disabled={currentComplainantIndex === 0}
+                  onClick={handlePreviousFacilityUser}
+                  disabled={currentFacilityUserIndex === 0}
                   variant="outline"
                   size="sm"
                 >
@@ -418,12 +418,12 @@ const ReportDetailPage = () => {
                 </Button>
 
                 <span className="text-sm text-gray-600">
-                  Report {currentComplainantIndex + 1} of {report.complainant.length}
+                  Report {currentFacilityUserIndex + 1} of {report.facilityUser.length}
                 </span>
 
                 <Button
-                  onClick={handleNextComplainant}
-                  disabled={currentComplainantIndex === report.complainant.length - 1}
+                  onClick={handleNextFacilityUser}
+                  disabled={currentFacilityUserIndex === report.facilityUser.length - 1}
                   variant="outline"
                   size="sm"
                 >
@@ -435,38 +435,38 @@ const ReportDetailPage = () => {
           </Card>
         )}
 
-        {/* Complainant Information - Only for View Mode */}
-        {isViewMode && currentComplainant && (
+        {/* FacilityUser Information - Only for View Mode */}
+        {isViewMode && currentFacilityUser && (
           <Card>
             <CardContent className="p-4 text-[#5d5d5d]">
-              <h2 className="font-semibold mb-3">Complainant Information</h2>
+              <h2 className="font-semibold mb-3">FacilityUser Information</h2>
               <div className="space-y-3">
                 <div>
                   <label className="text-sm font-medium">Name</label>
-                  <Input value={currentComplainant.name} disabled className="bg-gray-100" />
+                  <Input value={currentFacilityUser.name} disabled className="bg-gray-100" />
                 </div>
                 <div>
                   <label className="text-sm font-medium">Email</label>
-                  <Input value={currentComplainant.email} disabled className="bg-gray-100" />
+                  <Input value={currentFacilityUser.email} disabled className="bg-gray-100" />
                 </div>
               </div>
             </CardContent>
           </Card>
         )}
 
-        {/* Custodian Information - Only for View Mode when report has custodian */}
-        {isViewMode && report.custodian && (
+        {/* Technician Information - Only for View Mode when report has technician */}
+        {isViewMode && report.technician && (
           <Card>
             <CardContent className="p-4 text-[#5d5d5d]">
-              <h2 className="font-semibold mb-3">Custodian Information</h2>
+              <h2 className="font-semibold mb-3">Technician Information</h2>
               <div className="space-y-3">
                 <div>
                   <label className="text-sm font-medium">Name</label>
-                  <Input value={report.custodian.name} disabled className="bg-gray-100" />
+                  <Input value={report.technician.name} disabled className="bg-gray-100" />
                 </div>
                 <div>
                   <label className="text-sm font-medium">Email</label>
-                  <Input value={report.custodian.email} disabled className="bg-gray-100" />
+                  <Input value={report.technician.email} disabled className="bg-gray-100" />
                 </div>
               </div>
             </CardContent>
@@ -547,9 +547,9 @@ const ReportDetailPage = () => {
                     alt="Preview"
                     className="w-full h-full object-cover"
                   />
-                ) : currentComplainant?.image ? (
+                ) : currentFacilityUser?.image ? (
                   <img
-                    src={currentComplainant.image || "/placeholder.svg"}
+                    src={currentFacilityUser.image || "/placeholder.svg"}
                     alt="Current"
                     className="w-full h-full object-cover"
                   />
@@ -582,7 +582,7 @@ const ReportDetailPage = () => {
                   </div>
                 ) : (
                   <div className="text-sm text-gray-500">
-                    {currentComplainant?.image ? "Image attached" : "No image"}
+                    {currentFacilityUser?.image ? "Image attached" : "No image"}
                   </div>
                 )}
 
@@ -607,8 +607,8 @@ const ReportDetailPage = () => {
           </div>
         )}
 
-        {/* Take Report - Only for Custodian */}
-        {isComplainant && report.status === "PENDING" && (
+        {/* Take Report - Only for Technician */}
+        {isFacilityUser && report.status === "PENDING" && (
           <div className="flex justify-center sm:justify-end px-4 sm:px-0">
             <Button
               style={BACKGROUND_PRIMARY_COLOR(0.7)}
@@ -622,8 +622,8 @@ const ReportDetailPage = () => {
           </div>
         )}
 
-        {/* Done Report - Only for the Custodian who took the report */}
-        {isComplainant && report.status === "IN PROGRESS" && report.custodian?.personId === person?.id && (
+        {/* Done Report - Only for the Technician who took the report */}
+        {isFacilityUser && report.status === "IN PROGRESS" && report.technician?.personId === person?.id && (
           <div className="flex justify-center sm:justify-end gap-2 px-4 sm:px-0">
             <Button
               style={BACKGROUND_PRIMARY_COLOR(0.7)}
