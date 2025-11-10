@@ -435,11 +435,11 @@ const ReportDetailPage = () => {
           </Card>
         )}
 
-        {/* FacilityUser Information - Only for View Mode */}
+        {/* Facility User Information - Only for View Mode */}
         {isViewMode && currentFacilityUser && (
           <Card>
             <CardContent className="p-4 text-[#5d5d5d]">
-              <h2 className="font-semibold mb-3">FacilityUser Information</h2>
+              <h2 className="font-semibold mb-3">Facility User Information</h2>
               <div className="space-y-3">
                 <div>
                   <label className="text-sm font-medium">Name</label>
