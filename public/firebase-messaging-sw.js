@@ -21,12 +21,30 @@ messaging.onBackgroundMessage(function (payload) {
   const title = notification.title || 'New Report Alert';
   const body = notification.body || '';
   const image = (notification.image || '');
+  const clickUrl = payload.data?.click_action || '/';
 
   const notificationOptions = {
     body: body,
     icon: '/icon.png',
     ...(image ? { image } : {}),
+    data: { url: clickUrl },
   };
 
   self.registration.showNotification(title, notificationOptions);
+});
+
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  const url = event.notification.data?.url || '/';
+
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientsArr) => {
+      for (const client of clientsArr) {
+        if (client.url === url && 'focus' in client) {
+          return client.focus();
+        }
+      }
+      if (clients.openWindow) return clients.openWindow(url);
+    })
+  );
 });
