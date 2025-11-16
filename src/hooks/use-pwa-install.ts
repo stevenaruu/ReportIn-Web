@@ -12,6 +12,7 @@ interface UsePWAInstallReturn {
   hideInstallPrompt: () => void
   handleInstall: () => Promise<void>
   handleCancel: () => void
+  resetDismissalState: () => void
 }
 
 const isSubdomainOnly = (): boolean => {
@@ -39,6 +40,12 @@ export const usePWAInstall = (): UsePWAInstallReturn => {
     localStorage.setItem("pwaInstallDismissedUntil", dismissUntil.toString())
     setIsInstallPromptVisible(false)
     console.log("[PWA] Installation prompt dismissed for 24 hours")
+  }, [])
+
+  const resetDismissalState = useCallback(() => {
+    localStorage.removeItem("pwaInstallDismissedUntil")
+    setDismissedUntil(null)
+    console.log("[PWA] Dismissal state reset")
   }, [])
 
   // Check if app is already installed
@@ -171,5 +178,6 @@ export const usePWAInstall = (): UsePWAInstallReturn => {
     hideInstallPrompt,
     handleInstall,
     handleCancel,
+    resetDismissalState,
   }
 }

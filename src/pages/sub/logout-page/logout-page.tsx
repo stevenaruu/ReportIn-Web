@@ -4,11 +4,13 @@ import { selectCampus } from '@/store/campus/selector'
 import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { hexToRgba } from '@/lib/hex-to-rgba'
+import { usePWAInstall } from '@/hooks/use-pwa-install'
 
 const SubLogoutPage = () => {
   const dispatch = useDispatch();
   const campus = useSelector(selectCampus);
   const [primaryColor, setPrimaryColor] = useState<string>(campus?.customization.primaryColor || '#ef4444');
+  const { resetDismissalState } = usePWAInstall();
 
   // Store the primary color before clearing the store
   useEffect(() => {
@@ -19,6 +21,7 @@ const SubLogoutPage = () => {
 
   useEffect(() => {
     const logout = async () => {
+      resetDismissalState();
       await persistor.purge();
       await localStorage.clear();
       await sessionStorage.clear();

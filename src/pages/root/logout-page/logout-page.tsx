@@ -1,13 +1,16 @@
 import LogoutLogo from '@/assets/sub/logout'
+import { usePWAInstall } from '@/hooks/use-pwa-install'
 import { persistor } from '@/store'
 import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 
 const RootLogoutPage = () => {
   const dispatch = useDispatch();
+  const { resetDismissalState } = usePWAInstall();
 
   useEffect(() => {
     const logout = async () => {
+      resetDismissalState();
       dispatch({ type: "LOGOUT" });
       await persistor.purge();
       await localStorage.clear();
