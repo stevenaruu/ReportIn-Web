@@ -11,17 +11,6 @@ import { TooltipProvider } from "@radix-ui/react-tooltip"
 
 const queryClient = new QueryClient()
 
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker
-    .register("/service-worker.js")
-    .then((registration) => {
-      console.log("[PWA] Service Worker registered:", registration)
-    })
-    .catch((error) => {
-      console.log("[PWA] Service Worker registration failed:", error)
-    })
-}
-
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
