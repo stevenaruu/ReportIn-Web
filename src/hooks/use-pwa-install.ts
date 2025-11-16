@@ -5,6 +5,10 @@ interface BeforeInstallPromptEvent extends Event {
   userChoice: Promise<{ outcome: "accepted" | "dismissed" }>
 }
 
+interface NavigatorWithStandalone extends Navigator {
+  standalone?: boolean
+}
+
 interface UsePWAInstallReturn {
   isInstallPromptVisible: boolean
   isInstalled: boolean
@@ -32,6 +36,51 @@ export const usePWAInstall = (): UsePWAInstallReturn => {
   const [isInstallPromptVisible, setIsInstallPromptVisible] = useState(false)
   const [isInstalled, setIsInstalled] = useState(false)
   const [dismissedUntil, setDismissedUntil] = useState<number | null>(null)
+  const [hasCheckedDismissal, setHasCheckedDismissal] = useState(false)
+
+  useEffect(() => {
+    // Check if running in standalone mode
+    if (window.matchMedia("(display-mode: standalone)").matches) {
+      console.log("[PWA] App is already installed (standalone mode detected)")
+      setIsInstalled(true)
+      return
+    }
+
+    const navigatorWithStandalone = navigator as NavigatorWithStandalone
+    if (navigatorWithStandalone.standalone === true) {
+      console.log("[PWA] App is already installed (standalone property detected)")
+      setIsInstalled(true)
+      return
+    }
+
+    // For Android Chrome, check if the app is in the app drawer
+    if (
+      window.matchMedia("(display-mode: fullscreen)").matches ||
+      window.matchMedia("(display-mode: minimal-ui)").matches ||
+      window.matchMedia("(display-mode: browser)").matches
+    ) {
+      console.log("[PWA] Display mode detected:", window.matchMedia("(display-mode: standalone)").media)
+    }
+  }, [])
+
+  useEffect(() => {
+    const storedDismissalTime = localStorage.getItem("pwaInstallDismissedUntil")
+    if (storedDismissalTime) {
+      const dismissUntil = Number.parseInt(storedDismissalTime)
+      const now = Date.now()
+      
+      if (dismissUntil > now) {
+        console.log("[PWA] Install prompt dismissed until:", new Date(dismissUntil).toLocaleString())
+        setDismissedUntil(dismissUntil)
+      } else {
+        console.log("[PWA] Dismissal period expired, clearing it")
+        localStorage.removeItem("pwaInstallDismissedUntil")
+      }
+    }
+    
+    setHasCheckedDismissal(true)
+    console.log("[PWA] Dismissal state initialized")
+  }, [])
 
   const handleCancel = useCallback(() => {
     // Dismiss for 24 hours
@@ -43,20 +92,26 @@ export const usePWAInstall = (): UsePWAInstallReturn => {
   }, [])
 
   const resetDismissalState = useCallback(() => {
+    console.log("[PWA] Resetting dismissal state")
     localStorage.removeItem("pwaInstallDismissedUntil")
     setDismissedUntil(null)
-    console.log("[PWA] Dismissal state reset")
+    setInstallEvent(null)
+    setIsInstallPromptVisible(false)
+    console.log("[PWA] Dismissal state cleared - prompt will show on next eligibility")
   }, [])
 
-  // Check if app is already installed
   useEffect(() => {
-    if (window.matchMedia("(display-mode: standalone)").matches) {
-      setIsInstalled(true)
+    // Wait until dismissal state is loaded before setting up listeners
+    if (!hasCheckedDismissal) {
+      console.log("[PWA] Waiting for dismissal state to load...")
+      return
     }
-  }, [])
 
-  // Listen for install prompt
-  useEffect(() => {
+    if (isInstalled) {
+      console.log("[PWA] App already installed, skipping PWA prompt setup")
+      return
+    }
+
     const handleBeforeInstallPrompt = (e: Event) => {
       console.log("[PWA] beforeinstallprompt event triggered")
 
@@ -69,7 +124,7 @@ export const usePWAInstall = (): UsePWAInstallReturn => {
 
       const now = Date.now()
       if (dismissedUntil && now < dismissedUntil) {
-        console.log("[PWA] Install prompt dismissed until:", new Date(dismissedUntil))
+        console.log("[PWA] Install prompt is currently dismissed, skipping")
         return
       }
 
@@ -79,31 +134,42 @@ export const usePWAInstall = (): UsePWAInstallReturn => {
         return
       }
 
+      console.log("[PWA] beforeinstallprompt event is valid, setting up install")
       setInstallEvent(beforeInstallEvent)
       setIsInstallPromptVisible(true)
       console.log("[PWA] Install prompt ready and visible")
     }
 
-    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt)
-
     const handleAppInstalled = () => {
-      console.log("[PWA] App successfully installed")
+      console.log("[PWA] appinstalled event fired - app successfully installed")
       setIsInstalled(true)
       setIsInstallPromptVisible(false)
       setInstallEvent(null)
+      localStorage.removeItem("pwaInstallDismissedUntil")
     }
 
+    // Listen for the beforeinstallprompt event
+    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt)
     window.addEventListener("appinstalled", handleAppInstalled)
 
     return () => {
       window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt)
       window.removeEventListener("appinstalled", handleAppInstalled)
     }
-  }, [dismissedUntil])
+  }, [dismissedUntil, hasCheckedDismissal, isInstalled])
 
   const showInstallPrompt = useCallback(() => {
+    if (isInstalled) {
+      console.log("[PWA] Cannot show prompt - app is already installed")
+      return
+    }
+    if (!installEvent) {
+      console.log("[PWA] Cannot show prompt - no install event available")
+      return
+    }
     setIsInstallPromptVisible(true)
-  }, [])
+    console.log("[PWA] Install prompt shown manually")
+  }, [isInstalled, installEvent])
 
   const hideInstallPrompt = useCallback(() => {
     setIsInstallPromptVisible(false)
@@ -140,6 +206,7 @@ export const usePWAInstall = (): UsePWAInstallReturn => {
           setIsInstallPromptVisible(false)
           setInstallEvent(null)
           setIsInstalled(true)
+          localStorage.removeItem("pwaInstallDismissedUntil")
         } else {
           console.log("[PWA] Installation dismissed by user")
           handleCancel()
@@ -158,18 +225,7 @@ export const usePWAInstall = (): UsePWAInstallReturn => {
 
       alert("Installation could not be completed automatically. Please use your browser's menu to install this app.")
     }
-  }, [installEvent])
-
-  // Load dismissal time from localStorage on mount
-  useEffect(() => {
-    const storedDismissalTime = localStorage.getItem("pwaInstallDismissedUntil")
-    if (storedDismissalTime) {
-      const dismissUntil = Number.parseInt(storedDismissalTime)
-      if (dismissUntil > Date.now()) {
-        setDismissedUntil(dismissUntil)
-      }
-    }
-  }, [])
+  }, [installEvent, handleCancel])
 
   return {
     isInstallPromptVisible,
