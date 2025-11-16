@@ -1,6 +1,6 @@
 import apiClient from "@/config/api-client";
 import { ApiPerson } from "@/constant/ApiPerson";
-import { ILoginRequest, IUpdatePersonRoleRequest, IUpdatePersonStatusRequest } from "@/types/request/person";
+import { ILoginRequest, IUpdatePersonRoleRequest, IUpdatePersonStatusRequest, IGetAllPersonRequest } from "@/types/request/person";
 import { IResponse } from "@/types/response";
 import { IGetAllPersonResponse, ILoginResponse } from "@/types/response/person";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -33,13 +33,14 @@ export const useUpdatePersonStatus = (id: string) => {
   );
 };
 
-export const useGetAllPersonQuery = (id: string) => {
+export const useGetAllPersonQuery = (params?: IGetAllPersonRequest) => {
   return useQuery<IResponse<IGetAllPersonResponse[]>, Error>({
-    queryKey: ["all-person", id],
+    queryKey: ["all-person", params],
     queryFn: async () => {
       try {
-        const response = await apiClient.post<IResponse<IGetAllPersonResponse[]>>(
-          ApiPerson.allPerson(id)
+        const response = await apiClient.get<IResponse<IGetAllPersonResponse[]>>(
+          ApiPerson.allPerson(),
+          { params }
         );
         return response.data;
       } catch (err) {
@@ -52,5 +53,6 @@ export const useGetAllPersonQuery = (id: string) => {
     staleTime: 1000 * 60 * 5, // 5 menit
     retry: 3,
     refetchOnWindowFocus: false,
+    enabled: !!params?.campusId,
   });
 };

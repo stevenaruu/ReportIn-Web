@@ -5,6 +5,9 @@ export type ILoginRequest = {
 
 export type IGetAllPersonRequest = {
   campusId: string
+  page?: number
+  search?: string
+  all?: boolean
 }
 
 type IPersonRole = {

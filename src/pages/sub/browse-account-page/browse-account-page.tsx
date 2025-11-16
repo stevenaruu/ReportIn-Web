@@ -8,20 +8,30 @@ import { useNavigate } from "react-router-dom"
 import { formatTableDate } from "@/lib/format-date"
 import { useSelector } from "react-redux"
 import { selectCampus } from "@/store/campus/selector"
+import { useState } from "react"
 
 const BrowseAccountPage = () => {
   const campus = useSelector(selectCampus);
 
-  const { data, isLoading, isError, error } = useGetAllPersonQuery(campus?.campusId ?? '');
+  const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+
+  const { data, isLoading, isError, error } = useGetAllPersonQuery({
+    campusId: campus?.campusId ?? '',
+    page,
+    search,
+  });
 
   const navigate = useNavigate();
 
   const handleSearch = (value: string) => {
-    console.log("User searched:", value)
+    setSearch(value);
+    setPage(1);
   }
 
   const columns: Column<any>[] = [
     { key: "no", header: "No", render: (_row, index) => (index ?? 0) + 1 },
+    { key: "name", header: "Name" },
     { key: "email", header: "Email" },
     {
       key: "createdBy",
