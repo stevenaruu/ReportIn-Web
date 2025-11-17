@@ -11,7 +11,7 @@ const FeaturePage = () => {
         <div className="flex-1 max-w-xl w-full">
           <h1 className="text-4xl font-bold mb-2">MAIN FEATURES</h1>
           <p className="mb-6">Explore what ReportIn can do for your campus:</p>
-          <div className="flex gap-3 mb-6">
+          <div className="flex flex-wrap gap-3 mb-6">
             {features.map((feature, idx) => (
               <button
                 key={feature.title}
